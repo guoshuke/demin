@@ -1,12 +1,12 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
-import store from "./store";
+import store from "../../store";
 import Vant from "vant";
 import VueLazyload from "vue-lazyload";
 
 import "vant/lib/index.css";
-import common from "./utils/request";
+import common from "../../utils/request";
 
 Vue.use(VueLazyload);
 

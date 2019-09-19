@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { request, api } from "../request";
+import { request, api } from "../../request";
 import _ from "lodash";
 import { Toast } from "vant";
 
