@@ -65,7 +65,14 @@ const errorHandle = (status, other) => {
 };
 
 // 创建axios实例
-export let request = axios.create({ timeout: 1000 * 12 });
+axios.defaults.withCredentials = true;
+export let request = axios.create({
+  timeout: 1000 * 12,
+  withCredentials: true,
+  headers: {
+    Cookie: document.cookie
+  }
+});
 // 设置post请求头
 request.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
@@ -81,6 +88,9 @@ request.interceptors.request.use(
     // 而后我们可以在响应拦截器中，根据状态码进行一些统一的操作。
     const token = store.state.token;
     token && (config.headers.Authorization = token);
+    config.headers.Cookie =
+      "Hm_lvt_6706ba25fce92bc28c9ae7008ed6b8cb=1568601464,1568705819; JSESSIONID=22C578E2158471FFC565999C0D941778; Hm_lpvt_6706ba25fce92bc28c9ae7008ed6b8cb=1568881723";
+    debugger;
     return config;
   },
   error => Promise.error(error)
