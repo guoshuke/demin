@@ -18,12 +18,10 @@
 
     <div class="funcBar home_block mb15">
       <van-grid :column-num="5" :border="false">
-        <van-grid-item
-          v-for="value in 10"
-          :key="value"
-          icon="photo-o"
-          text="文字"
-        />
+        <van-grid-item v-for="value in 10" :key="value">
+          <van-image src="https://img.yzcdn.cn/vant/apple-1.jpg" />
+          <span>文字</span>
+        </van-grid-item>
       </van-grid>
     </div>
 
@@ -74,6 +72,17 @@
         />
       </van-grid>
     </div>
+
+    <div class="hotGoods">
+      <div class="hotGoods_Content">
+        <div class="hotGoods_Content_title"></div>
+        <div class="hotGoods_Content_list"></div>
+      </div>
+    </div>
+
+    <div class="pointSelect"></div>
+
+    <div class="iCanBuy"></div>
   </div>
 </template>
 
@@ -213,6 +222,21 @@ export default {
     height: 270px;
     display: flex;
     flex-direction: row;
+  }
+}
+
+.hotGoods {
+  width: 100%;
+  height: 303px;
+  background: linear-gradient(180deg, #ffffff, #efefef);
+  padding: 13px 10px 18px 10px;
+  box-sizing: border-box;
+  .hotGoods_Content {
+    background-color: #fff;
+    height: 100%;
+    .hotGoods_Content_title {
+      height: 48px;
+    }
   }
 }
 
