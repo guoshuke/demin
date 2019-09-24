@@ -94,6 +94,7 @@
           :key="value"
           icon="photo-o"
           text="文字"
+          @click="goHelpFree(value)"
         />
       </van-grid>
     </div>
@@ -151,7 +152,12 @@
         <van-divider>我能兑换</van-divider>
       </div>
       <van-grid :column-num="2" :gutter="10">
-        <van-grid-item class="canBuyItem" v-for="(n, i) in list" :key="i">
+        <van-grid-item
+          class="canBuyItem"
+          v-for="(n, i) in list"
+          :key="i"
+          @click="goGoodsDetail(i)"
+        >
           <van-image src="https://img.yzcdn.cn/vant/apple-1.jpg" />
           <div class="canBuyItem_title">
             KONKIA康佳电水壶1L大容量 家庭用电热水壶防干烧宿舍…
@@ -218,6 +224,9 @@ export default {
     },
     toSearch() {
       this.$router.push(`search`);
+    },
+    goHelpFree() {
+      this.$router.push(`free`);
     }
   },
   mounted() {

@@ -35,6 +35,11 @@ export default new Router({
       component: () => import("./page/Search.vue")
     },
     {
+      path: "/free",
+      name: "free",
+      component: () => import("./page/HelpFree.vue")
+    },
+    {
       path: "/goodsDetail",
       name: "goodsDetail",
       // route level code-splitting

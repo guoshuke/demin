@@ -35,6 +35,6 @@ module.exports = {
     // subpage: "src/views/other/main.js"
   },
   devServer: {
-    proxy: "http://weixin.chinatxyj.com"
+    proxy: "http://192.168.1.249:3000/mock/20/mall"
   }
 };

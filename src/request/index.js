@@ -68,10 +68,7 @@ const errorHandle = (status, other) => {
 axios.defaults.withCredentials = true;
 export let request = axios.create({
   timeout: 1000 * 12,
-  withCredentials: true,
-  headers: {
-    Cookie: document.cookie
-  }
+  withCredentials: true
 });
 // 设置post请求头
 request.defaults.headers.post["Content-Type"] =
@@ -86,11 +83,8 @@ request.interceptors.request.use(
     // 但是即使token存在，也有可能token是过期的，所以在每次的请求头中携带token
     // 后台根据携带的token判断用户的登录情况，并返回给我们对应的状态码
     // 而后我们可以在响应拦截器中，根据状态码进行一些统一的操作。
-    const token = store.state.token;
+    const token = "oOL3g1ZAGC_HG-e9GzV5tbV_MYxY_demin";
     token && (config.headers.Authorization = token);
-    config.headers.Cookie =
-      "Hm_lvt_6706ba25fce92bc28c9ae7008ed6b8cb=1568601464,1568705819; JSESSIONID=22C578E2158471FFC565999C0D941778; Hm_lpvt_6706ba25fce92bc28c9ae7008ed6b8cb=1568881723";
-    debugger;
     return config;
   },
   error => Promise.error(error)

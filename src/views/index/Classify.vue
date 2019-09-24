@@ -21,7 +21,7 @@
               {{ t.text }}
             </div>
             <van-grid :border="false" :column-num="3">
-              <van-grid-item v-for="n in t.children" :key="n.text">
+              <van-grid-item v-for="n in t.children" :key="n.id">
                 <van-image :src="n.image" />
                 <span class="subMenu_sub">{{ n.text }}</span>
               </van-grid-item>
@@ -35,57 +35,14 @@
 </template>
 
 <script>
+import _ from "lodash";
+import { request, api } from "../../request";
 export default {
   name: "Classify",
   data() {
     return {
       activeIndex: 0,
-      items: [
-        {
-          text: "分组 1",
-          children: [
-            {
-              text: "分组 1_1",
-              children: [
-                {
-                  text: "分组 1_1_1",
-                  image: "https://img.yzcdn.cn/vant/apple-1.jpg"
-                },
-                {
-                  text: "分组 1_1_2",
-                  image: "https://img.yzcdn.cn/vant/apple-1.jpg"
-                },
-                {
-                  text: "分组 1_1_3",
-                  image: "https://img.yzcdn.cn/vant/apple-1.jpg"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          text: "分组 2",
-          children: [
-            {
-              text: "分组 2_1",
-              children: [
-                {
-                  text: "分组 2_1_1",
-                  image: "https://img.yzcdn.cn/vant/apple-2.jpg"
-                },
-                {
-                  text: "分组 2_1_2",
-                  image: "https://img.yzcdn.cn/vant/apple-2.jpg"
-                },
-                {
-                  text: "分组 2_1_3",
-                  image: "https://img.yzcdn.cn/vant/apple-2.jpg"
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      items: [],
       value: ""
     };
   },
@@ -95,7 +52,63 @@ export default {
     },
     onCancel() {
       console.log(2);
+    },
+    getList() {
+      request
+        .get(api.list)
+        .then(res => {
+          console.log(res.data);
+          // todo 判断code
+          // 假设成功
+          this.items = _.transform(
+            res.data.data,
+            (r, n, k) => {
+              let temp = {
+                text: n.itemName,
+                id: n.id,
+                children: []
+              };
+              _.transform(
+                n.itemsList,
+                (r1, n1, k1) => {
+                  let temp1 = {
+                    text: n1.itemName,
+                    id: n1.id,
+                    children: []
+                  };
+                  _.transform(
+                    n1.itemsList,
+                    (r2, n2, k2) => {
+                      let temp2 = {
+                        text: n2.itemName,
+                        id: n2.id,
+                        image: "https://img.yzcdn.cn/vant/apple-2.jpg"
+                      };
+                      r2.push(temp2);
+                    },
+                    temp1.children
+                  );
+                  r1.push(temp1);
+                },
+                temp.children
+              );
+              r.push(temp);
+            },
+            []
+          );
+          // this.items = res.data.data;
+          console.log(this.items);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          // this.goGoodsDetail(3);
+        });
     }
+  },
+  created() {
+    this.getList();
   }
 };
 </script>
@@ -129,6 +142,13 @@ export default {
     padding: 1rem 0 1rem 0.5rem;
   }
   .subMenu_sub {
+    margin-top: 1rem;
+    height: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
     color: #858585;
   }
 
