@@ -35,9 +35,24 @@ export default new Router({
       component: () => import("./page/Search.vue")
     },
     {
+      path: "/address",
+      name: "address",
+      component: () => import("./page/Address.vue")
+    },
+    {
+      path: "/editAddress",
+      name: "editAddress",
+      component: () => import("./page/EditAddress.vue")
+    },
+    {
       path: "/free",
       name: "free",
       component: () => import("./page/HelpFree.vue")
+    },
+    {
+      path: "/order",
+      name: "order",
+      component: () => import("./page/Order.vue")
     },
     {
       path: "/goodsDetail",

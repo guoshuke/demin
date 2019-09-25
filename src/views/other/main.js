@@ -1,7 +1,7 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
-import store from "../../store";
+import store from "../index/store";
 import Vant from "vant";
 import VueLazyload from "vue-lazyload";
 
@@ -80,6 +80,8 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
+
+console.log("我执行了");
 
 new Vue({
   router,

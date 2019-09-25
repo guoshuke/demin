@@ -3,9 +3,9 @@ import items from "./items";
 import _ from "lodash";
 
 const target = (function() {
-  const base = "api/";
+  const base = "index/";
   const urls = {
-    point: "points"
+    goodsDetail: "goods/"
   };
   return _.transform(
     urls,

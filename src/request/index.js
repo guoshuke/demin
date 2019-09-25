@@ -4,7 +4,7 @@
  */
 import axios from "axios";
 import router from "../views/index/router";
-import store from "../store/index";
+import store from "../views/index/store/index";
 import Api from "./api";
 import { Toast } from "vant";
 

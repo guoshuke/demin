@@ -3,26 +3,44 @@
     <van-nav-bar left-arrow @click-left="onClickLeft"> </van-nav-bar>
     <div class="swipeBlock">
       <van-swipe :autoplay="8000" class="swipe">
-        <van-swipe-item v-for="(image, index) in images" :key="index">
+        <van-swipe-item
+          v-for="(image, index) in detail.goodsUrl.split(',')"
+          :key="index"
+        >
           <van-image v-lazy="image" @load="imgLoad" :src="image" />
         </van-swipe-item>
       </van-swipe>
     </div>
     <div class="goodsContent">
-      <div class="title">【现场兑换】智能扫地机器人 大红色</div>
+      <div class="title">
+        {{ detail.goodsName }}
+      </div>
       <div class="sub_title">
-        <span>当前积分：0</span>
-        <span>剩余库存：397</span>
+        <span>已兑换：{{ detail.goodsAmount - detail.goodsStock }}</span>
+        <span>剩余库存：{{ detail.goodsStock }}</span>
       </div>
       <div class="title payWay">支付方式</div>
       <ul class="sub_title">
         <li
-          v-for="t in types"
-          :key="t.id"
-          :class="{ activePay: activeNum == t.type }"
-          @click="activeNum = t.type"
+          :class="{ activePay: activeNum == 1 }"
+          @click="toggleType(1)"
+          v-if="detail.integral != 0"
         >
-          {{ t.title }}
+          {{ detail.integral + "积分" }}
+        </li>
+        <li
+          :class="{ activePay: activeNum == 2 }"
+          @click="toggleType(2)"
+          v-if="detail.price != 0"
+        >
+          {{ detail.price + "元" }}
+        </li>
+        <li
+          :class="{ activePay: activeNum == 3 }"
+          @click="toggleType(3)"
+          v-if="detail.mixedIntegral != 0"
+        >
+          {{ detail.mixedIntegral + "积分+" + detail.mixedPrice + "元" }}
         </li>
       </ul>
       <div class="num">
@@ -31,17 +49,15 @@
       </div>
       <div class="detailContent">
         <div class="title">商品详情</div>
-        <div class="content">
-          本款智能扫地机器人为一款智能扫地机器人，适合家居使
-          用，又称自动打扫机、智能吸尘、机器人吸尘器等，是智
-          能家用电器的一种，能凭借一定的人工智能，自动在房间
-          内完成地板清理工作。
-        </div>
+        <div class="content">{{ detail.remark }}</div>
       </div>
+
+      <van-button type="default" class="footer" to="order">立即兑换</van-button>
     </div>
   </div>
 </template>
 <script>
+import { request, api } from "@/request";
 export default {
   name: "goodsDetail",
   data() {
@@ -50,22 +66,22 @@ export default {
         "https://img.yzcdn.cn/vant/apple-1.jpg",
         "https://img.yzcdn.cn/vant/apple-2.jpg"
       ],
+      detail: {
+        goodsId: 0,
+        goodsName: "",
+        goodsSmallUrl: "",
+        goodsUrl: "",
+        goodsAmount: 0,
+        goodsStock: 0,
+        integral: 0,
+        price: 0,
+        mixedIntegral: 0,
+        mixedPrice: 0,
+        remark: "",
+        integralTotal: 0
+      },
       activeNum: 1,
-      num: 1,
-      types: [
-        {
-          title: "150积分",
-          type: 1
-        },
-        {
-          title: "99元",
-          type: 2
-        },
-        {
-          title: "50积分+70元",
-          type: 3
-        }
-      ]
+      num: 1
     };
   },
   methods: {
@@ -77,12 +93,55 @@ export default {
       if (height > this.swipeHeight) {
         this.swipeHeight = height;
       }
+    },
+    toggleType(num) {
+      this.activeNum = num;
+      this.num = 1;
     }
+  },
+  activated() {
+    let goodsId = 1;
+    request
+      .get(api.goodsDetail + goodsId)
+      .then(res => {
+        console.log(res.data);
+        // todo 判断code
+        // 假设成功
+        let resData = {
+          goodsId: 92598,
+          goodsName: "【现场兑换】智能扫地机器人 大红色",
+          goodsSmallUrl: "https://img.yzcdn.cn/vant/apple-1.jpg",
+          goodsUrl:
+            "https://img.yzcdn.cn/vant/apple-1.jpg,https://img.yzcdn.cn/vant/apple-2.jpg",
+          goodsAmount: 999,
+          goodsStock: 365,
+          integral: 150,
+          price: 99,
+          mixedIntegral: 50,
+          mixedPrice: 70,
+          remark:
+            "本款智能扫地机器人为一款智能扫地机器人，适合家居使\n" +
+            "          用，又称自动打扫机、智能吸尘、机器人吸尘器等，是智\n" +
+            "          能家用电器的一种，能凭借一定的人工智能，自动在房间\n" +
+            "          内完成地板清理工作。",
+          integralTotal: 60
+        };
+        this.detail = resData;
+
+        console.log(this.detail);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      .finally(() => {
+        // this.goGoodsDetail(3);
+      });
   }
 };
 </script>
 <style lang="less" scoped>
 .goodsDetail {
+  padding-bottom: 4rem;
   /deep/ .van-nav-bar {
     position: fixed;
     background-color: transparent;
@@ -153,6 +212,24 @@ export default {
         color: #858585;
       }
     }
+  }
+
+  .footer {
+    display: flex;
+    position: fixed;
+    height: 4rem;
+    width: 100vw;
+    bottom: 0;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.2rem;
+    background: linear-gradient(
+      -87deg,
+      rgba(242, 61, 61, 1),
+      rgba(233, 90, 59, 1)
+    );
   }
 }
 </style>
