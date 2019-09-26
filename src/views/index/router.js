@@ -52,7 +52,17 @@ export default new Router({
     {
       path: "/order",
       name: "order",
-      component: () => import("./page/Order.vue")
+      component: () => import("./page/CommitOrder.vue")
+    },
+    {
+      path: "/orderList",
+      name: "orderList",
+      component: () => import("./page/OrderList.vue")
+    },
+    {
+      path: "/orderDetail",
+      name: "orderDetail",
+      component: () => import("./page/OrderDetail.vue")
     },
     {
       path: "/goodsDetail",

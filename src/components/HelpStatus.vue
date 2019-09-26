@@ -33,26 +33,6 @@
               </div>
               <div slot="origin-price" class="origin-price">
                 100积分
-              </div> </van-card
-            ><van-card
-              price="0积分"
-              origin-price="100积分"
-              thumb="https://img.yzcdn.cn/vant/t-thirt.jpg"
-            >
-              <div slot="title" class="goodsTitle">
-                <span class="goodsTitleText"
-                  >厨房厨具三件套 淡蓝色 不锈钢厨具锅具</span
-                >
-              </div>
-              <div slot="tags">
-                <van-tag type="danger">好友助力</van-tag>
-                <van-tag plain type="danger" class="needTag">需要4人</van-tag>
-              </div>
-              <div slot="price" class="price">
-                0积分
-              </div>
-              <div slot="origin-price" class="origin-price">
-                100积分
               </div>
             </van-card>
             <div class="goFree">

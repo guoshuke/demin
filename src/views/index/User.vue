@@ -1,18 +1,20 @@
 <template>
   <div class="user">
     <div class="myRedeem">
-      <div class="myList ">
+      <div class="myList" @click="$router.push(`orderList`)">
         <div class="listTitle">我的兑换</div>
         <div class="listTitle_sub">查看更多</div>
         <van-icon name="arrow" class="listTitle_sub" />
       </div>
       <van-grid :column-num="3" :border="false">
         <van-grid-item
-          v-for="value in 3"
-          :key="value"
-          icon="photo-o"
-          text="文字"
-        />
+          v-for="(n, i) in redeemTypes"
+          :key="i"
+          @click="$router.push(`orderList`, { type: n.type })"
+        >
+          <van-image width="3rem" height="3rem" :src="n.url" />
+          <span class="status">{{ n.status }}</span>
+        </van-grid-item>
       </van-grid>
     </div>
 
@@ -67,7 +69,24 @@ export default {
       showList: false,
       chosenCoupon: -1,
       coupons: [coupon],
-      disabledCoupons: [coupon]
+      disabledCoupons: [coupon],
+      redeemTypes: [
+        {
+          type: 1,
+          url: "../user/waitPay.png",
+          status: "未付款"
+        },
+        {
+          type: 2,
+          url: "../user/waitDelivery.png",
+          status: "待发货"
+        },
+        {
+          type: 3,
+          url: "../user/finish.png",
+          status: "已完成"
+        }
+      ]
     };
   },
   methods: {
@@ -90,6 +109,11 @@ export default {
     margin-bottom: 1.2rem;
     .myList {
       height: 2.5rem;
+    }
+    .status {
+      color: #333;
+      font-weight: 400;
+      margin-top: 1rem;
     }
   }
   .myList {

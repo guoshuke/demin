@@ -59,6 +59,8 @@
       <div class="listTitle">实际支付：￥0</div>
       <van-button class="submitRedeem">立即兑换</van-button>
     </div>
+
+    <div class="footer"></div>
   </div>
 </template>
 

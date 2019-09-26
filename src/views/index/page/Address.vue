@@ -4,6 +4,7 @@
     <van-address-list
       v-model="chosenAddressId"
       :list="list"
+      :switchable="false"
       @add="onAdd"
       @edit="onEdit"
     />
@@ -53,8 +54,8 @@ export default {
 
 <style scoped lang="less">
 .address {
-  /deep/ .van-radio__icon {
-    display: none;
-  }
+  /*/deep/ .van-radio__icon {*/
+  /*  display: none;*/
+  /*}*/
 }
 </style>
