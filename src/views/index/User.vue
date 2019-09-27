@@ -1,5 +1,27 @@
 <template>
   <div class="user">
+    <div class="user_box">
+      <van-image src="../user/bg.png"></van-image>
+      <div class="user_info">
+        <van-image
+          round
+          fit="cover"
+          width="6rem"
+          height="6rem"
+          src="https://img.yzcdn.cn/vant/cat.jpeg"
+        />
+        <span class="nick_name">XueWei520</span>
+      </div>
+      <div class="point">
+        <div>当前积分</div>
+        <div>1000分</div>
+        <div>(含平台积分20分)</div>
+        <div>
+          <van-button type="default" size="small">默认按钮</van-button>
+          <van-button type="danger" size="small">危险按钮</van-button>
+        </div>
+      </div>
+    </div>
     <div class="myRedeem">
       <div class="myList" @click="$router.push(`orderList`)">
         <div class="listTitle">我的兑换</div>
@@ -105,6 +127,45 @@ export default {
 .user {
   background-color: #efefef;
   height: 100vh;
+  .user_box {
+    padding-bottom: 4rem;
+    position: relative;
+    .user_info {
+      position: absolute;
+      left: 1rem;
+      top: 1rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      .nick_name {
+        font-size: 1.1rem;
+        color: #fff;
+        font-weight: 500;
+        margin-left: 1rem;
+      }
+    }
+    .point {
+      background-color: #fff;
+      height: 10.5rem;
+      position: absolute;
+      top: 8rem;
+      left: 1rem;
+      width: calc(100% - 2rem);
+      border-radius: 1rem;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+      & > div:last-child {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+      }
+    }
+  }
   .myRedeem {
     margin-bottom: 1.2rem;
     .myList {

@@ -175,7 +175,6 @@
 <script>
 import { request, api } from "../../request";
 import _ from "lodash";
-import { Toast } from "vant";
 
 export default {
   name: "home",
@@ -199,7 +198,7 @@ export default {
       // id 商品的id
       _.isNumber(id)
         ? this.$router.push(`goodsDetail?goodId=${id}`)
-        : Toast("商品id未找到");
+        : this.$toast("商品id未找到");
     },
     imgLoad(e) {
       let height = e.target.clientHeight || e.target.height;

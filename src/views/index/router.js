@@ -65,6 +65,11 @@ export default new Router({
       component: () => import("./page/OrderDetail.vue")
     },
     {
+      path: "/goodsList",
+      name: "goodsList",
+      component: () => import("./page/GoodsList.vue")
+    },
+    {
       path: "/goodsDetail",
       name: "goodsDetail",
       // route level code-splitting

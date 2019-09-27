@@ -21,7 +21,7 @@
               {{ t.text }}
             </div>
             <van-grid :border="false" :column-num="3">
-              <van-grid-item v-for="n in t.children" :key="n.id">
+              <van-grid-item v-for="n in t.children" :key="n.id" to="goodsList">
                 <van-image :src="n.image" />
                 <span class="subMenu_sub">{{ n.text }}</span>
               </van-grid-item>

@@ -71,12 +71,36 @@
         </div>
       </div>
     </div>
+    <div class="footer">
+      <van-button class="cancel" @click="show = true">取消订单</van-button>
+      <van-button class="toPay">立即支付</van-button>
+    </div>
+    <van-popup v-model="show" class="dialog">
+      <div class="dialog_box">
+        <div class="dialog_title">取消订单</div>
+        <div class="dialog_content">确定要取消订单吗</div>
+        <div class="dialog_footer footer">
+          <van-button class="cancel" @click="deleteOrder">确定</van-button>
+          <van-button class="toPay" @click="show = false">取消</van-button>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
 
 <script>
 export default {
-  name: "OrderDetail"
+  name: "OrderDetail",
+  data() {
+    return {
+      show: false
+    };
+  },
+  methods: {
+    deleteOrder() {
+      this.$toast("删除提示  然后返回到列表页面并刷新");
+    }
+  }
 };
 </script>
 
@@ -215,6 +239,69 @@ export default {
     .listTitle_sub {
       color: #858585;
       font-size: 1.1rem;
+    }
+  }
+  .footer {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    background-color: #efefef;
+    button {
+      width: 7rem;
+      height: 2.6rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.1rem;
+      border-radius: 1.2rem;
+      margin-right: 1rem;
+      line-height: 2.6rem;
+    }
+    .cancel {
+      border: 1px solid #333;
+    }
+    .toPay {
+      color: #fff;
+      background: linear-gradient(
+        263deg,
+        rgba(242, 61, 61, 1),
+        rgba(233, 107, 79, 1)
+      );
+    }
+  }
+  .dialog {
+    width: 19rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    .dialog_title {
+      margin-top: 2rem;
+      color: #f23d3d;
+      font-size: 1.2rem;
+      font-weight: 500;
+      text-align: center;
+    }
+    .dialog_content {
+      padding: 1.2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-size: 1rem;
+    }
+    .dialog_footer {
+      position: relative;
+      width: 100%;
+      background-color: #fff;
+      justify-content: space-evenly;
+      margin-bottom: 1.2rem;
+      button {
+        margin-right: 0;
+      }
     }
   }
 }
