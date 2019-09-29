@@ -1,11 +1,13 @@
 import user from "./user";
 import items from "./items";
+import def from "./default";
 import _ from "lodash";
 
 const target = (function() {
   const base = "index/";
   const urls = {
-    goodsDetail: "goods/"
+    goodsDetail: "goods/",
+    allList: "goods/list"
   };
   return _.transform(
     urls,
@@ -16,7 +18,7 @@ const target = (function() {
   );
 })();
 
-Object.assign(target, user, items);
+Object.assign(target, user, items, def);
 
 export default target;
 

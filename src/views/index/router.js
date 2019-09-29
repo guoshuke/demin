@@ -65,6 +65,11 @@ export default new Router({
       component: () => import("./page/OrderDetail.vue")
     },
     {
+      path: "/pointsDetail",
+      name: "pointsDetail",
+      component: () => import("./page/PointsDetails.vue")
+    },
+    {
       path: "/goodsList",
       name: "goodsList",
       component: () => import("./page/GoodsList.vue")

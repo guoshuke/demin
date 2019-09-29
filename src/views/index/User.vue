@@ -13,12 +13,24 @@
         <span class="nick_name">XueWei520</span>
       </div>
       <div class="point">
-        <div>当前积分</div>
-        <div>1000分</div>
+        <div class="point_title">当前积分</div>
+        <div class="point_num">1000分</div>
         <div>(含平台积分20分)</div>
-        <div>
-          <van-button type="default" size="small">默认按钮</van-button>
-          <van-button type="danger" size="small">危险按钮</van-button>
+        <div class="funcBar">
+          <van-button
+            type="default"
+            size="small"
+            @click="$router.push('pointsDetail')"
+          >
+            积分明细
+          </van-button>
+          <van-button
+            type="danger"
+            size="small"
+            @click="pointRules_show = true"
+          >
+            积分规则
+          </van-button>
         </div>
       </div>
     </div>
@@ -69,10 +81,23 @@
         close-button-text="返回"
       />
     </van-popup>
+    <!--    积分规则-->
+    <van-popup
+      v-model="pointRules_show"
+      round
+      closeable
+      position="bottom"
+      :style="{ height: '80%' }"
+    >
+      <van-nav-bar title="积分规则" @click-left="$router.back(-1)" />
+      <div v-html="pointRules" class="pointRules_pop"></div>
+    </van-popup>
   </div>
 </template>
 
 <script>
+import { request, api } from "@/request";
+
 const coupon = {
   available: 1,
   condition: "无使用门槛\n最多优惠12元",
@@ -88,6 +113,7 @@ export default {
   name: "User",
   data() {
     return {
+      pointRules_show: false,
       showList: false,
       chosenCoupon: -1,
       coupons: [coupon],
@@ -108,7 +134,8 @@ export default {
           url: "../user/finish.png",
           status: "已完成"
         }
-      ]
+      ],
+      pointRules: ""
     };
   },
   methods: {
@@ -119,6 +146,19 @@ export default {
     onExchange(code) {
       this.coupons.push(coupon);
     }
+  },
+  mounted() {
+    const self = this;
+    console.log(api);
+    request
+      .get(api.pointRules)
+      .then(res => {
+        console.log(res.data);
+        self.pointRules = res.data.data.integralDescription;
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 };
 </script>
@@ -130,6 +170,8 @@ export default {
   .user_box {
     padding-bottom: 4rem;
     position: relative;
+    width: 100%;
+    overflow: hidden;
     .user_info {
       position: absolute;
       left: 1rem;
@@ -163,6 +205,27 @@ export default {
         flex-direction: row;
         align-items: center;
         justify-content: space-evenly;
+      }
+      .point_title {
+        font-size: 1.2rem;
+        color: #333;
+      }
+
+      .point_num {
+        color: #f23d3d;
+        font-size: 1.6rem;
+        font-weight: 400;
+      }
+    }
+    .funcBar {
+      height: 3.5rem;
+      button {
+        width: 7rem;
+        height: 2.6rem;
+        font-size: 1.1rem;
+        &:last-child {
+          background-color: #f23d3d;
+        }
       }
     }
   }
@@ -202,6 +265,9 @@ export default {
     /deep/ .van-coupon-list {
       height: 100vh;
     }
+  }
+  .pointRules_pop {
+    padding: 1rem;
   }
 }
 </style>

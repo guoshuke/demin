@@ -1,9 +1,10 @@
 import _ from "lodash";
 
 export default (() => {
-  const base = "user/";
+  const base = "/";
   const urls = {
-    userInfo: "info"
+    pointRules: "integralDescription/list",
+    pointsDetails: "integralDetail/list"
   };
   return _.transform(
     urls,

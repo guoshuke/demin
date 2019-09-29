@@ -28,11 +28,14 @@
     <div class="home_block">
       <van-swipe :autoplay="3000" class="swipe">
         <van-swipe-item
-          v-for="(image, index) in images"
-          :key="index"
-          @click="goGoodsDetail(index)"
+          v-for="n in data.bannerList"
+          :key="n.id"
+          @click="goGoodsDetail(n.id)"
         >
-          <img v-lazy="image" @load="imgLoad" />
+          <img
+            v-lazy="n.bannerUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
+            @load="imgLoad"
+          />
         </van-swipe-item>
       </van-swipe>
     </div>
@@ -182,6 +185,13 @@ export default {
   data() {
     return {
       swipeHeight: 0,
+      data: {
+        bannerList: [],
+        itemsList: [],
+        zeroGoodsList: [],
+        newGoodsList: [],
+        bomGoodsList: []
+      },
       images: [
         "https://img.yzcdn.cn/vant/apple-1.jpg",
         "https://img.yzcdn.cn/vant/apple-2.jpg"
@@ -229,18 +239,146 @@ export default {
     }
   },
   mounted() {
-    // request
-    //   .get(api.point)
-    //   .then(res => {
-    //     // console.log(res);
-    //   })
-    //   .catch(err => {
-    //     /* console.log(err);*/
-    //   })
-    //   .finally(() => {
-    //     // console.log("end");
-    //     // this.goGoodsDetail(3);
-    //   });
+    const me = this;
+    request
+      .get(api.allList)
+      .then(res => {
+        console.log(res);
+        let data = {
+          code: 200,
+          message: "Lorem sint",
+          data: {
+            bannerList: [
+              {
+                id: 493,
+                bannerUrl: ""
+              },
+              {
+                id: 703,
+                bannerUrl: ""
+              }
+            ],
+            itemsList: [
+              {
+                id: 218,
+                parentId: 1021,
+                itemName: "tempor",
+                imageUrl: ""
+              },
+              {
+                id: 762,
+                parentId: 279,
+                itemName: "aute",
+                imageUrl: ""
+              },
+              {
+                id: 453,
+                parentId: 847,
+                itemName: "cing",
+                imageUrl: ""
+              }
+            ],
+            zeroGoodsList: [
+              {
+                goodsId: 827,
+                goodsName: "mollit",
+                goodsSmallUrl: "",
+                integral: 63
+              },
+              {
+                goodsId: 166,
+                goodsName: "pariatur",
+                goodsSmallUrl: "",
+                integral: 817
+              },
+              {
+                goodsId: 538,
+                goodsName: "Duis",
+                goodsSmallUrl: "",
+                integral: 654
+              },
+              {
+                goodsId: 685,
+                goodsName: "cillum",
+                goodsSmallUrl: "",
+                integral: 109
+              }
+            ],
+            newGoodsList: [
+              {
+                goodsId: 242,
+                goodsName: "culpa",
+                goodsSmallUrl: "",
+                integral: 935
+              },
+              {
+                goodsId: 339,
+                goodsName: "labore",
+                goodsSmallUrl: "",
+                integral: 988
+              },
+              {
+                goodsId: 134,
+                goodsName: "exerci",
+                goodsSmallUrl: "",
+                integral: 648
+              },
+              {
+                goodsId: 942,
+                goodsName: "consequat",
+                goodsSmallUrl: "",
+                integral: 377
+              },
+              {
+                goodsId: 101,
+                goodsName: "deserunt",
+                goodsSmallUrl: "",
+                integral: 986
+              }
+            ],
+            bomGoodsList: [
+              {
+                goodsId: 866,
+                goodsName: "dolo",
+                goodsSmallUrl: "",
+                integral: 806
+              },
+              {
+                goodsId: 134,
+                goodsName: "adipisicing",
+                goodsSmallUrl: "",
+                integral: 763
+              },
+              {
+                goodsId: 689,
+                goodsName: "sedame",
+                goodsSmallUrl: "",
+                integral: 511
+              },
+              {
+                goodsId: 639,
+                goodsName: "enimanim",
+                goodsSmallUrl: "",
+                integral: 407
+              },
+              {
+                goodsId: 613,
+                goodsName: "nisi in",
+                goodsSmallUrl: "",
+                integral: 5945
+              }
+            ]
+          }
+        };
+        me.data = data.data;
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      .finally(() => {
+        // console.log("end");
+        // this.goGoodsDetail(3);
+      });
   }
 };
 </script>

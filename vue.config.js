@@ -35,6 +35,7 @@ module.exports = {
     // subpage: "src/views/other/main.js"
   },
   devServer: {
-    proxy: "http://192.168.1.249:3000/mock/20/mall"
+    // proxy: "http://192.168.1.249:3000/mock/20/mall"
+    proxy: "http://127.0.0.1:8082/mall"
   }
 };
