@@ -1,6 +1,6 @@
 class Url {
-    constructor (){
-        this.api = 'api/';
-    }
+  constructor() {
+    this.api = "api/";
+  }
 }
-export default Url
+export default Url;
