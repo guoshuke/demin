@@ -7,7 +7,9 @@ const target = (function() {
   const base = "index/";
   const urls = {
     goodsDetail: "goods/",
-    allList: "goods/list"
+    allList: "goods/list",
+    myGoods: "myGoods",
+    classifyList: "items/goods"
   };
   return _.transform(
     urls,

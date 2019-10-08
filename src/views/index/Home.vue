@@ -121,8 +121,10 @@
             <span class="goodsName">{{ n.goodsName }}</span>
             <span class="red">{{ n.integral }} 积分</span>
             <span class="helpNum">已有100+人成功</span>
-            <div class="icon" :lazy:background-image="'./home/style.png'">
-              爆品\n助力
+            <div class="icon">
+              <van-image src="./home/style.png" class="icon_img" />
+              爆品 <br />
+              助力
             </div>
           </li>
         </ul>
@@ -145,9 +147,12 @@
           </template>
         </van-cell>
         <ul class="hotGoods_Content_list scrollBar">
-          <li v-for="value in 10" :key="value">
-            <van-image src="https://img.yzcdn.cn/vant/apple-1.jpg" />
-            <span>文字1</span>
+          <li v-for="n in data.bomGoodsList" :key="n.goodsId">
+            <van-image
+              :src="n.goodsSmallUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
+            />
+            <span class="goodsName">{{ n.goodsName }}</span>
+            <span class="red">{{ n.integral }} 积分</span>
           </li>
         </ul>
       </div>
@@ -155,16 +160,23 @@
 
     <div class="pointSelect">
       <van-grid :column-num="2" :gutter="10">
-        <van-grid-item>
+        <van-grid-item class="point_box">
           5000分以下
+          <van-image class="bg-image" fit="cover" src="./home/p5000.png" />
         </van-grid-item>
         <van-grid-item>
           <van-grid :column-num="1" :gutter="10">
             <van-grid-item>
               5000-10000分
+              <van-image class="bg-image" fit="cover" src="./home/p10000.png" />
             </van-grid-item>
             <van-grid-item>
               10000分以上
+              <van-image
+                class="bg-image"
+                fit="cover"
+                src="./home/p10000+.png"
+              />
             </van-grid-item>
           </van-grid>
         </van-grid-item>
@@ -186,15 +198,17 @@
           class="canBuyItem"
           v-for="(n, i) in list"
           :key="i"
-          @click="goGoodsDetail(i)"
+          @click="goGoodsDetail(n.goodsId)"
         >
-          <van-image src="https://img.yzcdn.cn/vant/apple-1.jpg" />
+          <van-image
+            :src="n.goodsSmallUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
+          />
           <div class="canBuyItem_title">
-            KONKIA康佳电水壶1L大容量 家庭用电热水壶防干烧宿舍…
+            {{ n.goodsName }}
           </div>
           <div class="canBuyItem_subTitle">
-            <span class="canBuyItem_needPoint">1500积分</span>
-            <span class="canBuyItem_num">已兑换88件</span>
+            <span class="canBuyItem_needPoint">{{ integral || 0 }}积分</span>
+            <span class="canBuyItem_num">已兑换99+件</span>
           </div>
         </van-grid-item>
       </van-grid>
@@ -279,7 +293,8 @@ export default {
       finished: false,
       list: [],
       value: "",
-      show: false
+      show: false,
+      resData: { currentPage: 1, pageSize: 10 }
     };
   },
   methods: {
@@ -302,165 +317,190 @@ export default {
       const self = this;
       console.log("onLoad");
       this.loading = true;
-      setTimeout(() => {
-        if (self.list.length < 100) {
-          for (let i = 0; i < 10; i++) {
-            self.list.push({});
-          }
-        } else {
-          self.finished = true;
-        }
-        self.loading = false;
-      }, 300);
+      this.requestList();
     },
     toSearch() {
       this.$router.push(`search`);
     },
     goHelpFree() {
       this.$router.push(`free`);
+    },
+    requestHomeData() {
+      const me = this;
+      request
+        .get(api.allList)
+        .then(res => {
+          console.log(res);
+          let data = {
+            code: 200,
+            message: "Lorem sint",
+            data: {
+              bannerList: [
+                {
+                  id: 493,
+                  bannerUrl: ""
+                },
+                {
+                  id: 703,
+                  bannerUrl: ""
+                }
+              ],
+              itemsList: [
+                {
+                  id: 218,
+                  parentId: 1021,
+                  itemName: "tempor",
+                  imageUrl: ""
+                },
+                {
+                  id: 762,
+                  parentId: 279,
+                  itemName: "aute",
+                  imageUrl: ""
+                },
+                {
+                  id: 453,
+                  parentId: 847,
+                  itemName: "cing",
+                  imageUrl: ""
+                }
+              ],
+              zeroGoodsList: [
+                {
+                  goodsId: 827,
+                  goodsName: "mollit",
+                  goodsSmallUrl: "",
+                  integral: 63
+                },
+                {
+                  goodsId: 166,
+                  goodsName: "pariatur",
+                  goodsSmallUrl: "",
+                  integral: 817
+                },
+                {
+                  goodsId: 538,
+                  goodsName: "Duis",
+                  goodsSmallUrl: "",
+                  integral: 654
+                },
+                {
+                  goodsId: 685,
+                  goodsName: "cillum",
+                  goodsSmallUrl: "",
+                  integral: 109
+                }
+              ],
+              newGoodsList: [
+                {
+                  goodsId: 242,
+                  goodsName: "culpa",
+                  goodsSmallUrl: "",
+                  integral: 935
+                },
+                {
+                  goodsId: 339,
+                  goodsName: "labore",
+                  goodsSmallUrl: "",
+                  integral: 988
+                },
+                {
+                  goodsId: 134,
+                  goodsName: "exerci",
+                  goodsSmallUrl: "",
+                  integral: 648
+                },
+                {
+                  goodsId: 942,
+                  goodsName: "consequat",
+                  goodsSmallUrl: "",
+                  integral: 377
+                },
+                {
+                  goodsId: 101,
+                  goodsName: "deserunt",
+                  goodsSmallUrl: "",
+                  integral: 986
+                }
+              ],
+              bomGoodsList: [
+                {
+                  goodsId: 866,
+                  goodsName: "dolo",
+                  goodsSmallUrl: "",
+                  integral: 806
+                },
+                {
+                  goodsId: 134,
+                  goodsName: "adipisicing",
+                  goodsSmallUrl: "",
+                  integral: 763
+                },
+                {
+                  goodsId: 689,
+                  goodsName: "sedame",
+                  goodsSmallUrl: "",
+                  integral: 511
+                },
+                {
+                  goodsId: 639,
+                  goodsName: "enimanim",
+                  goodsSmallUrl: "",
+                  integral: 407
+                },
+                {
+                  goodsId: 613,
+                  goodsName: "nisi in",
+                  goodsSmallUrl: "",
+                  integral: 5945
+                }
+              ]
+            }
+          };
+          me.data = data.data;
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          // console.log("end");
+          // this.goGoodsDetail(3);
+        });
+    },
+    requestList() {
+      const me = this;
+      request
+        .post(api.myGoods, this.resData)
+        .then(res => {
+          res = res.data;
+          console.log(res);
+          let data = {
+            code: 200,
+            message: "Lorem sint",
+            data: []
+          };
+
+          if (res.code != "200") {
+            me.finished = true;
+            console.log("end");
+          } else {
+            me.list = me.list.concat(res.dataList);
+            if (res.totalPage === res.pageIndex) {
+              me.finished = true;
+            }
+          }
+          // me.data = data.data;
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          me.loading = false;
+        });
     }
   },
   mounted() {
-    const me = this;
-    request
-      .get(api.allList)
-      .then(res => {
-        console.log(res);
-        let data = {
-          code: 200,
-          message: "Lorem sint",
-          data: {
-            bannerList: [
-              {
-                id: 493,
-                bannerUrl: ""
-              },
-              {
-                id: 703,
-                bannerUrl: ""
-              }
-            ],
-            itemsList: [
-              {
-                id: 218,
-                parentId: 1021,
-                itemName: "tempor",
-                imageUrl: ""
-              },
-              {
-                id: 762,
-                parentId: 279,
-                itemName: "aute",
-                imageUrl: ""
-              },
-              {
-                id: 453,
-                parentId: 847,
-                itemName: "cing",
-                imageUrl: ""
-              }
-            ],
-            zeroGoodsList: [
-              {
-                goodsId: 827,
-                goodsName: "mollit",
-                goodsSmallUrl: "",
-                integral: 63
-              },
-              {
-                goodsId: 166,
-                goodsName: "pariatur",
-                goodsSmallUrl: "",
-                integral: 817
-              },
-              {
-                goodsId: 538,
-                goodsName: "Duis",
-                goodsSmallUrl: "",
-                integral: 654
-              },
-              {
-                goodsId: 685,
-                goodsName: "cillum",
-                goodsSmallUrl: "",
-                integral: 109
-              }
-            ],
-            newGoodsList: [
-              {
-                goodsId: 242,
-                goodsName: "culpa",
-                goodsSmallUrl: "",
-                integral: 935
-              },
-              {
-                goodsId: 339,
-                goodsName: "labore",
-                goodsSmallUrl: "",
-                integral: 988
-              },
-              {
-                goodsId: 134,
-                goodsName: "exerci",
-                goodsSmallUrl: "",
-                integral: 648
-              },
-              {
-                goodsId: 942,
-                goodsName: "consequat",
-                goodsSmallUrl: "",
-                integral: 377
-              },
-              {
-                goodsId: 101,
-                goodsName: "deserunt",
-                goodsSmallUrl: "",
-                integral: 986
-              }
-            ],
-            bomGoodsList: [
-              {
-                goodsId: 866,
-                goodsName: "dolo",
-                goodsSmallUrl: "",
-                integral: 806
-              },
-              {
-                goodsId: 134,
-                goodsName: "adipisicing",
-                goodsSmallUrl: "",
-                integral: 763
-              },
-              {
-                goodsId: 689,
-                goodsName: "sedame",
-                goodsSmallUrl: "",
-                integral: 511
-              },
-              {
-                goodsId: 639,
-                goodsName: "enimanim",
-                goodsSmallUrl: "",
-                integral: 407
-              },
-              {
-                goodsId: 613,
-                goodsName: "nisi in",
-                goodsSmallUrl: "",
-                integral: 5945
-              }
-            ]
-          }
-        };
-        me.data = data.data;
-      })
-      .catch(err => {
-        console.log(err);
-      })
-      .finally(() => {
-        // console.log("end");
-        // this.goGoodsDetail(3);
-      });
+    this.requestHomeData();
   }
 };
 </script>
@@ -633,12 +673,20 @@ export default {
           color: #858585;
         }
         .icon {
-          padding-left: 0.5rem;
           position: absolute;
-          left: 0;
-          top: 0;
+          left: 5px;
+          top: 5px;
           width: 3rem;
           height: 3rem;
+          z-index: 10;
+          color: #fff;
+          text-align: center;
+          .icon_img {
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: -1;
+          }
         }
       }
     }
@@ -699,7 +747,25 @@ export default {
       li {
         width: 29%;
         margin-right: 1rem;
+        justify-content: space-evenly;
       }
+    }
+  }
+}
+
+.pointSelect {
+  height: 18rem;
+  /deep/ .van-grid {
+    height: 100%;
+    background: transparent;
+    .point_box {
+      position: relative;
+    }
+    .bg-image {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 0;
     }
   }
 }
@@ -708,20 +774,22 @@ export default {
   width: 12rem;
   margin: 0 auto;
   .van-divider {
-    margin-top: 0;
     color: #333333;
     border-color: #333333;
   }
 }
 
 .canBuyItem {
+  height: 18rem;
   .van-image {
     height: 11rem;
   }
   .canBuyItem_title {
+    text-align: left;
     font-size: 1rem;
     color: #333;
     padding: 0.6rem 0;
+    width: 100%;
   }
   .canBuyItem_subTitle {
     display: flex;
