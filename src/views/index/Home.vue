@@ -147,7 +147,7 @@
         <ul class="hotGoods_Content_list scrollBar">
           <li v-for="value in 10" :key="value">
             <van-image src="https://img.yzcdn.cn/vant/apple-1.jpg" />
-            <span>文字</span>
+            <span>文字1</span>
           </li>
         </ul>
       </div>
