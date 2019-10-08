@@ -22,7 +22,7 @@
             </div>
             <van-grid :border="false" :column-num="3">
               <van-grid-item v-for="n in t.children" :key="n.id" to="goodsList">
-                <van-image :src="n.image" />
+                <van-image :src="n.image" class="subMenu_img" />
                 <span class="subMenu_sub">{{ n.text }}</span>
               </van-grid-item>
             </van-grid>
@@ -141,9 +141,11 @@ export default {
     color: #333333;
     padding: 1rem 0 1rem 0.5rem;
   }
+  .subMenu_img {
+    margin-bottom: 1rem;
+  }
   .subMenu_sub {
-    margin-top: 1rem;
-    height: 1rem;
+    height: 1.2rem;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

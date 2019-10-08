@@ -1,25 +1,49 @@
 <template>
   <div id="app">
     <keep-alive>
-      <router-view />
+      <router-view class="box" />
     </keep-alive>
     <van-tabbar
       v-model="active"
-      active-color="#07c160"
+      active-color="#F23D3D"
       inactive-color="#000"
       v-show="showTabBar"
       class="tabBar"
       route
     >
-      <van-tabbar-item replace to="/" icon="home-o">首页</van-tabbar-item>
+      <van-tabbar-item replace to="/" icon="home-o"
+        >首页
+        <img
+          slot="icon"
+          slot-scope="props"
+          :src="props.active ? './home/home.png' : './home/home_normal.png'"
+        />
+      </van-tabbar-item>
       <van-tabbar-item replace to="/classify" icon="search">
         分类
+        <img
+          slot="icon"
+          slot-scope="props"
+          :src="
+            props.active ? './home/classify.png' : './home/classify_normal.png'
+          "
+        />
       </van-tabbar-item>
       <van-tabbar-item replace to="/share" icon="friends-o">
         邀请
+        <img
+          slot="icon"
+          slot-scope="props"
+          :src="props.active ? './home/share.png' : './home/share_normal.png'"
+        />
       </van-tabbar-item>
       <van-tabbar-item replace to="/user" icon="setting-o">
         我的
+        <img
+          slot="icon"
+          slot-scope="props"
+          :src="props.active ? './home/user.png' : './home/user_normal.png'"
+        />
       </van-tabbar-item>
     </van-tabbar>
   </div>
@@ -56,6 +80,9 @@ export default {
   width: 100%;
   height: 100%;
 }
+.box {
+  padding-bottom: 55px;
+}
 * {
   margin: 0;
   padding: 0;
@@ -85,5 +112,13 @@ img {
 }
 .tabBar {
   border-top: 1px solid #eeeeee;
+}
+
+/* 公共的样式先放在这 */
+.red {
+  color: #f23d3d;
+}
+.fs14 {
+  font-size: 1rem;
 }
 </style>

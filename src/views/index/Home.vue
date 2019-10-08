@@ -3,7 +3,7 @@
     <div class="fixed_top">
       <div class="location" @click="show = true">
         <van-icon name="aim" />
-        扬州市
+        <span>扬州市</span>
         <van-icon name="arrow-down" />
       </div>
       <form action="/" class="form">
@@ -43,12 +43,17 @@
     <!--    <div class="newUser home_block">-->
     <!--      <img v-lazy="images[0]" />-->
     <!--    </div>-->
+    <!--    todo  funcList 是自己造的 应该取data.itemsList   -->
 
     <div class="funcBar home_block mb15">
       <van-grid :column-num="5" :border="false">
-        <van-grid-item v-for="value in 10" :key="value">
-          <van-image src="https://img.yzcdn.cn/vant/apple-1.jpg" />
-          <span>文字</span>
+        <van-grid-item
+          v-for="n in funcList"
+          :key="n.id"
+          :to="{ path: 'goodsList', query: { id: n.id } }"
+        >
+          <van-image :src="n.imageUrl" />
+          <span>{{ n.itemName }}</span>
         </van-grid-item>
       </van-grid>
     </div>
@@ -64,21 +69,26 @@
           <span class="custom-title-right">查看更多</span>
         </template>
       </van-cell>
-      <van-grid :column-num="3" class="newGoods_list">
-        <van-grid-item
-          v-for="value in 3"
-          :key="value"
-          icon="photo-o"
-          text="文字"
-        />
-      </van-grid>
+      <ul class="newGoods_list scrollBar">
+        <li
+          v-for="n in data.newGoodsList"
+          :key="n.goodsId"
+          @click="goGoodsDetail(n.goodsId)"
+        >
+          <van-image
+            :src="n.goodsSmallUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
+          />
+          <span class="goodsName">{{ n.goodsName }}</span>
+          <span class="red">{{ n.integral }} 积分</span>
+        </li>
+      </ul>
     </div>
 
     <div class="superScrabble home_block mb15">
       <van-cell is-link class="custom">
         <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
-          <span class="custom-title">超值拼团</span>
+          <span class="custom-title">助力免单</span>
           <span class="custom-title-sub">嗨购时刻 超值抢购</span>
         </template>
         <template slot="default" class="test">
@@ -88,18 +98,35 @@
       <ul class="superScrabble_title">
         <li>
           <div class="calc">1</div>
-          <span>开团</span>
+          <span>选择奖励</span>
+          <van-icon name="down" />
+        </li>
+        <li>
+          <div class="calc">2</div>
+          <span>邀请好友助力</span>
+          <van-icon name="down" />
+        </li>
+        <li>
+          <div class="calc">3</div>
+          <span>团满发货</span>
+          <van-icon name="down" />
         </li>
       </ul>
-      <van-grid :column-num="2" :border="false" class="superScrabble_list">
-        <van-grid-item
-          v-for="value in 2"
-          :key="value"
-          icon="photo-o"
-          text="文字"
-          @click="goHelpFree(value)"
-        />
-      </van-grid>
+      <div class="superScrabble_box">
+        <ul class="superScrabble_list scrollBar">
+          <li v-for="n in data.zeroGoodsList" @click="goHelpFree(n.goodsId)">
+            <van-image
+              :src="n.goodsSmallUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
+            />
+            <span class="goodsName">{{ n.goodsName }}</span>
+            <span class="red">{{ n.integral }} 积分</span>
+            <span class="helpNum">已有100+人成功</span>
+            <div class="icon" :lazy:background-image="'./home/style.png'">
+              爆品\n助力
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div class="hotGoods">
@@ -117,7 +144,7 @@
             </div>
           </template>
         </van-cell>
-        <ul class="hotGoods_Content_list">
+        <ul class="hotGoods_Content_list scrollBar">
           <li v-for="value in 10" :key="value">
             <van-image src="https://img.yzcdn.cn/vant/apple-1.jpg" />
             <span>文字</span>
@@ -192,6 +219,58 @@ export default {
         newGoodsList: [],
         bomGoodsList: []
       },
+      funcList: [
+        {
+          id: 1,
+          itemName: "本地生活",
+          imageUrl: "./home/icon_1.png"
+        },
+        {
+          id: 2,
+          itemName: "家居日用",
+          imageUrl: "./home/icon_2.png"
+        },
+        {
+          id: 3,
+          itemName: "厨具用具",
+          imageUrl: "./home/icon_3.png"
+        },
+        {
+          id: 4,
+          itemName: "家用电器",
+          imageUrl: "./home/icon_4.png"
+        },
+        {
+          id: 5,
+          itemName: "家纺家饰",
+          imageUrl: "./home/icon_5.png"
+        },
+        {
+          id: 6,
+          itemName: "数码生活",
+          imageUrl: "./home/icon_6.png"
+        },
+        {
+          id: 7,
+          itemName: "母婴亲子",
+          imageUrl: "./home/icon_7.png"
+        },
+        {
+          id: 8,
+          itemName: "箱包手袋",
+          imageUrl: "./home/icon_8.png"
+        },
+        {
+          id: 9,
+          itemName: "个护时尚",
+          imageUrl: "./home/icon_9.png"
+        },
+        {
+          id: 10,
+          itemName: "汽车用品",
+          imageUrl: "./home/icon_10.png"
+        }
+      ],
       images: [
         "https://img.yzcdn.cn/vant/apple-1.jpg",
         "https://img.yzcdn.cn/vant/apple-2.jpg"
@@ -209,6 +288,9 @@ export default {
       _.isNumber(id)
         ? this.$router.push(`goodsDetail?goodId=${id}`)
         : this.$toast("商品id未找到");
+    },
+    goGoodsList(id) {
+      this.$router.push(`goodsList?classifyId=${id}`);
     },
     imgLoad(e) {
       let height = e.target.clientHeight || e.target.height;
@@ -398,6 +480,15 @@ export default {
   width: 100%;
   align-items: center;
   color: #fff;
+  background: rgba(0, 0, 0, 0.3);
+  .location {
+    padding-left: 12px;
+    display: flex;
+    align-items: center;
+    * {
+      padding: 0 1px;
+    }
+  }
 }
 .form {
   flex: 1;
@@ -453,28 +544,45 @@ export default {
   color: #858585;
 }
 .funcBar {
-  height: 260px;
+  height: 16.5rem;
   display: flex;
-}
-.superScrabble {
-  margin: 0 10px 22px 10px;
+  /deep/ .van-grid-item__content {
+    padding: 10px 4px;
+    .van-image {
+      padding: 1rem;
+    }
+  }
 }
 .newGoods {
   .newGoods_list {
-    height: 250px;
+    height: 16rem;
+    padding: 1rem 0;
+    li {
+      width: 33.3333vw;
+      margin-right: 1rem;
+      justify-content: space-evenly;
+    }
+    li:last-child {
+      margin-right: 0;
+    }
   }
 }
 .superScrabble {
+  margin-bottom: 22px;
+  width: 100%;
   .superScrabble_title {
     margin: 0 10px;
     background-color: #fef7ed;
     height: 30px;
     line-height: 30px;
+    display: flex;
+    flex-direction: row;
     li {
+      flex: 1;
       display: flex;
       flex-direction: row;
       align-items: center;
-      padding-left: 32px;
+      justify-content: space-around;
       .calc {
         width: 18px;
         height: 18px;
@@ -488,16 +596,68 @@ export default {
         align-items: center;
       }
       span {
-        margin-left: 7px;
-        font-size: 13px;
+        font-size: 12px;
         color: #b5a37b;
+        text-align: center;
+      }
+      i {
+        transform: rotate(-90deg);
+        color: #b5a37b;
+      }
+      &:last-child {
+        i {
+          visibility: hidden;
+        }
       }
     }
   }
-  .superScrabble_list {
-    height: 270px;
+  .superScrabble_box {
+    width: 100%;
+    padding: 0 1.2rem;
+    box-sizing: border-box;
+    .superScrabble_list {
+      height: 18rem;
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      li {
+        width: 50vw;
+        align-items: start;
+        height: 100%;
+        justify-content: space-evenly;
+        border-right: 1px solid #efefef;
+        padding: 0 0.6rem;
+        position: relative;
+        .helpNum {
+          font-size: 0.9rem;
+          color: #858585;
+        }
+        .icon {
+          padding-left: 0.5rem;
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 3rem;
+          height: 3rem;
+        }
+      }
+    }
+  }
+}
+
+.scrollBar {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  white-space: nowrap;
+  justify-content: space-between;
+  li {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 16rem;
+    flex-shrink: 0;
   }
 }
 
@@ -536,23 +696,9 @@ export default {
     }
 
     .hotGoods_Content_list {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      display: flex;
-      white-space: nowrap;
-      justify-content: space-between;
       li {
-        height: 16rem;
-        flex-shrink: 0;
         width: 29%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
         margin-right: 1rem;
-        justify-content: center;
-      }
-      li:last-child {
-        margin-right: 0;
       }
     }
   }
@@ -595,5 +741,10 @@ export default {
 
 .mb15 {
   margin-bottom: 15px;
+}
+.goodsName {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 </style>
