@@ -9,12 +9,17 @@ export default new Vuex.Store({
       openId: "" //正式环境制空
       // openId:'1',//测试环境
       // id:2//测试环境
-    }
+    },
+    browseHistory: [],
+    searchHistory: []
   },
   getters: {},
   mutations: {
     setLoginInfo(state, playload) {
       state.loginInfo = { ...state.loginInfo, ...playload };
+    },
+    setBrowseHistory(state, goods) {
+      state.browseHistory.unshift(goods);
     }
   },
   actions: {}

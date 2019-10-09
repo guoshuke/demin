@@ -16,12 +16,16 @@
     >
       <template slot="content">
         <div v-for="(v, i) in items" :key="i" v-if="i == activeIndex">
-          <div v-for="t in v.children">
+          <div class="items" v-for="t in v.children">
             <div class="subMenu">
               {{ t.text }}
             </div>
             <van-grid :border="false" :column-num="3">
-              <van-grid-item v-for="n in t.children" :key="n.id" to="goodsList">
+              <van-grid-item
+                v-for="n in t.children"
+                :key="n.id"
+                @click="goGoodsList({ type: 'itemCatId', itemCatId: n.id })"
+              >
                 <van-image :src="n.image" class="subMenu_img" />
                 <span class="subMenu_sub">{{ n.text }}</span>
               </van-grid-item>
@@ -105,6 +109,9 @@ export default {
         .finally(() => {
           // this.goGoodsDetail(3);
         });
+    },
+    goGoodsList(item) {
+      this.$router.push(`goodsList?object=${JSON.stringify(item)}`);
     }
   },
   created() {
@@ -115,14 +122,21 @@ export default {
 
 <style scoped lang="less">
 .classify {
+  background-color: #f9f9f9;
   /deep/ .van-tree-select__content {
     flex: 3;
+    background-color: #f9f9f9;
   }
   .form {
     /deep/ .van-search {
-      background: linear-gradient(90deg, #f23d3d, #f26e6e) !important;
+      .van-search__content {
+        padding-left: 0;
+      }
+      background: #f9f9f9 !important;
+      padding: 1rem;
       .van-cell {
-        padding: 5px 8px 5px 0;
+        border: 1px solid rgba(242, 61, 61, 1);
+        border-radius: 0.3rem;
         font-size: 0.9rem;
         justify-content: center;
         .van-cell__value {
@@ -136,6 +150,26 @@ export default {
   }
   /deep/ .van-tree-select__content {
     padding: 10px;
+    padding-top: 0;
+  }
+  /deep/ .van-sidebar {
+    .van-sidebar-item {
+      div {
+        padding-left: 10px;
+        border-left: 3px solid transparent;
+      }
+    }
+    .van-sidebar-item--select {
+      border-color: #efefef;
+      div {
+        border-color: #f23d3d;
+        padding: 10px;
+      }
+    }
+  }
+  .items {
+    background-color: #fff;
+    padding: 0 1rem;
   }
   .subMenu {
     color: #333333;
@@ -155,7 +189,11 @@ export default {
   }
 
   .van-sidebar {
-    border-right: 1px solid #858585;
+    background-color: #efefef;
+    /deep/ .van-sidebar-item {
+      background-color: #efefef;
+    }
+    flex: 1.5;
   }
   .divider {
     color: #858585;

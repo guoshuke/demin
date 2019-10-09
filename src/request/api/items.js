@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 export default (() => {
-  const base = "items/";
+  const base = "mall/items/";
   const urls = {
     list: "list"
   };

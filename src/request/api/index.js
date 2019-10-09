@@ -4,7 +4,7 @@ import def from "./default";
 import _ from "lodash";
 
 const target = (function() {
-  const base = "index/";
+  const base = "mall/index/";
   const urls = {
     goodsDetail: "goods/",
     allList: "goods/list",

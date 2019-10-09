@@ -112,6 +112,7 @@ img {
 }
 .tabBar {
   border-top: 1px solid #eeeeee;
+  z-index: 12 !important;
 }
 
 /* 公共的样式先放在这 */

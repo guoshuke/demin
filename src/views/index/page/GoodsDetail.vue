@@ -58,6 +58,8 @@
 </template>
 <script>
 import { request, api } from "@/request";
+import store from "../store";
+import _ from "lodash";
 export default {
   name: "goodsDetail",
   data() {
@@ -100,7 +102,8 @@ export default {
     }
   },
   activated() {
-    let goodsId = 1;
+    let goodsId = this.$route.query.goodId;
+    const me = this;
     request
       .get(api.goodsDetail + goodsId)
       .then(res => {
@@ -129,6 +132,15 @@ export default {
         this.detail = resData;
 
         console.log(this.detail);
+
+        let browseHistory = _.filter(store.state.browseHistory, n => {
+          return n.goodId == goodsId;
+        });
+        console.log(browseHistory);
+        if (browseHistory.length === 0) {
+          store.commit("setBrowseHistory", resData);
+        }
+        console.log(store);
       })
       .catch(err => {
         console.log(err);

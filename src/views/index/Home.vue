@@ -43,14 +43,13 @@
     <!--    <div class="newUser home_block">-->
     <!--      <img v-lazy="images[0]" />-->
     <!--    </div>-->
-    <!--    todo  funcList 是自己造的 应该取data.itemsList   -->
 
     <div class="funcBar home_block mb15">
       <van-grid :column-num="5" :border="false">
         <van-grid-item
-          v-for="n in funcList"
+          v-for="n in data.itemsList"
           :key="n.id"
-          :to="{ path: 'goodsList', query: { id: n.id } }"
+          @click="goGoodsList({ type: 'itemCatId', itemCatId: n.id })"
         >
           <van-image :src="n.imageUrl" />
           <span>{{ n.itemName }}</span>
@@ -59,7 +58,11 @@
     </div>
 
     <div class="newGoods home_block mb15">
-      <van-cell is-link class="custom">
+      <van-cell
+        is-link
+        class="custom"
+        @click="goGoodsList({ type: 'typeId', typeId: 1 })"
+      >
         <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
           <span class="custom-title">新品推荐</span>
@@ -85,14 +88,14 @@
     </div>
 
     <div class="superScrabble home_block mb15">
-      <van-cell is-link class="custom">
+      <van-cell class="custom">
         <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
           <span class="custom-title">助力免单</span>
           <span class="custom-title-sub">嗨购时刻 超值抢购</span>
         </template>
         <template slot="default" class="test">
-          <span class="custom-title-right">查看更多</span>
+          <!--          <span class="custom-title-right">查看更多</span>-->
         </template>
       </van-cell>
       <ul class="superScrabble_title">
@@ -133,7 +136,10 @@
 
     <div class="hotGoods">
       <div class="hotGoods_Content">
-        <van-cell class="hotGoods_Content_title">
+        <van-cell
+          class="hotGoods_Content_title"
+          @click="goGoodsList({ type: 'typeId', typeId: 2 })"
+        >
           <!-- 使用 title 插槽来自定义标题 -->
           <template slot="title">
             <span class="custom-title">爆款清单</span>
@@ -160,17 +166,22 @@
 
     <div class="pointSelect">
       <van-grid :column-num="2" :gutter="10">
-        <van-grid-item class="point_box">
+        <van-grid-item
+          class="point_box"
+          @click="goGoodsList({ upLimit: 5000 })"
+        >
           5000分以下
           <van-image class="bg-image" fit="cover" src="./home/p5000.png" />
         </van-grid-item>
         <van-grid-item>
           <van-grid :column-num="1" :gutter="10">
-            <van-grid-item>
+            <van-grid-item
+              @click="goGoodsList({ upLimit: 10000, downLimit: 5000 })"
+            >
               5000-10000分
               <van-image class="bg-image" fit="cover" src="./home/p10000.png" />
             </van-grid-item>
-            <van-grid-item>
+            <van-grid-item @click="goGoodsList({ downLimit: 10000 })">
               10000分以上
               <van-image
                 class="bg-image"
@@ -207,8 +218,8 @@
             {{ n.goodsName }}
           </div>
           <div class="canBuyItem_subTitle">
-            <span class="canBuyItem_needPoint">{{ integral || 0 }}积分</span>
-            <span class="canBuyItem_num">已兑换99+件</span>
+            <span class="canBuyItem_needPoint">{{ n.integral || 0 }}积分</span>
+            <!--            <span class="canBuyItem_num">已兑换99+件</span>-->
           </div>
         </van-grid-item>
       </van-grid>
@@ -217,7 +228,7 @@
 </template>
 
 <script>
-import { request, api } from "../../request";
+import { request, api } from "@/request";
 import _ from "lodash";
 
 export default {
@@ -304,8 +315,12 @@ export default {
         ? this.$router.push(`goodsDetail?goodId=${id}`)
         : this.$toast("商品id未找到");
     },
-    goGoodsList(id) {
-      this.$router.push(`goodsList?classifyId=${id}`);
+    goGoodsList(item) {
+      if (item.itemCatId === 0 && item.type == "itemCatId") {
+        this.$toast("敬请期待");
+        return;
+      }
+      this.$router.push(`goodsList?object=${JSON.stringify(item)}`);
     },
     imgLoad(e) {
       let height = e.target.clientHeight || e.target.height;
@@ -347,22 +362,9 @@ export default {
               ],
               itemsList: [
                 {
-                  id: 218,
-                  parentId: 1021,
-                  itemName: "tempor",
-                  imageUrl: ""
-                },
-                {
-                  id: 762,
-                  parentId: 279,
-                  itemName: "aute",
-                  imageUrl: ""
-                },
-                {
-                  id: 453,
-                  parentId: 847,
-                  itemName: "cing",
-                  imageUrl: ""
+                  id: 0,
+                  itemName: "本地生活",
+                  imageUrl: "./home/icon_1.png"
                 }
               ],
               zeroGoodsList: [
@@ -457,6 +459,17 @@ export default {
               ]
             }
           };
+          res.data.data.itemsList.forEach(item => {
+            me.funcList.forEach(n => {
+              if (n.itemName == item.itemName) {
+                item.imageUrl = n.imageUrl;
+                if (data.data.itemsList.length < 11) {
+                  data.data.itemsList.push(item);
+                }
+              }
+            });
+          });
+          console.log(data.data.itemsList);
           me.data = data.data;
         })
         .catch(err => {
@@ -493,6 +506,7 @@ export default {
         })
         .catch(err => {
           console.log(err);
+          me.finished = true;
         })
         .finally(() => {
           me.loading = false;
@@ -516,7 +530,7 @@ export default {
 .fixed_top {
   display: flex;
   position: fixed;
-  z-index: 10;
+  z-index: 11;
   width: 100%;
   align-items: center;
   color: #fff;

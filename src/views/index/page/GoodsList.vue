@@ -33,17 +33,19 @@
         <van-grid :column-num="2">
           <van-grid-item
             class="canBuyItem"
-            v-for="(n, i) in list"
-            :key="i"
-            @click="goGoodsDetail(i)"
+            v-for="n in list"
+            :key="n.goodsId"
+            @click="goGoodsDetail(n.goodsId)"
           >
-            <van-image src="https://img.yzcdn.cn/vant/apple-1.jpg" />
+            <van-image :src="'https://img.yzcdn.cn/vant/apple-1.jpg'" />
             <div class="canBuyItem_title">
-              KONKIA康佳电水壶1L大容量 家庭用电热水壶防干烧宿舍…
+              {{ n.goodsName }}
             </div>
             <div class="canBuyItem_subTitle">
-              <span class="canBuyItem_needPoint">1500积分</span>
-              <span class="canBuyItem_num">已兑换88件</span>
+              <span class="canBuyItem_needPoint"
+                >{{ n.integral || 0 }}积分</span
+              >
+              <!--              <span class="canBuyItem_num">已兑换88件</span>-->
             </div>
           </van-grid-item>
         </van-grid>
@@ -53,6 +55,8 @@
 </template>
 
 <script>
+import { request, api } from "@/request";
+import _ from "lodash";
 export default {
   name: "GoodsList",
   data() {
@@ -63,7 +67,10 @@ export default {
       finished: false,
       active: 1,
       status: 1,
-      currentPage: 1,
+      resData: {
+        currentPage: 1,
+        pageSize: 10
+      },
       typeList: [
         {
           title: "推荐",
@@ -95,7 +102,7 @@ export default {
       if (n.canSort || temp !== n.type) {
         console.log("----------");
         this.loadMore = true;
-        this.currentPage = 0;
+        this.resData.currentPage = 0;
         this.list = [];
         this.finished = false;
         this.onLoad();
@@ -103,32 +110,50 @@ export default {
       }
     },
     onRefresh() {
-      this.loading = true;
-      this.currentPage = 1;
+      console.log("onRefresh");
+      this.resData.currentPage = 0;
       this.list = [];
       this.finished = false;
       this.onLoad();
     },
     questData() {
-      setTimeout(() => {
-        for (let i = 0; i < 20; i++) {
-          this.list.push(this.list.length + 1);
-        }
-        // 加载状态结束
-        this.loading = false;
-        this.loadMore = false;
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
-        }
-      }, 500);
+      let me = this;
+      let sendData = _.cloneDeep(me.resData);
+      sendData.type = this.active;
+      if (sendData.type == 1) {
+        sendData.recommendOrder = this.status;
+      } else if (sendData.type == 2) {
+        sendData.integralOrder = this.status;
+      }
+      console.log("end3", me.loading);
+      this.loading = true;
+      request
+        .post(api.classifyList, this.resData)
+        .then(res => {
+          console.log(res);
+          res = res.data;
+          if (res.code != "200") {
+            me.finished = true;
+            console.log("end");
+          } else {
+            me.list = me.list.concat(res.dataList);
+            if (res.pageIndex > res.totalPage) {
+              me.finished = true;
+            }
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          me.finished = true;
+        })
+        .finally(() => {
+          me.loading = false;
+        });
     },
     onLoad() {
       // 异步更新数据
-      console.log("load执行了");
       this.loadMore = true;
-      this.currentPage++;
+      this.resData.currentPage++;
       this.questData();
     },
     goGoodsDetail(id) {
@@ -139,7 +164,24 @@ export default {
     }
   },
   activated() {
-    this.onLoad();
+    this.resData = {
+      currentPage: 0,
+      pageSize: 10
+    };
+    try {
+      let t = JSON.parse(this.$route.query.object);
+      console.log(t);
+      if (t.type) {
+        this.resData[t.type] = t[t.type];
+      } else {
+        Object.assign(this.resData, t);
+      }
+      this.resData.type = 1;
+      this.list = [];
+      this.onLoad();
+    } catch (e) {
+      this.$toast("链接不合法");
+    }
   }
 };
 </script>
@@ -193,10 +235,17 @@ export default {
     .van-image {
       height: 11rem;
     }
+    .canBuyItem {
+      /deep/ .van-grid-item__content {
+        height: 18rem;
+        justify-content: space-evenly;
+      }
+    }
     .canBuyItem_title {
       font-size: 1rem;
       color: #333;
       padding: 0.6rem 0;
+      width: 100%;
     }
     .canBuyItem_subTitle {
       display: flex;
