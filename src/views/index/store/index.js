@@ -17,10 +17,8 @@ export default new Vuex.Store({
   mutations: {
     setLoginInfo(state, playload) {
       console.log(playload);
-      debugger;
       state.loginInfo = playload;
       localStorage.setItem("loginInfo", JSON.stringify(playload));
-      debugger;
     },
     setBrowseHistory(state, goods) {
       state.browseHistory = _.filter(

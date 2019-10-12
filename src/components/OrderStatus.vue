@@ -8,7 +8,7 @@
       <van-card thumb="https://img.yzcdn.cn/vant/t-thirt.jpg" class="goodsInfo">
         <div slot="title" class="goodsTitle">
           <span class="goodsTitleText">{{
-            brief.price ? "现金支付" : "积分兑换"
+            brief.payType ? "现金支付" : "积分兑换"
           }}</span>
         </div>
         <div slot="desc" class="goodsTitle">
@@ -28,7 +28,7 @@
           {{ status[brief.orderStatus] }}
         </div>
         <div slot="num" class="time">
-          2019-09-17 16:51:15
+          {{ brief.createTime }}
         </div>
       </van-card>
       <div
@@ -36,17 +36,25 @@
         v-if="brief.orderStatus == 3 || brief.orderStatus == 4"
       >
         <van-image
-          src="../user/finish_stamp.png"
+          :src="
+            brief.orderStatus == 3
+              ? '../user/finish_stamp.png'
+              : '../user/cancel_stamp.png'
+          "
           width="5rem"
           height="5rem"
         ></van-image>
       </div>
       <div class="logistics" v-if="brief.orderStatus == 2">
         <div class="logistics_title">物流信息</div>
-        <div class="logistics_company">快递公司：中通快递</div>
+        <div class="logistics_company">快递公司：{{ brief.expressName }}</div>
         <div class="logistics_order">
-          <div class="logistics_order_number">快递单号：7637 8375 8787 589</div>
-          <div class="copy">复制</div>
+          <div class="logistics_order_number">
+            快递单号：{{ brief.expressNumber }}
+          </div>
+          <button @click="doCopy(brief.expressNumber)" class="copy">
+            复制
+          </button>
         </div>
       </div>
     </div>
@@ -71,12 +79,24 @@ export default {
   methods: {
     toPay(brief) {
       if (brief.orderStatus == 0) {
-        alert("支付");
+        // alert("支付");
+        // return;
       }
     },
     goOrderDetail(brief) {
       debugger;
       this.$router.push("orderDetail?orderId=" + brief.orderId);
+    },
+    doCopy(text) {
+      let me = this;
+      this.$copyText(text).then(
+        function(e) {
+          me.$toast("复制成功");
+        },
+        function(e) {
+          me.$toast("复制失败");
+        }
+      );
     }
   }
 };

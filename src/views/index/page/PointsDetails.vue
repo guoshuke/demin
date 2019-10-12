@@ -23,35 +23,16 @@
     <div class="listBox">
       <ul class="list">
         <li v-for="n in dataList">
-          <div class="cacl">{{ n.type ? "" : "-" }}</div>
+          <div class="cacl">{{ (n.type ? "" : "-") + n.mallIntegral }}</div>
           <div class="point_info">
             <div class="point_info_title">
-              商家积分兑换（【现场兑换】宏滴 富硒稻花 香米（礼盒装））
+              {{ n.remark }}
             </div>
             <div class="point_info_other">
-              2019-09-17 15:00:00 (其中消耗平台积分1000)
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="cacl">-150000</div>
-          <div class="point_info">
-            <div class="point_info_title">
-              商家积分兑换（【现场兑换】宏滴 富硒稻花 香米（礼盒装））
-            </div>
-            <div class="point_info_other">
-              2019-09-17 15:00:00 (其中消耗平台积分1000)
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="cacl">-150000</div>
-          <div class="point_info">
-            <div class="point_info_title">
-              商家积分兑换（【现场兑换】宏滴 富硒稻花 香米（礼盒装））
-            </div>
-            <div class="point_info_other">
-              2019-09-17 15:00:00 (其中消耗平台积分1000)
+              2019-09-17 15:00:00
+              {{
+                !n.type && n.platformIntegral ? "(其中消耗平台积分1000)" : ""
+              }}
             </div>
           </div>
         </li>
@@ -81,17 +62,7 @@ export default {
     },
     getList() {
       const self = this;
-      this.dataList = [
-        {
-          id: 1,
-          userId: 1,
-          type: 1,
-          mallIntegral: 1,
-          platformIntegral: 1,
-          sourceType: 1,
-          remark: ""
-        }
-      ];
+      this.dataList = [];
       this.resData.currentPage++;
 
       request
@@ -105,7 +76,9 @@ export default {
         });
     }
   },
-  activated() {}
+  mounted() {
+    this.getList();
+  }
 };
 </script>
 

@@ -4,35 +4,29 @@
     <div class="content">
       <div class="payStatusBar">
         <div class="payStatus">
-          待支付
+          {{ status[detail.orderStatus] }}
         </div>
-        <div class="payMoney">实际支付：<span>￥99</span></div>
+        <div class="payMoney">
+          实际支付：<span>￥{{ detail.price }}</span>
+        </div>
       </div>
       <div class="address">
         <div class="address_icon"></div>
         <div class="address_info">
           <div class="address_info_title">
-            <span>收货人：张雪薇</span>
-            158 xxxx 7258
+            <span>收货人：{{ detail.userName }}</span>
+            {{ detail.phone }}
           </div>
           <div class="address_info_detail">
-            江苏省苏州市苏站路X号娄江新村1栋604
+            {{ detail.address }}
           </div>
         </div>
       </div>
-      <van-card
-        num="1"
-        thumb="https://img.yzcdn.cn/vant/t-thirt.jpg"
-        class="goodsInfo"
-      >
+      <van-card num="1" :thumb="detail.imageUrl" class="goodsInfo">
         <div slot="title" class="goodsTitle">
-          <span class="goodsTitleText"
-            >厨房厨具三件套 淡蓝色 不锈钢厨具锅具</span
-          >
+          <span class="goodsTitleText">{{ detail.goodsName }}</span>
         </div>
-        <div slot="price" class="price">
-          150积分
-        </div>
+        <div slot="price" class="price">￥ {{ detail.price }}</div>
       </van-card>
       <div class="myList payWay">
         <div class="listTitle">配送方式</div>
@@ -40,47 +34,49 @@
       </div>
       <div class="myList">
         <div class="listTitle">支付方式</div>
-        <div class="listTitle_sub">微信支付</div>
+        <div class="listTitle_sub wePay">
+          <van-image src="./user/wepay.png" alt="" />微信支付
+        </div>
         <!--      <van-icon name="arrow" class="listTitle_sub" />-->
       </div>
       <div class="myList">
         <div class="listTitle">商品金额</div>
-        <div class="listTitle_sub">150积分</div>
+        <div class="listTitle_sub">￥{{ detail.price }}</div>
         <!--      <van-icon name="arrow" class="listTitle_sub" />-->
       </div>
-      <div class="myList">
-        <div class="listTitle">平台积分立减</div>
-        <div class="listTitle_sub red">150积分</div>
-      </div>
-      <div class="myList">
-        <div class="listTitle">商家积分立减</div>
-        <div class="listTitle_sub red">-50积分</div>
-      </div>
+      <!--      <div class="myList">-->
+      <!--        <div class="listTitle">平台积分立减</div>-->
+      <!--        <div class="listTitle_sub red">150积分</div>-->
+      <!--      </div>-->
+      <!--      <div class="myList">-->
+      <!--        <div class="listTitle">商家积分立减</div>-->
+      <!--        <div class="listTitle_sub red">-50积分</div>-->
+      <!--      </div>-->
       <div class="myList hasLine">
         <div class="listTitle">实际支付</div>
-        <div class="listTitle_sub">￥99</div>
+        <div class="listTitle_sub">￥{{ detail.price }}</div>
       </div>
       <div class="orderInfo">
         <div class="myList">
           <div class="listTitle">订单编号</div>
-          <div class="listTitle_sub">112532842374923903858</div>
+          <div class="listTitle_sub">{{ detail.orderId }}</div>
         </div>
         <div class="myList">
           <div class="listTitle">创建时间</div>
-          <div class="listTitle_sub">2019-09-08 11:12:09</div>
+          <div class="listTitle_sub">{{ detail.createTime }}</div>
         </div>
       </div>
     </div>
     <div class="footer">
       <van-button class="cancel" @click="show = true">取消订单</van-button>
-      <van-button class="toPay">立即支付</van-button>
+      <van-button class="toPay" @click="pay">立即支付</van-button>
     </div>
     <van-popup v-model="show" class="dialog">
       <div class="dialog_box">
         <div class="dialog_title">取消订单</div>
         <div class="dialog_content">确定要取消订单吗</div>
         <div class="dialog_footer footer">
-          <van-button class="cancel" @click="deleteOrder">确定</van-button>
+          <van-button class="cancel" @click="cancelOrder">确定</van-button>
           <van-button class="toPay" @click="show = false">取消</van-button>
         </div>
       </div>
@@ -97,17 +93,65 @@ export default {
   data() {
     return {
       show: false,
-      detail: {}
+      detail: {
+        address: "",
+        createTime: "",
+        goodsId: 0,
+        goodsIntegral: 0,
+        goodsName: "",
+        id: 0,
+        imageUrl: "",
+        mallIntegral: 0,
+        orderId: "",
+        orderStatus: 0,
+        payType: 0,
+        phone: "",
+        platformIntegral: 0,
+        price: 0,
+        storeId: "",
+        updateTime: "",
+        userId: 0,
+        userName: ""
+      },
+      loading: false,
+      status: {
+        0: "待付款",
+        1: "发货中",
+        2: "已发货",
+        3: "已成功",
+        4: "已取消"
+      }
     };
   },
   methods: {
-    deleteOrder() {
-      this.$toast("删除提示  然后返回到列表页面并刷新");
+    cancelOrder() {
+      const me = this;
+      let orderId = this.$route.query.orderId;
+      if (!orderId) {
+        this.$toast("获取订单信息失败");
+        return;
+      }
+      request
+        .post(api.cancelOrder, { orderId, orderStatus: 4 })
+        .then(res => {
+          if (res.data.code == "200") {
+            // 因为组件要他们的格式  所以转换一次
+            me.$toast("取消成功");
+            me.$router.back(-1);
+          } else {
+            me.$toast(res.data.message);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {});
     },
     getOrderDetail() {
       const me = this;
       let orderId = this.$route.query.orderId;
       if (!orderId) {
+        this.$toast("获取订单信息失败");
         return;
       }
       request
@@ -115,14 +159,75 @@ export default {
         .then(res => {
           if (res.data.code == "200") {
             // 因为组件要他们的格式  所以转换一次
+            me.detail = res.data.data;
             console.log(res);
           } else {
+            me.$toast(res.data.message);
           }
         })
         .catch(err => {
           console.log(err);
         })
         .finally(() => {});
+    },
+    doCopy(text) {
+      let me = this;
+      this.$copyText("11111111").then(
+        function(e) {
+          me.$toast("复制成功");
+        },
+        function(e) {
+          me.$toast("复制失败");
+        }
+      );
+    },
+    pay() {
+      let data = this.detail;
+      let sendData = {
+        orderId: data.orderId,
+        goodsName: data.goodsName,
+        goodsIntegral: data.goodsIntegral,
+        payType: data.payType,
+        platformIntegral: data.platformIntegral,
+        mallIntegral: data.mallIntegral,
+        price: data.price
+      };
+      this.loading = true;
+      request
+        .post(api.pay, sendData)
+        .then(res => {
+          console.log(res);
+          alert(JSON.stringify(res.data.data));
+          debugger;
+          let payConfig = res.data.data;
+
+          payConfig.package = "prepay_id=" + payConfig.prepayId;
+          payConfig.paySign = payConfig.sign;
+          payConfig.nonceStr = payConfig.noncestr;
+          payConfig.success = function(res) {
+            console.log(res);
+          };
+          console.log(payConfig);
+          alert("签名是" + payConfig.prepayId);
+          debugger;
+          // wx.config({
+          //   debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+          //   appId: "wx50dd97a40ea2adf9", // 必填，公众号的唯一标识
+          //   timestamp: payConfig.timestamp, // 必填，生成签名的时间戳
+          //   nonceStr: payConfig.nonceStr, // 必填，生成签名的随机串
+          //   signature: payConfig.signature, // 必填，签名，见附录1
+          //   jsApiList: ["chooseWXPay"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+          // });
+          // wx.chooseWXPay(payConfig);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+
+      // me.$router.push("paySuccess?orderId=" + res.data.data);
     }
   },
 
@@ -330,6 +435,17 @@ export default {
       button {
         margin-right: 0;
       }
+    }
+  }
+  .wePay {
+    color: #333;
+    font-size: 1rem;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    .van-image {
+      width: 1.5rem;
+      padding-right: 0.3rem;
     }
   }
 }

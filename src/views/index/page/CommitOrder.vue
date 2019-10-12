@@ -97,7 +97,7 @@
               "积分"
         }}
       </div>
-      <van-button class="submitRedeem" @click="submitOrder"
+      <van-button class="submitRedeem" :loading="loading" @click="submitOrder"
         >立即兑换</van-button
       >
     </div>
@@ -109,11 +109,13 @@ import { request, api } from "@/request";
 import areaList from "@/utils/areaList";
 import _ from "lodash";
 import utils from "@/utils";
+import wx from "weixin-js-sdk";
 export default {
   props: ["detail", "num", "type"],
   name: "Order",
   data() {
     return {
+      loading: false,
       showList: false,
       showEdit: false,
       chosenContactId: null,
@@ -250,11 +252,17 @@ export default {
             info.address =
               info.province + info.city + info.county + " " + info.address;
             me.editingContact = info;
-            debugger;
+            if (me.editingContactId && !info.id) {
+              info.id = me.editingContactId;
+            }
           }
         });
     },
     submitOrder() {
+      if (this.loading) {
+        return;
+      }
+      this.loading = true;
       let sendData = {
         goodsId: this.detail.goodsId,
         goodsName: this.detail.goodsName,
@@ -287,7 +295,7 @@ export default {
             console.log(res);
             if (sendData.payType) {
               //todo  如果选择金钱支付则发起支付
-              me.$router.push("paySuccess?orderId=" + res.data.data);
+              me.pay(res.data.data, sendData);
             } else {
               me.$router.push("paySuccess?orderId=" + res.data.data);
             }
@@ -298,7 +306,52 @@ export default {
         .catch(err => {
           console.log(err);
         })
-        .finally(() => {});
+        .finally(() => {
+          me.loading = false;
+        });
+    },
+    pay(orderId, data) {
+      let sendData = {
+        orderId: orderId,
+        goodsName: data.goodsName,
+        goodsIntegral: data.goodsIntegral,
+        payType: data.payType,
+        platformIntegral: data.platformIntegral,
+        mallIntegral: data.mallIntegral,
+        price: data.price
+      };
+      this.loading = true;
+      request
+        .post(api.pay, sendData)
+        .then(res => {
+          console.log(res);
+          let payConfig = res.data.data;
+          payConfig.appId = "wx50dd97a40ea2adf9"; // 必填，公众号的唯一标识
+          payConfig.package = payConfig.prepayId;
+          payConfig.paySign = payConfig.sign;
+          payConfig.nonceStr = payConfig.noncestr;
+          payConfig.success = function(res) {
+            console.log(res);
+          };
+          console.log(payConfig);
+          wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: "wx50dd97a40ea2adf9", // 必填，公众号的唯一标识
+            timestamp: payConfig.timestamp, // 必填，生成签名的时间戳
+            nonceStr: payConfig.nonceStr, // 必填，生成签名的随机串
+            signature: payConfig.signature, // 必填，签名，见附录1
+            jsApiList: ["chooseWXPay"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+          });
+          wx.chooseWXPay(payConfig);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+
+      // me.$router.push("paySuccess?orderId=" + res.data.data);
     }
   },
   mounted() {

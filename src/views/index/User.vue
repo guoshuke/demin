@@ -60,23 +60,6 @@
       <div class="listTitle">我的助力</div>
       <van-icon name="arrow" class="listTitle_sub" />
     </div>
-    <div class="myList" @click="showList = true">
-      <div class="listTitle">我的优惠券</div>
-      <div class="listTitle_sub">2张可用</div>
-      <van-icon name="arrow" class="listTitle_sub" />
-    </div>
-    <!-- 优惠券列表 -->
-    <van-popup v-model="showList" position="bottom" class="coupon">
-      <van-coupon-list
-        :coupons="coupons"
-        :chosen-coupon="chosenCoupon"
-        :disabled-coupons="disabledCoupons"
-        @change="onChange"
-        @exchange="onExchange"
-        :show-exchange-bar="false"
-        close-button-text="返回"
-      />
-    </van-popup>
     <!--    积分规则-->
     <van-popup
       v-model="pointRules_show"

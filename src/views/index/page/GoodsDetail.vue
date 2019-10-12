@@ -5,7 +5,9 @@
     <div class="swipeBlock">
       <van-swipe :autoplay="8000" class="swipe">
         <van-swipe-item
-          v-for="(image, index) in detail.goodsUrl.split(',')"
+          v-for="(image, index) in detail.goodsUrl
+            ? detail.goodsUrl.split(',')
+            : []"
           :key="index"
         >
           <van-image v-lazy="image" @load="imgLoad" :src="image" />
@@ -147,7 +149,13 @@ export default {
       .get(api.goodsDetail + goodsId)
       .then(res => {
         console.log(res.data);
-        // todo 判断code
+        if (res.data.code != "200") {
+          // todo delete
+          if (res.data.code === "501") {
+            localStorage.removeItem("loginInfo");
+          }
+          me.$toast(res.data.message);
+        }
         // 假设成功
         let resData = {
           goodsId: goodsId,
@@ -183,9 +191,8 @@ export default {
   computed: {
     needPoints() {
       return (
-        (this.detail.integral || 0) +
-        (this.detail.platformReductionIntegral || 0) +
-        (this.detail.platformIntegral || 0)
+        (this.detail.integral || 0) -
+        (this.detail.platformReductionIntegral || 0)
       );
     }
   },

@@ -4,6 +4,10 @@ import router from "./router";
 import store from "./store";
 import Vant from "vant";
 import VueLazyload from "vue-lazyload";
+import VueClipboard from "vue-clipboard2";
+
+VueClipboard.config.autoSetContainer = true; // add this line
+Vue.use(VueClipboard);
 
 import "vant/lib/index.css";
 import common from "../../utils/request";
@@ -20,7 +24,6 @@ router.beforeEach((to, from, next) => {
   const appId = "wx50dd97a40ea2adf9";
   // 获取code后再次跳转路径 window.location.href；例：www.baido.com/#/Home
   const toPath = common.host;
-  debugger;
   // 核心步骤，获取code
   const hrefUrl =
     "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
@@ -37,22 +40,30 @@ router.beforeEach((to, from, next) => {
   }
   /* 判断该路由是否需要登录权限 */
   if (to.matched.some(record => record.meta.requireAuth)) {
-    debugger;
-    if (store.state.loginInfo.openId) {
+    let t = JSON.parse(localStorage.getItem("loginInfo"));
+    let openId = _.isObject(t) ? t.openId : "";
+    alert("openId:------" + openId);
+    if (openId) {
       console.log("openId: " + store.state.loginInfo.openId);
       // isLogin(); //是否登录 正式环境
-      // next() //test环境
+      next(); //test环境
     } else {
       //openId不存在
       if (code) {
+        alert("code:------" + code);
         //根据code获取openId
-        request.get(api.oauth + "/" + code).then(function(res) {
+        request.post(api.oauth, { code }).then(function(res) {
           console.log("getOpenId:" + res);
-          debugger;
           if (res && res.status == 200) {
+            if (res.data.data) {
+              res.data.data.openId = res.data.data.openid;
+              store.commit("setLoginInfo", res.data.data);
+              next();
+            } else {
+              alert(JSON.stringify(res.data.data || {}));
+            }
             //commit同步，dispatch 异步
-            debugger;
-            store.commit("setLoginInfo", res.data.data);
+
             // isLogin(); //是否登录
           } else {
             console.log("请求失败");

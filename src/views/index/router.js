@@ -22,6 +22,7 @@ export default new Router({
     {
       path: "/share",
       name: "share",
+      meta: { title: "邀请有奖" },
       component: Share
     },
     {
@@ -83,6 +84,7 @@ export default new Router({
     {
       path: "/goodsDetail",
       name: "goodsDetail",
+      meta: { requireAuth: true },
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.

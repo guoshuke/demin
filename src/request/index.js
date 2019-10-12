@@ -83,7 +83,10 @@ request.interceptors.request.use(
     // 但是即使token存在，也有可能token是过期的，所以在每次的请求头中携带token
     // 后台根据携带的token判断用户的登录情况，并返回给我们对应的状态码
     // 而后我们可以在响应拦截器中，根据状态码进行一些统一的操作。
-    const token = "oOL3g1ZAGC_HG-e9GzV5tbV_MYxY_demin";
+    let obj = JSON.parse(localStorage.getItem("loginInfo"));
+    console.log("获取到的token是", obj);
+    // openid 正确地 ocz_9s85KT-EWnDBUKXBe3AisXw0
+    const token = _.isObject(obj) ? obj.openId : "";
     token && (config.headers.openId = token);
     return config;
   },
