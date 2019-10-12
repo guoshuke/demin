@@ -121,14 +121,14 @@ export default {
       let sendData = _.cloneDeep(me.resData);
       sendData.type = this.active;
       if (sendData.type == 1) {
-        sendData.recommendOrder = this.status;
+        sendData.recommendOrder = Number(!this.status);
       } else if (sendData.type == 2) {
-        sendData.integralOrder = this.status;
+        sendData.integralOrder = Number(!this.status);
       }
       console.log("end3", me.loading);
       this.loading = true;
       request
-        .post(api.classifyList, this.resData)
+        .post(api.classifyList, sendData)
         .then(res => {
           console.log(res);
           res = res.data;
@@ -159,7 +159,7 @@ export default {
     goGoodsDetail(id) {
       // id 商品的id
       _.isNumber(id)
-        ? this.$router.push(`goodsDetail?goodId=${id}`)
+        ? this.$router.push(`goodsDetail?goodsId=${id}`)
         : this.$toast("商品id未找到");
     }
   },

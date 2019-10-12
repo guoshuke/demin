@@ -1,6 +1,7 @@
 <template>
   <div class="goodsDetail">
-    <van-nav-bar left-arrow @click-left="onClickLeft"> </van-nav-bar>
+    <van-nav-bar left-arrow fiexd @click-left="onClickLeft" class="goodsTitle">
+    </van-nav-bar>
     <div class="swipeBlock">
       <van-swipe :autoplay="8000" class="swipe">
         <van-swipe-item
@@ -22,26 +23,26 @@
       <div class="title payWay">支付方式</div>
       <ul class="sub_title">
         <li
-          :class="{ activePay: activeNum == 1 }"
-          @click="toggleType(1)"
+          :class="{ activePay: activeNum == 0 }"
+          @click="toggleType(0)"
           v-if="detail.integral != 0"
         >
           {{ detail.integral + "积分" }}
         </li>
         <li
-          :class="{ activePay: activeNum == 2 }"
-          @click="toggleType(2)"
+          :class="{ activePay: activeNum == 1 }"
+          @click="toggleType(1)"
           v-if="detail.price != 0"
         >
           {{ detail.price + "元" }}
         </li>
-        <li
-          :class="{ activePay: activeNum == 3 }"
-          @click="toggleType(3)"
-          v-if="detail.mixedIntegral != 0"
-        >
-          {{ detail.mixedIntegral + "积分+" + detail.mixedPrice + "元" }}
-        </li>
+        <!--        <li-->
+        <!--          :class="{ activePay: activeNum == 3 }"-->
+        <!--          @click="toggleType(3)"-->
+        <!--          v-if="detail.mixedIntegral != 0"-->
+        <!--        >-->
+        <!--          {{ detail.mixedIntegral + "积分+" + detail.mixedPrice + "元" }}-->
+        <!--        </li>-->
       </ul>
       <div class="num">
         <div class="title">数量</div>
@@ -52,18 +53,41 @@
         <div class="content">{{ detail.remark }}</div>
       </div>
 
-      <van-button type="default" class="footer" to="order">立即兑换</van-button>
+      <van-button
+        type="default"
+        class="footer"
+        @click="goCommitOrder"
+        v-if="activeNum || needPoints <= detail.integralTotal"
+        >立即兑换
+      </van-button>
+      <van-button
+        type="default"
+        class="footer poorPoints"
+        v-if="detail.integralTotal < needPoints && !activeNum"
+        >积分不足</van-button
+      >
     </div>
+    <van-popup v-model="showList" position="bottom">
+      <CommitOrder
+        :detail="detail"
+        :type="activeNum"
+        :num="num"
+        ref="commitOrder"
+        @closePopup="closePopup"
+      />
+    </van-popup>
   </div>
 </template>
 <script>
 import { request, api } from "@/request";
 import store from "../store";
+import CommitOrder from "./CommitOrder";
 import _ from "lodash";
 export default {
   name: "goodsDetail",
   data() {
     return {
+      showList: false,
       images: [
         "https://img.yzcdn.cn/vant/apple-1.jpg",
         "https://img.yzcdn.cn/vant/apple-2.jpg"
@@ -82,13 +106,16 @@ export default {
         remark: "",
         integralTotal: 0
       },
-      activeNum: 1,
+      activeNum: 0,
       num: 1
     };
   },
   methods: {
     onClickLeft() {
       this.$router.back(-1);
+    },
+    closePopup() {
+      this.showList = false;
     },
     imgLoad(e) {
       let height = e.target.clientHeight || e.target.height;
@@ -99,10 +126,22 @@ export default {
     toggleType(num) {
       this.activeNum = num;
       this.num = 1;
+    },
+    goCommitOrder() {
+      // let goodsId = this.$route.query.goodsId;
+      // let temp = {
+      //   0: "integral",
+      //   1: "price"
+      // };
+      // this.$router.push(
+      //   `order?goodsId=${goodsId}&num=${this.num}&type=${this.activeNum}`
+      // );
+      this.showList = true;
+      this.$refs.commitOrder && this.$refs.commitOrder.getAddressList(); // 进去后重新获取一下地址
     }
   },
   activated() {
-    let goodsId = this.$route.query.goodId;
+    let goodsId = this.$route.query.goodsId;
     const me = this;
     request
       .get(api.goodsDetail + goodsId)
@@ -111,7 +150,7 @@ export default {
         // todo 判断code
         // 假设成功
         let resData = {
-          goodsId: 92598,
+          goodsId: goodsId,
           goodsName: "【现场兑换】智能扫地机器人 大红色",
           goodsSmallUrl: "https://img.yzcdn.cn/vant/apple-1.jpg",
           goodsUrl:
@@ -127,20 +166,12 @@ export default {
             "          用，又称自动打扫机、智能吸尘、机器人吸尘器等，是智\n" +
             "          能家用电器的一种，能凭借一定的人工智能，自动在房间\n" +
             "          内完成地板清理工作。",
-          integralTotal: 60
+          integralTotal: 60,
+          platformReductionIntegral: 40,
+          platformIntegral: 10
         };
-        this.detail = resData;
-
-        console.log(this.detail);
-
-        let browseHistory = _.filter(store.state.browseHistory, n => {
-          return n.goodId == goodsId;
-        });
-        console.log(browseHistory);
-        if (browseHistory.length === 0) {
-          store.commit("setBrowseHistory", resData);
-        }
-        console.log(store);
+        me.detail = res.data.data;
+        store.commit("setBrowseHistory", res.data.data);
       })
       .catch(err => {
         console.log(err);
@@ -148,13 +179,29 @@ export default {
       .finally(() => {
         // this.goGoodsDetail(3);
       });
+  },
+  computed: {
+    needPoints() {
+      return (
+        (this.detail.integral || 0) +
+        (this.detail.platformReductionIntegral || 0) +
+        (this.detail.platformIntegral || 0)
+      );
+    }
+  },
+  components: {
+    CommitOrder
   }
 };
 </script>
 <style lang="less" scoped>
 .goodsDetail {
   padding-bottom: 4rem;
-  /deep/ .van-nav-bar {
+  .popup-title {
+    width: 100%;
+    background-color: #fff !important;
+  }
+  .goodsTitle {
     position: fixed;
     background-color: transparent;
   }
@@ -242,6 +289,10 @@ export default {
       rgba(242, 61, 61, 1),
       rgba(233, 90, 59, 1)
     );
+  }
+  .poorPoints {
+    background: #efefef;
+    color: #858585;
   }
 }
 </style>

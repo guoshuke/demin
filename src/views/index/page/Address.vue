@@ -2,52 +2,124 @@
   <div class="address">
     <van-nav-bar title="地址列表" left-arrow @click-left="$router.back(-1)" />
     <van-address-list
-      v-model="chosenAddressId"
+      v-model="activeId"
       :list="list"
       :switchable="false"
       @add="onAdd"
       @edit="onEdit"
     />
+    <van-popup v-model="showEdit" position="bottom">
+      <van-nav-bar
+        :title="isEdit ? '编辑地址' : '新增地址'"
+        left-arrow
+        @click-left="showEdit = false"
+      />
+      <van-address-edit
+        :area-list="areaList"
+        :address-info="addressInfo"
+        show-delete
+        show-set-default
+        @save="onSave"
+        @delete="onDelete"
+        :style="{ height: '100vh' }"
+      />
+    </van-popup>
   </div>
 </template>
 
 <script>
+import areaList from "@/utils/areaList";
+import { request, api } from "@/request";
+import _ from "lodash";
+import utils from "@/utils";
 export default {
   name: "Address",
   data() {
     return {
-      chosenAddressId: "1",
-      list: [
-        {
-          id: "1",
-          name: "张三",
-          tel: "13000000000",
-          address: "浙江省杭州市西湖区文三路 138 号东方通信大厦 7 楼 501 室"
-        },
-        {
-          id: "2",
-          name: "李四",
-          tel: "1310000000",
-          address: "浙江省杭州市拱墅区莫干山路 50 号"
-        }
-      ]
+      areaList,
+      activeId: null,
+      list: [],
+      showEdit: false,
+      isEdit: false,
+      addressInfo: {}
     };
   },
 
   methods: {
     onAdd() {
-      this.$router.push("editAddress");
+      this.isEdit = false;
+      this.showEdit = true;
+      this.addressInfo = {};
     },
 
     onEdit(item, index) {
-      let obj = {
-        name: `editAddress`,
-        params: {
-          id: index + 1
-        }
-      };
-      this.$router.push(obj);
+      this.isEdit = true;
+      this.showEdit = true;
+      console.log(item);
+      item.areaCode = item.areaCode + "";
+      item.addressDetail = _.drop(item.address.split(" ")).join(" ");
+      this.addressInfo = item;
+      debugger;
+    },
+    onSave() {},
+    onDelete(info) {
+      let me = this;
+      console.log(info);
+      debugger;
+      if (info.id) {
+        request
+          .get(api.deleteAddress + info.id)
+          .then(res => {
+            if (res.data.code == "200") {
+              me.getAddressList();
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          })
+          .finally(() => {});
+      }
+      this.showEdit = false;
+    },
+    getAddressList() {
+      const me = this;
+      request
+        .get(api.addressList)
+        .then(res => {
+          if (res.data.code == "200") {
+            // 因为组件要他们的格式  所以转换一次
+            me.list = _.transform(
+              res.data.data,
+              (r, n) => {
+                let obj = {
+                  id: n.id,
+                  address: n.address,
+                  name: n.userName,
+                  tel: n.phone,
+                  areaCode: n.areaCode,
+                  isDefault: !!n.isDefault
+                };
+                obj.address =
+                  utils.getAddress(obj.areaCode) + " " + obj.address;
+                r.push(obj);
+                if (n.isDefault) {
+                  me.activeId = obj.id;
+                }
+              },
+              []
+            );
+          } else {
+            me.list = [];
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {});
     }
+  },
+  activated() {
+    this.getAddressList();
   }
 };
 </script>
@@ -57,5 +129,8 @@ export default {
   /*/deep/ .van-radio__icon {*/
   /*  display: none;*/
   /*}*/
+  .van-address-list__add {
+    z-index: 10;
+  }
 }
 </style>

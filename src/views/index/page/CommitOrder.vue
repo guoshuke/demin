@@ -1,38 +1,57 @@
 <template>
   <div class="order">
-    <van-nav-bar title="订单填写" left-arrow @click-left="$router.back(-1)" />
+    <van-nav-bar title="订单填写" left-arrow @click-left="closePopup" />
     <!-- 联系人卡片 -->
     <div class="address">
-      <div
-        class="noAddress"
-        @click="showList = true"
-        v-if="!currentContact.name"
-      >
-        +新增收货地址
+      <div class="noAddress" @click="showList = true">
+        <span v-if="!editingContact.hasOwnProperty('id')">+新增收货地址</span>
+        <div v-if="editingContact.hasOwnProperty('id')" class="hasAddress">
+          <div class="addressInfo">
+            <div class="nameAndTel">
+              <div class="addressName">{{ editingContact.name }}</div>
+              <div class="tel">{{ editingContact.tel }}</div>
+            </div>
+            <div class="addressDetail">{{ editingContact.address }}</div>
+          </div>
+          <van-icon name="arrow" />
+        </div>
       </div>
     </div>
 
     <van-popup v-model="showList" position="bottom">
+      <van-nav-bar title="选择地址" left-arrow @click-left="showList = false" />
       <van-address-list
-        v-model="chosenAddressId"
+        v-model="editingContactId"
         :list="list"
         @add="onAdd"
         @edit="onEdit"
         @select="onSelect"
       />
     </van-popup>
+    <van-popup v-model="showEdit" position="bottom">
+      <van-nav-bar
+        :title="isEdit ? '编辑地址' : '新增地址'"
+        left-arrow
+        @click-left="showEdit = false"
+      />
+      <van-address-edit
+        :area-list="areaList"
+        :address-info="addressInfo"
+        show-set-default
+        @save="onSave"
+      />
+    </van-popup>
 
     <van-card
-      price="150积分"
-      num="1"
-      thumb="https://img.yzcdn.cn/vant/t-thirt.jpg"
+      :num="num"
+      :thumb="detail.goodsSmallUrl || `https://img.yzcdn.cn/vant/t-thirt.jpg`"
       class="goodsInfo"
     >
       <div slot="title" class="goodsTitle">
-        <span class="goodsTitleText">厨房厨具三件套 淡蓝色 不锈钢厨具锅具</span>
+        <span class="goodsTitleText">{{ detail.goodsName }}</span>
       </div>
       <div slot="price" class="price">
-        0积分
+        {{ type ? detail.price + "元" : detail.integral + "积分" }}
       </div>
     </van-card>
 
@@ -40,59 +59,80 @@
       <div class="listTitle">配送方式</div>
       <div class="listTitle_sub">快递费货到付款</div>
     </div>
-    <div class="myList">
-      <div class="listTitle">商品金额</div>
-      <div class="listTitle_sub">150积分</div>
+    <div class="myList" v-if="type == 1">
+      <div class="listTitle">支付方式</div>
+      <div class="listTitle_sub wePay">
+        <van-image src="./user/wepay.png" alt="" />微信支付
+      </div>
       <!--      <van-icon name="arrow" class="listTitle_sub" />-->
     </div>
     <div class="myList">
-      <div class="listTitle">平台积分立减</div>
-      <div class="listTitle_sub">150积分</div>
-      <van-icon name="arrow" class="listTitle_sub" />
+      <div class="listTitle">商品金额</div>
+      <div class="listTitle_sub">
+        {{ type ? detail.price + "元" : detail.integral + "积分" }}
+      </div>
+      <!--      <van-icon name="arrow" class="listTitle_sub" />-->
     </div>
-    <div class="myList">
+    <div class="myList" v-if="type == 0">
+      <div class="listTitle">平台积分立减</div>
+      <div class="listTitle_sub">{{ detail.platformIntegral }}积分</div>
+      <!--      <van-icon name="arrow" class="listTitle_sub" />-->
+    </div>
+    <div class="myList" v-if="type == 0">
       <div class="listTitle">商家积分立减</div>
-      <div class="listTitle_sub">-50积分</div>
+      <div class="listTitle_sub">
+        -{{ detail.platformReductionIntegral }}积分
+      </div>
     </div>
 
     <div class="myList submitOrder">
-      <div class="listTitle">实际支付：￥0</div>
-      <van-button class="submitRedeem">立即兑换</van-button>
+      <div class="listTitle">
+        实际支付：
+        {{
+          type
+            ? "￥" + detail.price
+            : detail.integral -
+              detail.platformReductionIntegral -
+              detail.platformIntegral +
+              "积分"
+        }}
+      </div>
+      <van-button class="submitRedeem" @click="submitOrder"
+        >立即兑换</van-button
+      >
     </div>
   </div>
 </template>
 
 <script>
+import { request, api } from "@/request";
+import areaList from "@/utils/areaList";
+import _ from "lodash";
+import utils from "@/utils";
 export default {
+  props: ["detail", "num", "type"],
   name: "Order",
   data() {
     return {
       showList: false,
       showEdit: false,
       chosenContactId: null,
+      isEdit: false,
       editingContact: {},
-      chosenAddressId: "1",
-      list: [
-        {
-          id: "1",
-          name: "张三",
-          tel: "13000000000",
-          address: "浙江省杭州市西湖区文三路 138 号东方通信大厦 7 楼 501 室"
-        },
-        {
-          id: "2",
-          name: "李四",
-          tel: "1310000000",
-          address: "浙江省杭州市拱墅区莫干山路 50 号"
-        }
-      ]
+      addressInfo: {},
+      editingContactId: null,
+      areaList,
+      list: []
     };
   },
   computed: {
-    cardType() {
-      return this.chosenContactId !== null ? "edit" : "add";
+    needPoints() {
+      return (
+        this.detail.integralTotal +
+        this.detail.platformReductionIntegral +
+        this.detail.platformIntegral
+      );
     },
-
     currentContact() {
       const id = this.chosenContactId;
       return id !== null ? this.list.filter(item => item.id === id)[0] : {};
@@ -100,46 +140,169 @@ export default {
   },
 
   methods: {
-    // 添加联系人
+    // 添加地址
     onAdd() {
-      this.editingContact = { id: this.list.length };
       this.isEdit = false;
       this.showEdit = true;
+      this.addressInfo = {};
     },
 
-    // 编辑联系人
-    onEdit(item) {
+    // 编辑地址
+    onEdit(item, i) {
       this.isEdit = true;
       this.showEdit = true;
-      this.editingContact = item;
+      item.areaCode = item.areaCode + "";
+      item.addressDetail = _.drop(item.address.split(" ")).join(" ");
+      this.addressInfo = item;
+      console.log(item);
+      console.log(i);
+      debugger;
     },
 
-    // 选中联系人
-    onSelect() {
+    // 选中地址
+    onSelect(n) {
       this.showList = false;
+      this.editingContact = n;
+      this.editingContactId = n.id;
     },
 
-    // 保存联系人
+    // 保存地址
     onSave(info) {
+      const me = this;
       this.showEdit = false;
       this.showList = false;
+      info.address = info.addressDetail;
 
-      if (this.isEdit) {
-        this.list = this.list.map(item => (item.id === info.id ? info : item));
+      if (info.id) {
+        this.list = this.list.map(item => {
+          return item.id === info.id ? info : item;
+        });
       } else {
         this.list.push(info);
       }
       this.chosenContactId = info.id;
+      let sendData = {
+        address: info.addressDetail,
+        userName: info.name,
+        phone: info.tel,
+        isDefault: Number(info.isDefault),
+        areaCode: info.areaCode - 0
+      };
+      if (info.id) {
+        sendData.id = info.id;
+      }
+      request
+        .post(api.addAddress, sendData)
+        .then(res => {
+          if (res.data.code == "200") {
+            // 因为组件要他们的格式  所以转换一次
+            me.getAddressList(info);
+          } else {
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {});
     },
 
-    // 删除联系人
-    onDelete(info) {
-      this.showEdit = false;
-      this.list = this.list.filter(item => item.id !== info.id);
-      if (this.chosenContactId === info.id) {
-        this.chosenContactId = null;
+    closePopup() {
+      this.$emit("closePopup");
+    },
+
+    getAddressList(info) {
+      const me = this;
+      request
+        .get(api.addressList)
+        .then(res => {
+          if (res.data.code == "200") {
+            // 因为组件要他们的格式  所以转换一次
+            me.list = _.transform(
+              res.data.data,
+              (r, n) => {
+                let obj = {
+                  id: n.id,
+                  address: n.address,
+                  name: n.userName,
+                  tel: n.phone,
+                  areaCode: n.areaCode,
+                  isDefault: !!n.isDefault
+                };
+                obj.address =
+                  utils.getAddress(obj.areaCode) + " " + obj.address;
+                r.push(obj);
+                if (n.isDefault) {
+                  me.editingContact = obj;
+                  me.editingContactId = obj.id;
+                }
+              },
+              []
+            );
+          } else {
+            me.list = [];
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          if (info) {
+            info.address =
+              info.province + info.city + info.county + " " + info.address;
+            me.editingContact = info;
+            debugger;
+          }
+        });
+    },
+    submitOrder() {
+      let sendData = {
+        goodsId: this.detail.goodsId,
+        goodsName: this.detail.goodsName,
+        imageUrl: this.detail.goodsUrl,
+        platformIntegral: this.detail.platformIntegral,
+        mallIntegral: this.detail.platformReductionIntegral,
+        price: this.detail.price,
+        goodsIntegral: this.detail.integral,
+        address: this.editingContact.address,
+        userName: this.editingContact.name,
+        phone: this.editingContact.tel,
+        payType: this.type - 0
+      };
+      _.each(this.list, n => {
+        if (this.editingContact.id == n.id) {
+          sendData.address = utils.getAddress(n.areaCode) + sendData.address;
+        }
+      });
+      console.log(sendData);
+      const me = this;
+      if (!sendData.address) {
+        this.$toast("请选择地址");
+        return;
       }
+      request
+        .post(api.submitOrder, sendData)
+        .then(res => {
+          if (res.data.code == "200") {
+            // 因为组件要他们的格式  所以转换一次
+            console.log(res);
+            if (sendData.payType) {
+              //todo  如果选择金钱支付则发起支付
+              me.$router.push("paySuccess?orderId=" + res.data.data);
+            } else {
+              me.$router.push("paySuccess?orderId=" + res.data.data);
+            }
+          } else {
+            this.$toast(res.data.message);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {});
     }
+  },
+  mounted() {
+    this.getAddressList();
   }
 };
 </script>
@@ -149,6 +312,11 @@ export default {
   min-height: 100vh;
   /deep/ .van-popup--bottom {
     height: 100vh;
+  }
+  .van-nav-bar {
+    width: 100%;
+    top: 0;
+    background-color: #fff !important;
   }
   .address {
     background-color: #fff;
@@ -201,6 +369,41 @@ export default {
         bottom: initial;
         top: 0;
       }
+
+      .hasAddress {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0 1rem;
+        .addressInfo {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          height: 100%;
+          justify-content: space-evenly;
+          margin-left: 1rem;
+          .nameAndTel {
+            display: flex;
+            align-items: center;
+            color: #333;
+            font-size: 1.1rem;
+            font-weight: 400;
+            .addressName {
+              margin-right: 3rem;
+            }
+            .addressTel {
+              color: #858585;
+              font-size: 1rem;
+            }
+          }
+        }
+        .van-icon {
+          font-size: 1.5rem;
+          color: #858585;
+        }
+      }
     }
   }
 
@@ -248,6 +451,17 @@ export default {
     .listTitle_sub {
       color: #f23d3d;
       font-size: 0.9rem;
+    }
+    .wePay {
+      color: #333;
+      font-size: 1rem;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      .van-image {
+        width: 1.5rem;
+        padding-right: 0.3rem;
+      }
     }
     /deep/ .van-icon {
       color: #f23d3d;

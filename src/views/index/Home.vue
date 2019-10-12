@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="fixed_top">
-      <div class="location" @click="show = true">
+      <div class="location" @click="$toast('更多城市入驻中')">
         <van-icon name="aim" />
         <span>扬州市</span>
         <van-icon name="arrow-down" />
@@ -33,9 +33,13 @@
           @click="goGoodsDetail(n.id)"
         >
           <img
-            v-lazy="n.bannerUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
+            v-lazy="
+              n.bannerUrl ||
+                'http://139.196.151.129:8081/goodsPic/15/1/65c018d98a0e476da458bd3f26b7422e.jpg'
+            "
             @load="imgLoad"
           />
+          {{ n.bannerUrl }}
         </van-swipe-item>
       </van-swipe>
     </div>
@@ -49,7 +53,7 @@
         <van-grid-item
           v-for="n in data.itemsList"
           :key="n.id"
-          @click="goGoodsList({ type: 'itemCatId', itemCatId: n.id })"
+          @click="goGoodsList({ type: 'pItemCatId', pItemCatId: n.id })"
         >
           <van-image :src="n.imageUrl" />
           <span>{{ n.itemName }}</span>
@@ -170,19 +174,28 @@
           class="point_box"
           @click="goGoodsList({ upLimit: 5000 })"
         >
-          5000分以下
+          <div class="point">
+            <span class="pointText">5000积分以下</span>
+            <span class="pointSubText pl8">生活好物</span>
+          </div>
           <van-image class="bg-image" fit="cover" src="./home/p5000.png" />
         </van-grid-item>
-        <van-grid-item>
-          <van-grid :column-num="1" :gutter="10">
+        <van-grid-item class="rightPoint">
+          <van-grid :column-num="1" :gutter="10" class="rightBox">
             <van-grid-item
               @click="goGoodsList({ upLimit: 10000, downLimit: 5000 })"
             >
-              5000-10000分
+              <div class="point">
+                <div class="pointText hadLine">5千-1万积分</div>
+                <div class="pointSubText pt1rem">只为品质生活</div>
+              </div>
               <van-image class="bg-image" fit="cover" src="./home/p10000.png" />
             </van-grid-item>
             <van-grid-item @click="goGoodsList({ downLimit: 10000 })">
-              10000分以上
+              <div class="point">
+                <div class="pointText hadLine">1万积分以上</div>
+                <div class="pointSubText pt1rem">只为品质生活</div>
+              </div>
               <van-image
                 class="bg-image"
                 fit="cover"
@@ -312,14 +325,15 @@ export default {
     goGoodsDetail(id) {
       // id 商品的id
       _.isNumber(id)
-        ? this.$router.push(`goodsDetail?goodId=${id}`)
+        ? this.$router.push(`goodsDetail?goodsId=${id}`)
         : this.$toast("商品id未找到");
     },
     goGoodsList(item) {
-      if (item.itemCatId === 0 && item.type == "itemCatId") {
+      if (item.pItemCatId === 0 && item.type == "pItemCatId") {
         this.$toast("敬请期待");
         return;
       }
+      debugger;
       this.$router.push(`goodsList?object=${JSON.stringify(item)}`);
     },
     imgLoad(e) {
@@ -470,7 +484,12 @@ export default {
             });
           });
           console.log(data.data.itemsList);
-          me.data = data.data;
+          res.data.data.itemsList.unshift({
+            id: 0,
+            itemName: "本地生活",
+            imageUrl: "./home/icon_1.png"
+          });
+          me.data = res.data.data;
         })
         .catch(err => {
           console.log(err);
@@ -610,7 +629,7 @@ export default {
 .newGoods {
   .newGoods_list {
     height: 16rem;
-    padding: 1rem 0;
+    padding: 1rem;
     li {
       width: 33.3333vw;
       margin-right: 1rem;
@@ -712,7 +731,7 @@ export default {
   -webkit-overflow-scrolling: touch;
   display: flex;
   white-space: nowrap;
-  justify-content: space-between;
+  justify-content: flex-start;
   li {
     display: flex;
     flex-direction: column;
@@ -769,16 +788,51 @@ export default {
 
 .pointSelect {
   height: 18rem;
+  .point {
+    position: absolute;
+    z-index: 11;
+    left: 16px;
+    top: 24px;
+    .pointText {
+      color: #333;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .pointSubText {
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: #858585;
+    }
+  }
   /deep/ .van-grid {
     height: 100%;
+    width: 100%;
+    box-sizing: border-box;
     background: transparent;
     .point_box {
       position: relative;
     }
+    .rightPoint {
+      .van-grid-item__content {
+        padding: 0;
+      }
+    }
+    .rightBox {
+      padding-left: 0 !important;
+      .van-grid-item__content {
+        padding: 0;
+      }
+      .van-grid-item {
+        padding-right: 0 !important;
+        margin-top: 0 !important;
+      }
+    }
     .bg-image {
       position: absolute;
-      left: 0;
-      top: 0;
+      left: 8px;
+      top: 16px;
+      right: 8px;
+      bottom: 16px;
       z-index: 0;
     }
   }
@@ -828,5 +882,23 @@ export default {
   color: #333;
   font-size: 1.1rem;
   font-weight: 500;
+}
+.pl8 {
+  padding-left: 8px;
+}
+.pt1rem {
+  padding-top: 1rem;
+}
+.hadLine {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1.8rem;
+    width: 2rem;
+    height: 3px;
+    background-color: #f23d3d;
+  }
 }
 </style>

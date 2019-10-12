@@ -16,10 +16,24 @@ export default new Vuex.Store({
   getters: {},
   mutations: {
     setLoginInfo(state, playload) {
-      state.loginInfo = { ...state.loginInfo, ...playload };
+      console.log(playload);
+      debugger;
+      state.loginInfo = playload;
+      localStorage.setItem("loginInfo", JSON.stringify(playload));
+      debugger;
     },
     setBrowseHistory(state, goods) {
+      state.browseHistory = _.filter(
+        JSON.parse(localStorage.getItem("browseHistory")) || [],
+        n => {
+          return n.goodsId != goods.goodsId;
+        }
+      );
       state.browseHistory.unshift(goods);
+      localStorage.setItem(
+        "browseHistory",
+        JSON.stringify(state.browseHistory)
+      );
     }
   },
   actions: {}

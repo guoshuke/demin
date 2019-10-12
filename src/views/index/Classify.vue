@@ -10,7 +10,7 @@
       />
     </form>
     <van-tree-select
-      height="90vh"
+      height="calc(100vh - 115px)"
       :items="items"
       :main-active-index.sync="activeIndex"
     >
@@ -151,11 +151,14 @@ export default {
   /deep/ .van-tree-select__content {
     padding: 10px;
     padding-top: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   /deep/ .van-sidebar {
     .van-sidebar-item {
       div {
-        padding-left: 10px;
+        padding: 3px 10px;
+        padding-right: 0 !important;
         border-left: 3px solid transparent;
       }
     }
@@ -163,7 +166,6 @@ export default {
       border-color: #efefef;
       div {
         border-color: #f23d3d;
-        padding: 10px;
       }
     }
   }

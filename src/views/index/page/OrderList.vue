@@ -6,7 +6,13 @@
     <!--      left-arrow-->
     <!--      @click-left="$router.back(-1)"-->
     <!--    />-->
-    <van-tabs v-model="active" :swipe-threshold="6" swipeable sticky>
+    <van-tabs
+      v-model="active"
+      :swipe-threshold="6"
+      swipeable
+      sticky
+      @change="toggleStatus"
+    >
       <van-tab
         v-for="(n, i) in statusList"
         :key="i"
@@ -15,7 +21,7 @@
       >
         <ul class="list">
           <li v-for="(m, l) in list" :key="l">
-            <OrderStatus :brief="n"></OrderStatus>
+            <OrderStatus :brief="m"></OrderStatus>
           </li>
         </ul>
       </van-tab>
@@ -25,15 +31,16 @@
 
 <script>
 import OrderStatus from "@/components/OrderStatus";
+import { request, api } from "@/request";
 export default {
   name: "OrderList",
   data() {
     return {
-      active: 1,
+      active: 0,
       statusList: [
         {
           title: "全部",
-          type: -1
+          type: null
         },
         {
           title: "待付款",
@@ -56,11 +63,57 @@ export default {
           type: 4
         }
       ],
-      list: [{ orderStatus: 1 }]
+      list: [],
+      resData: {
+        pageSize: 10,
+        currentPage: 0,
+        orderStatus: null
+      },
+      loading: false,
+      finished: false
     };
   },
-  deactivated() {
-    console.log(this.$route);
+  activated() {
+    let type = this.$route.query.type - 0;
+    if (!_.isNaN(type)) {
+      this.active = type;
+    }
+    this.questData(this.active || null);
+  },
+  methods: {
+    toggleStatus(i) {
+      console.log(i);
+      this.list = [];
+      let types = [null, 0, 1, 2, 3, 4];
+      this.resData.currentPage = 0;
+      this.questData(types[i]);
+    },
+    questData(type) {
+      let me = this;
+      me.resData.currentPage++;
+      me.resData.orderStatus = type;
+      _.isNull(type) && delete me.resData.orderStatus;
+      this.loading = true;
+      request
+        .post(api.orderList, me.resData)
+        .then(res => {
+          console.log(res);
+          res = res.data;
+          if (res.code != "200") {
+            me.finished = true;
+            console.log("end");
+          } else {
+            me.list = me.list.concat(res.dataList);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          me.finished = true;
+        })
+        .finally(() => {
+          me.loading = false;
+        });
+    }
   },
   components: {
     OrderStatus
@@ -71,5 +124,10 @@ export default {
 <style scoped lang="less">
 .orderList {
   background-color: #efefef;
+  .list {
+    height: calc(100vh - 46px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 </style>

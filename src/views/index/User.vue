@@ -17,11 +17,7 @@
         <div class="point_num">1000分</div>
         <div>(含平台积分20分)</div>
         <div class="funcBar">
-          <van-button
-            type="default"
-            size="small"
-            @click="$router.push('pointsDetail')"
-          >
+          <van-button type="default" size="small" @click="showPoint">
             积分明细
           </van-button>
           <van-button
@@ -44,7 +40,7 @@
         <van-grid-item
           v-for="(n, i) in redeemTypes"
           :key="i"
-          @click="$router.push(`orderList`, { type: n.type })"
+          @click="$router.push(`orderList?type= ${n.type}`)"
         >
           <van-image width="3rem" height="3rem" :src="n.url" />
           <span class="status">{{ n.status }}</span>
@@ -92,12 +88,25 @@
       <van-nav-bar title="积分规则" @click-left="$router.back(-1)" />
       <div v-html="pointRules" class="pointRules_pop"></div>
     </van-popup>
+    <!--    积分明细-->
+    <van-popup
+      v-model="showPointList"
+      position="bottom"
+      :style="{ height: '100vh' }"
+    >
+      <van-nav-bar
+        title="积分明细"
+        left-arrow
+        @click-left="showPointList = false"
+      />
+      <PointList class="PointList" ref="pointList"></PointList>
+    </van-popup>
   </div>
 </template>
 
 <script>
 import { request, api } from "@/request";
-
+import PointList from "./page/PointsDetails";
 const coupon = {
   available: 1,
   condition: "无使用门槛\n最多优惠12元",
@@ -130,12 +139,15 @@ export default {
           status: "待发货"
         },
         {
-          type: 3,
+          type: 4,
           url: "../user/finish.png",
           status: "已完成"
         }
+        // 此type 不是订单的orderStatus
       ],
-      pointRules: ""
+      pointRules: "",
+      showAddress: false,
+      showPointList: false
     };
   },
   methods: {
@@ -145,6 +157,10 @@ export default {
     },
     onExchange(code) {
       this.coupons.push(coupon);
+    },
+    showPoint() {
+      this.$refs.pointList && this.$refs.pointList.openModal();
+      this.showPointList = true;
     }
   },
   mounted() {
@@ -159,6 +175,9 @@ export default {
       .catch(err => {
         console.log(err);
       });
+  },
+  components: {
+    PointList
   }
 };
 </script>

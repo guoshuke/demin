@@ -27,8 +27,8 @@ export default new Router({
     {
       path: "/user",
       name: "user",
-      component: User,
-      meta: { requireAuth: true }
+      component: User
+      // meta: { requireAuth: true }
     },
     {
       path: "/search",
@@ -54,6 +54,11 @@ export default new Router({
       path: "/order",
       name: "order",
       component: () => import("./page/CommitOrder.vue")
+    },
+    {
+      path: "/paySuccess",
+      name: "paySuccess",
+      component: () => import("./page/PaySuccess.vue")
     },
     {
       path: "/orderList",

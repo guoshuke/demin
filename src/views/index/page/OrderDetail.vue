@@ -89,17 +89,45 @@
 </template>
 
 <script>
+import { request, api } from "@/request";
+import _ from "lodash";
+import utils from "@/utils";
 export default {
   name: "OrderDetail",
   data() {
     return {
-      show: false
+      show: false,
+      detail: {}
     };
   },
   methods: {
     deleteOrder() {
       this.$toast("删除提示  然后返回到列表页面并刷新");
+    },
+    getOrderDetail() {
+      const me = this;
+      let orderId = this.$route.query.orderId;
+      if (!orderId) {
+        return;
+      }
+      request
+        .get(api.orderDetail + orderId)
+        .then(res => {
+          if (res.data.code == "200") {
+            // 因为组件要他们的格式  所以转换一次
+            console.log(res);
+          } else {
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {});
     }
+  },
+
+  activated() {
+    this.getOrderDetail();
   }
 };
 </script>

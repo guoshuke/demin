@@ -1,6 +1,8 @@
 import user from "./user";
 import items from "./items";
 import def from "./default";
+import address from "./address";
+import pay from "./pay";
 import _ from "lodash";
 
 const target = (function() {
@@ -20,7 +22,7 @@ const target = (function() {
   );
 })();
 
-Object.assign(target, user, items, def);
+Object.assign(target, user, items, def, address, pay);
 
 export default target;
 

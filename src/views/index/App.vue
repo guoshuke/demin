@@ -67,6 +67,8 @@ export default {
     this.showTabBar = this.homePages.includes(this.$route.name);
   },
   created() {
+    if (!localStorage.getItem("LocationCity")) {
+    }
     let loading = document.getElementById("loadingGif");
     loading && document.body.removeChild(loading);
   }
@@ -80,8 +82,11 @@ export default {
   width: 100%;
   height: 100%;
 }
+#app .van-nav-bar .van-icon {
+  color: #333;
+}
 .box {
-  padding-bottom: 55px;
+  padding-bottom: 50px;
 }
 * {
   margin: 0;

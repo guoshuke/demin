@@ -1,32 +1,34 @@
 <template>
   <div class="search">
-    <form action="/" class="form" @click="onCancel">
-      <van-icon name="arrow-left" />
+    <form action="/" class="form">
+      <van-icon name="arrow-left" @click="onCancel" />
       <van-search
         v-model="value"
         placeholder="请您输入商品、品牌名称"
         show-action
-        @click="toSearch"
+        @search="toSearch"
         @cancel="onCancel"
       />
     </form>
     <div class="content">
-      <div class="historyS">
+      <div class="historyS" v-if="searchHistory.length">
         <div class="historyTitle">历史搜索</div>
         <div class="tags">
-          <van-tag round>标签</van-tag>
-          <van-tag round type="primary">标签</van-tag>
-          <van-tag round type="success">标签</van-tag>
-          <van-tag round type="danger">标签</van-tag>
-          <van-tag round type="warning">标签</van-tag>
+          <van-tag
+            round
+            v-for="n in searchHistory.slice(0, 10)"
+            :key="n"
+            @click="goGoodsList({ selectName: n })"
+            >{{ n }}</van-tag
+          >
         </div>
       </div>
-      <div class="historyB">
+      <div class="historyB" v-if="browseHistory.length">
         <div class="historyTitle">历史浏览</div>
         <van-grid :column-num="2">
           <van-grid-item
             class="canBuyItem"
-            v-for="n in browseHistory"
+            v-for="n in browseHistory.slice(0, 10)"
             :key="n.goodsId"
             @click="goGoodsDetail(n.goodsId)"
           >
@@ -53,17 +55,54 @@ export default {
   data() {
     return {
       value: "",
-      list: []
+      list: [],
+      browseHistory: [],
+      searchHistory: []
     };
   },
   computed: {
-    ...mapState(["browseHistory", "searchHistory"])
+    // ...mapState(["browseHistory", "searchHistory"])
   },
   methods: {
-    toSearch() {},
+    toSearch() {
+      let searchHistory = this.searchHistory;
+      if (_.trim(this.value)) {
+        if (searchHistory.includes(this.value)) {
+          searchHistory = _.transform(
+            searchHistory,
+            (r, n) => {
+              if (n != this.value) {
+                r.push(n);
+              }
+            },
+            []
+          );
+        }
+        searchHistory.unshift(this.value);
+        console.log(searchHistory);
+        debugger;
+        localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+      }
+      this.goGoodsList({ selectName: this.value });
+    },
     onCancel() {
       this.$router.back(-1);
+    },
+    goGoodsDetail(id) {
+      // id 商品的id
+      _.isNumber(id - 0)
+        ? this.$router.push(`goodsDetail?goodsId=${id}`)
+        : this.$toast("商品id未找到");
+    },
+    goGoodsList(obj) {
+      this.$router.push(`goodsList?object=${JSON.stringify(obj)}`);
     }
+  },
+  activated() {
+    this.browseHistory =
+      JSON.parse(localStorage.getItem("browseHistory")) || [];
+    this.searchHistory =
+      JSON.parse(localStorage.getItem("searchHistory")) || [];
   }
 };
 </script>
@@ -79,7 +118,7 @@ export default {
     padding-left: 1rem;
     box-sizing: border-box;
     background-color: #fff;
-    border-bottom: 1px solid #ababab;
+    border-bottom: 1px solid #f9f9f9;
     margin-bottom: 0.5rem;
     .van-search {
       width: 100%;
@@ -104,8 +143,13 @@ export default {
       .tags {
         display: flex;
         margin-bottom: 1rem;
+        width: 100%;
+        flex-wrap: wrap;
         .van-tag {
           margin-right: 10px;
+          font-size: 1rem;
+          padding: 3px 10px;
+          margin-bottom: 1rem;
         }
       }
     }

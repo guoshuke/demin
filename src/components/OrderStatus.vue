@@ -2,37 +2,46 @@
   <div class="orderStatus">
     <div
       class="public"
-      :class="{ unpaid: brief.type === 0 }"
+      :class="{ unpaid: brief.orderStatus == 0 }"
       @click="goOrderDetail(brief)"
     >
       <van-card thumb="https://img.yzcdn.cn/vant/t-thirt.jpg" class="goodsInfo">
         <div slot="title" class="goodsTitle">
-          <span class="goodsTitleText">积分兑换</span>
+          <span class="goodsTitleText">{{
+            brief.price ? "现金支付" : "积分兑换"
+          }}</span>
         </div>
         <div slot="desc" class="goodsTitle">
-          <span class="goodsTitleText descText">奥金湘核桃油100ml玻璃瓶装</span>
+          <span class="goodsTitleText descText">{{ brief.goodsName }}</span>
         </div>
 
         <div
           slot="price"
           class="price"
           @click="toPay(brief)"
-          v-if="brief.type === 0 || brief.type === 1 || brief.type === 2"
+          v-if="
+            brief.orderStatus == 0 ||
+              brief.orderStatus == 1 ||
+              brief.orderStatus == 2
+          "
         >
-          {{ status[brief.type] }}
+          {{ status[brief.orderStatus] }}
         </div>
         <div slot="num" class="time">
           2019-09-17 16:51:15
         </div>
       </van-card>
-      <div class="stamp" v-if="brief.type === 3 || brief.type === 4">
+      <div
+        class="stamp"
+        v-if="brief.orderStatus == 3 || brief.orderStatus == 4"
+      >
         <van-image
           src="../user/finish_stamp.png"
           width="5rem"
           height="5rem"
         ></van-image>
       </div>
-      <div class="logistics" v-if="brief.type === 2">
+      <div class="logistics" v-if="brief.orderStatus == 2">
         <div class="logistics_title">物流信息</div>
         <div class="logistics_company">快递公司：中通快递</div>
         <div class="logistics_order">
@@ -46,7 +55,7 @@
 
 <script>
 export default {
-  props: { brief: { default: { type: null } } },
+  props: ["brief"],
   name: "OrderStatus",
   data() {
     return {
@@ -61,12 +70,13 @@ export default {
   },
   methods: {
     toPay(brief) {
-      if (brief.type == 0) {
+      if (brief.orderStatus == 0) {
         alert("支付");
       }
     },
     goOrderDetail(brief) {
-      this.$router.push("orderDetail", { brief });
+      debugger;
+      this.$router.push("orderDetail?orderId=" + brief.orderId);
     }
   }
 };
