@@ -36,7 +36,7 @@ module.exports = {
   },
   devServer: {
     // proxy: "http://192.168.1.249:3000/mock/20/mall"
-    proxy: "http://127.0.0.1:8082/"
+    proxy: "http://192.168.1.98:8082/"
     // proxy: "http://192.168.1.78:8080/"
   }
 };
