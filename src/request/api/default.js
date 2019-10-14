@@ -5,7 +5,10 @@ export default (() => {
   const urls = {
     pointRules: "integralDescription/list",
     pointsDetails: "integralDetail/list",
-    oauth: "oauth/redirect/url"
+    oauth: "oauth/redirect/url",
+    point: "UserAccount",
+    bindFather: "/set/distribution",
+    HelperGoods: "Helper/add/"
   };
   return _.transform(
     urls,

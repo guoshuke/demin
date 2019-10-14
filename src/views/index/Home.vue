@@ -32,11 +32,12 @@
           :key="n.id"
           @click="goGoodsDetail(n.id)"
         >
-          <img
-            v-lazy="
+          <van-image
+            :src="
               n.bannerUrl ||
                 'http://139.196.151.129:8081/goodsPic/15/1/65c018d98a0e476da458bd3f26b7422e.jpg'
             "
+            fit="cover"
             @load="imgLoad"
           />
           {{ n.bannerUrl }}
@@ -44,51 +45,21 @@
       </van-swipe>
     </div>
 
-    <!--    <div class="newUser home_block">-->
-    <!--      <img v-lazy="images[0]" />-->
-    <!--    </div>-->
+    <div class="newUser home_block" @click="showModal">
+      <van-image src="./home/newP.png" />
+    </div>
 
     <div class="funcBar home_block mb15">
       <van-grid :column-num="5" :border="false">
         <van-grid-item
           v-for="n in data.itemsList"
           :key="n.id"
-          @click="goGoodsList({ type: 'pItemCatId', pItemCatId: n.id })"
+          @click="goGoodsList({ type: 'parentItemId', parentItemId: n.id })"
         >
           <van-image :src="n.imageUrl" />
           <span>{{ n.itemName }}</span>
         </van-grid-item>
       </van-grid>
-    </div>
-
-    <div class="newGoods home_block mb15">
-      <van-cell
-        is-link
-        class="custom"
-        @click="goGoodsList({ type: 'typeId', typeId: 1 })"
-      >
-        <!-- 使用 title 插槽来自定义标题 -->
-        <template slot="title">
-          <span class="custom-title">新品推荐</span>
-          <span class="custom-title-sub">第一时间获取好物</span>
-        </template>
-        <template slot="default" class="test">
-          <span class="custom-title-right">查看更多</span>
-        </template>
-      </van-cell>
-      <ul class="newGoods_list scrollBar">
-        <li
-          v-for="n in data.newGoodsList"
-          :key="n.goodsId"
-          @click="goGoodsDetail(n.goodsId)"
-        >
-          <van-image
-            :src="n.goodsSmallUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
-          />
-          <span class="goodsName">{{ n.goodsName }}</span>
-          <span class="red">{{ n.integral }} 积分</span>
-        </li>
-      </ul>
     </div>
 
     <div class="superScrabble home_block mb15">
@@ -123,6 +94,7 @@
         <ul class="superScrabble_list scrollBar">
           <li v-for="n in data.zeroGoodsList" @click="goHelpFree(n.goodsId)">
             <van-image
+              class="goodsImg"
               :src="n.goodsSmallUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
             />
             <span class="goodsName">{{ n.goodsName }}</span>
@@ -136,6 +108,36 @@
           </li>
         </ul>
       </div>
+    </div>
+
+    <div class="newGoods home_block mb15">
+      <van-cell
+        is-link
+        class="custom"
+        @click="goGoodsList({ type: 'typeId', typeId: 1 })"
+      >
+        <!-- 使用 title 插槽来自定义标题 -->
+        <template slot="title">
+          <span class="custom-title">新品推荐</span>
+          <span class="custom-title-sub">第一时间获取好物</span>
+        </template>
+        <template slot="default" class="test">
+          <span class="custom-title-right">查看更多</span>
+        </template>
+      </van-cell>
+      <ul class="newGoods_list scrollBar">
+        <li
+          v-for="n in data.newGoodsList"
+          :key="n.goodsId"
+          @click="goGoodsDetail(n.goodsId)"
+        >
+          <van-image
+            :src="n.goodsSmallUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
+          />
+          <span class="goodsName">{{ n.goodsName }}</span>
+          <span class="red">{{ n.integral }} 积分</span>
+        </li>
+      </ul>
     </div>
 
     <div class="hotGoods">
@@ -157,7 +159,11 @@
           </template>
         </van-cell>
         <ul class="hotGoods_Content_list scrollBar">
-          <li v-for="n in data.bomGoodsList" :key="n.goodsId">
+          <li
+            v-for="n in data.bomGoodsList"
+            :key="n.goodsId"
+            @click="goGoodsDetail(n.goodsId)"
+          >
             <van-image
               :src="n.goodsSmallUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
             />
@@ -227,7 +233,7 @@
           <van-image
             :src="n.goodsSmallUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
           />
-          <div class="canBuyItem_title">
+          <div class="canBuyItem_title goodsName">
             {{ n.goodsName }}
           </div>
           <div class="canBuyItem_subTitle">
@@ -237,16 +243,33 @@
         </van-grid-item>
       </van-grid>
     </van-list>
+    <HelpStatus ref="HelpStatus" :details="details" :status="status" />
   </div>
 </template>
 
 <script>
 import { request, api } from "@/request";
+import HelpStatus from "@/components/HelpStatus";
+import store from "./store";
 import _ from "lodash";
 
 export default {
   name: "home",
-  components: {},
+  computed: {
+    status() {
+      let t = 1;
+      if (this.loginInfo.flag === false) {
+        t = 1;
+      }
+      if (this.loginInfo.flag === true) {
+        t = 0;
+      }
+      if (this.showNew) {
+        t = 2;
+      }
+      return t;
+    }
+  },
   data() {
     return {
       swipeHeight: 0,
@@ -270,7 +293,7 @@ export default {
         },
         {
           id: 3,
-          itemName: "厨具用具",
+          itemName: "饮食健康",
           imageUrl: "./home/icon_3.png"
         },
         {
@@ -318,7 +341,9 @@ export default {
       list: [],
       value: "",
       show: false,
-      resData: { currentPage: 1, pageSize: 10 }
+      resData: { currentPage: 1, pageSize: 10 },
+      details: [],
+      showNew: false
     };
   },
   methods: {
@@ -329,11 +354,10 @@ export default {
         : this.$toast("商品id未找到");
     },
     goGoodsList(item) {
-      if (item.pItemCatId === 0 && item.type == "pItemCatId") {
+      if (item.parentItemId === 0 && item.type == "parentItemId") {
         this.$toast("敬请期待");
         return;
       }
-      debugger;
       this.$router.push(`goodsList?object=${JSON.stringify(item)}`);
     },
     imgLoad(e) {
@@ -351,8 +375,8 @@ export default {
     toSearch() {
       this.$router.push(`search`);
     },
-    goHelpFree() {
-      this.$router.push(`free`);
+    goHelpFree(id) {
+      this.$router.push(`free?goodsId=` + id);
     },
     requestHomeData() {
       const me = this;
@@ -517,7 +541,7 @@ export default {
             console.log("end");
           } else {
             me.list = me.list.concat(res.dataList);
-            if (res.totalPage === res.pageIndex) {
+            if (res.totalPage <= res.pageIndex) {
               me.finished = true;
             }
           }
@@ -530,10 +554,52 @@ export default {
         .finally(() => {
           me.loading = false;
         });
+    },
+    showModal() {
+      this.details = this.data.zeroGoodsList.slice(0, 2);
+      this.showNew = true;
+      this.$refs.HelpStatus.showModal();
     }
   },
   mounted() {
+    store.commit("toShare");
     this.requestHomeData();
+  },
+  components: {
+    HelpStatus
+  },
+  created() {
+    this.loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+    if (
+      localStorage.getItem("powerSurfaceId") &&
+      localStorage.getItem("goodsId") &&
+      this.loginInfo.flag
+    ) {
+      this.$refs.HelpStatus.showModal();
+
+      const me = this;
+      request
+        .get(api.goodsDetail + localStorage.getItem("goodsId"))
+        .then(res => {
+          console.log(res.data);
+          if (res.data.code != "200") {
+            // todo delete
+            me.$toast(res.data.message);
+          } else {
+            me.details = [res.data.data];
+            // me.detail.powerSurfaceId = localStorage.getItem("powerSurfaceId");
+          }
+          // 假设成功
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          localStorage.removeItem("powerSurfaceId");
+          localStorage.removeItem("goodsId");
+          // this.goGoodsDetail(3);
+        });
+    }
   }
 };
 </script>
@@ -581,14 +647,19 @@ export default {
   }
 }
 
-.swipe img {
-  width: 100vw;
+.swipe {
+  .van-image {
+    height: 66vw;
+  }
+  img {
+    width: 100vw;
+  }
 }
 .newUser {
-  height: 100px;
+  height: 120px;
   display: flex;
   width: 100vw;
-  padding: 2rem 3rem;
+  padding: 2rem 1rem;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
@@ -686,10 +757,10 @@ export default {
   }
   .superScrabble_box {
     width: 100%;
-    padding: 0 1.2rem;
+    padding: 1.2rem;
     box-sizing: border-box;
     .superScrabble_list {
-      height: 18rem;
+      /*height: 18rem;*/
       display: flex;
       flex-direction: row;
       width: 100%;
@@ -704,6 +775,9 @@ export default {
         .helpNum {
           font-size: 0.9rem;
           color: #858585;
+        }
+        .goodsImg {
+          height: 13rem;
         }
         .icon {
           position: absolute;
@@ -848,7 +922,7 @@ export default {
 }
 
 .canBuyItem {
-  height: 18rem;
+  min-height: 18rem;
   .van-image {
     height: 11rem;
   }
@@ -856,7 +930,7 @@ export default {
     text-align: left;
     font-size: 1rem;
     color: #333;
-    padding: 0.6rem 0;
+    margin: 0.6rem 0;
     width: 100%;
   }
   .canBuyItem_subTitle {
@@ -879,9 +953,19 @@ export default {
   margin-bottom: 15px;
 }
 .goodsName {
+  width: 100%;
   color: #333;
   font-size: 1.1rem;
   font-weight: 500;
+  overflow: hidden;
+  white-space: normal;
+  text-overflow: ellipsis;
+  text-overflow: -o-ellipsis-lastline;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 .pl8 {
   padding-left: 8px;

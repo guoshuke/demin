@@ -84,7 +84,6 @@ export default {
       }
     },
     goOrderDetail(brief) {
-      debugger;
       this.$router.push("orderDetail?orderId=" + brief.orderId);
     },
     doCopy(text) {

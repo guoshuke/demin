@@ -10,7 +10,12 @@
             : []"
           :key="index"
         >
-          <van-image v-lazy="image" @load="imgLoad" :src="image" />
+          <van-image
+            v-lazy="image"
+            class="goodsImg"
+            @load="imgLoad"
+            :src="image"
+          />
         </van-swipe-item>
       </van-swipe>
     </div>
@@ -52,7 +57,7 @@
       </div>
       <div class="detailContent">
         <div class="title">商品详情</div>
-        <div class="content">{{ detail.remark }}</div>
+        <div class="content" v-html="detail.remark"></div>
       </div>
 
       <van-button
@@ -157,29 +162,17 @@ export default {
           me.$toast(res.data.message);
         }
         // 假设成功
-        let resData = {
-          goodsId: goodsId,
-          goodsName: "【现场兑换】智能扫地机器人 大红色",
-          goodsSmallUrl: "https://img.yzcdn.cn/vant/apple-1.jpg",
-          goodsUrl:
-            "https://img.yzcdn.cn/vant/apple-1.jpg,https://img.yzcdn.cn/vant/apple-2.jpg",
-          goodsAmount: 999,
-          goodsStock: 365,
-          integral: 150,
-          price: 99,
-          mixedIntegral: 50,
-          mixedPrice: 70,
-          remark:
-            "本款智能扫地机器人为一款智能扫地机器人，适合家居使\n" +
-            "          用，又称自动打扫机、智能吸尘、机器人吸尘器等，是智\n" +
-            "          能家用电器的一种，能凭借一定的人工智能，自动在房间\n" +
-            "          内完成地板清理工作。",
-          integralTotal: 60,
-          platformReductionIntegral: 40,
-          platformIntegral: 10
-        };
         me.detail = res.data.data;
         store.commit("setBrowseHistory", res.data.data);
+
+        let sendData = {
+          goodsInfo: me.detail,
+          pathInfo: {
+            path: "goodsDetail",
+            data: "&goodsId=" + me.detail.goodsId
+          }
+        };
+        store.commit("toShare", sendData);
       })
       .catch(err => {
         console.log(err);
@@ -191,7 +184,7 @@ export default {
   computed: {
     needPoints() {
       return (
-        (this.detail.integral || 0) -
+        (this.detail.integral || 0) * this.num -
         (this.detail.platformReductionIntegral || 0)
       );
     }
@@ -217,6 +210,10 @@ export default {
       width: 1rem;
       border-radius: 1rem;
       background-color: #f23d3d;
+    }
+    .goodsImg {
+      width: 100%;
+      min-height: 100vw;
     }
   }
   .goodsContent {
@@ -273,9 +270,13 @@ export default {
       }
     }
     .detailContent {
-      padding: 0 0.6rem 1rem 0.6rem;
+      padding: 0 0 1rem 0rem;
+
       .content {
         color: #858585;
+        /deep/ img {
+          width: 100%;
+        }
       }
     }
   }

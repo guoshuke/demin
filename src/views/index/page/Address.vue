@@ -59,13 +59,38 @@ export default {
       item.areaCode = item.areaCode + "";
       item.addressDetail = _.drop(item.address.split(" ")).join(" ");
       this.addressInfo = item;
-      debugger;
     },
-    onSave() {},
+    onSave(info) {
+      let me = this;
+      let sendData = {
+        address: info.addressDetail,
+        userName: info.name,
+        phone: info.tel,
+        isDefault: Number(info.isDefault),
+        areaCode: info.areaCode - 0
+      };
+      if (info.id) {
+        sendData.id = info.id;
+      }
+      request
+        .post(api.addAddress, sendData)
+        .then(res => {
+          if (res.data.code == "200") {
+            // 因为组件要他们的格式  所以转换一次
+            me.getAddressList(info);
+          } else {
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          me.showEdit = false;
+        });
+    },
     onDelete(info) {
       let me = this;
       console.log(info);
-      debugger;
       if (info.id) {
         request
           .get(api.deleteAddress + info.id)

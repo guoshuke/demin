@@ -8,14 +8,14 @@
           fit="cover"
           width="6rem"
           height="6rem"
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="loginInfo.headImg"
         />
-        <span class="nick_name">XueWei520</span>
+        <span class="nick_name">{{ loginInfo.nickname }}</span>
       </div>
       <div class="point">
         <div class="point_title">当前积分</div>
-        <div class="point_num">1000分</div>
-        <div>(含平台积分20分)</div>
+        <div class="point_num">{{ pointInfo.totalIntegral || 0 }}</div>
+        <div>(含平台积分{{ pointInfo.platformIntegral || 0 }}分)</div>
         <div class="funcBar">
           <van-button type="default" size="small" @click="showPoint">
             积分明细
@@ -82,7 +82,11 @@
         left-arrow
         @click-left="showPointList = false"
       />
-      <PointList class="PointList" ref="pointList"></PointList>
+      <PointList
+        class="PointList"
+        ref="pointList"
+        :pointInfo="pointInfo"
+      ></PointList>
     </van-popup>
   </div>
 </template>
@@ -90,17 +94,7 @@
 <script>
 import { request, api } from "@/request";
 import PointList from "./page/PointsDetails";
-const coupon = {
-  available: 1,
-  condition: "无使用门槛\n最多优惠12元",
-  reason: "",
-  value: 150,
-  name: "优惠券名称",
-  startAt: 1489104000,
-  endAt: 1514592000,
-  valueDesc: "1.5",
-  unitDesc: "元"
-};
+
 export default {
   name: "User",
   data() {
@@ -108,8 +102,6 @@ export default {
       pointRules_show: false,
       showList: false,
       chosenCoupon: -1,
-      coupons: [coupon],
-      disabledCoupons: [coupon],
       redeemTypes: [
         {
           type: 1,
@@ -130,7 +122,9 @@ export default {
       ],
       pointRules: "",
       showAddress: false,
-      showPointList: false
+      showPointList: false,
+      pointInfo: {},
+      loginInfo: JSON.parse(localStorage.getItem("loginInfo"))
     };
   },
   methods: {
@@ -144,6 +138,18 @@ export default {
     showPoint() {
       this.$refs.pointList && this.$refs.pointList.openModal();
       this.showPointList = true;
+    },
+    getPoint() {
+      let me = this;
+      request
+        .post(api.point)
+        .then(res => {
+          me.pointInfo = res.data.data;
+          console.log(res.data.data);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   },
   mounted() {
@@ -158,6 +164,9 @@ export default {
       .catch(err => {
         console.log(err);
       });
+  },
+  activated() {
+    this.getPoint();
   },
   components: {
     PointList

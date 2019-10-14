@@ -28,8 +28,8 @@ export default new Router({
     {
       path: "/user",
       name: "user",
-      component: User
-      // meta: { requireAuth: true }
+      component: User,
+      meta: { requireAuth: true }
     },
     {
       path: "/search",

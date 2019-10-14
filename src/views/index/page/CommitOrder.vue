@@ -91,10 +91,9 @@
         {{
           type
             ? "￥" + detail.price
-            : detail.integral -
-              detail.platformReductionIntegral -
-              detail.platformIntegral +
-              "积分"
+            : (detail.integral - detail.platformReductionIntegral < 0
+                ? 0
+                : detail.integral - detail.platformReductionIntegral) + "积分"
         }}
       </div>
       <van-button class="submitRedeem" :loading="loading" @click="submitOrder"
@@ -129,11 +128,7 @@ export default {
   },
   computed: {
     needPoints() {
-      return (
-        this.detail.integralTotal +
-        this.detail.platformReductionIntegral +
-        this.detail.platformIntegral
-      );
+      return this.detail.integralTotal + this.detail.platformReductionIntegral;
     },
     currentContact() {
       const id = this.chosenContactId;
@@ -158,7 +153,6 @@ export default {
       this.addressInfo = item;
       console.log(item);
       console.log(i);
-      debugger;
     },
 
     // 选中地址
@@ -326,17 +320,28 @@ export default {
         .then(res => {
           console.log(res);
           let payConfig = res.data.data;
-          payConfig.appId = "wx50dd97a40ea2adf9"; // 必填，公众号的唯一标识
-          payConfig.package = payConfig.prepayId;
+
+          payConfig.package = "prepay_id=" + payConfig.prepayId;
           payConfig.paySign = payConfig.sign;
           payConfig.nonceStr = payConfig.noncestr;
           payConfig.success = function(res) {
-            console.log(res);
+            if (res.errMsg == "chooseWXPay:ok") {
+              //alert("支付成功");
+              me.$router.push("paySuccess?orderId=" + orderId);
+            } else {
+              me.$toast("支付失败");
+              this.$router.push("orderDetail?orderId=" + orderId);
+            }
+          };
+          payConfig.cancel = function(res) {
+            me.$toast("取消支付");
+            this.$router.push("orderDetail?orderId=" + orderId);
           };
           console.log(payConfig);
+
           wx.config({
             debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-            appId: "wx50dd97a40ea2adf9", // 必填，公众号的唯一标识
+            appId: payConfig.appId, // 必填，公众号的唯一标识
             timestamp: payConfig.timestamp, // 必填，生成签名的时间戳
             nonceStr: payConfig.nonceStr, // 必填，生成签名的随机串
             signature: payConfig.signature, // 必填，签名，见附录1

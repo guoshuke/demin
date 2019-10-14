@@ -11,23 +11,23 @@
       </div>
       <van-card
         price="0积分"
-        origin-price="100积分"
-        thumb="https://img.yzcdn.cn/vant/t-thirt.jpg"
+        :origin-price="detail.integral + '积分'"
+        :thumb="detail.goodsSmallUrl"
       >
         <div slot="title" class="goodsTitle">
-          <span class="goodsTitleText"
-            >厨房厨具三件套 淡蓝色 不锈钢厨具锅具</span
-          >
+          <span class="goodsTitleText">{{ detail.goodsName }}</span>
         </div>
         <div slot="tags">
           <van-tag type="danger">好友助力</van-tag>
-          <van-tag plain type="danger" class="needTag">需要4人</van-tag>
+          <van-tag plain type="danger" class="needTag"
+            >需要{{ detail.assistanceCount || 0 }}人</van-tag
+          >
         </div>
         <div slot="price" class="price">
           0积分
         </div>
         <div slot="origin-price" class="origin-price">
-          100积分
+          {{ detail.integral }}积分
         </div>
       </van-card>
       <div class="calc">
@@ -36,20 +36,45 @@
       </div>
 
       <div class="invite">
-        再邀请<span style="color: #f23d3d;">4位</span
+        再邀请<span style="color: #f23d3d;"
+          >{{
+            detail.assistanceCount - detail.powerHelperDTOList.length
+          }}位</span
         >好友助力，立即免费获得该商品
       </div>
 
       <div class="goInvite">
-        <van-button class="goInviteButton">去邀请</van-button>
+        <van-button
+          class="goInviteButton"
+          @click="$toast('点击右上角分享给朋友吧')"
+          >去邀请</van-button
+        >
       </div>
 
       <div class="countDown">
         <van-count-down :time="time">
           <template v-slot="timeData">
-            <span class="item">{{ timeData.hours }} </span>:
-            <span class="item">{{ timeData.minutes }} </span>:
-            <span class="item">{{ timeData.seconds }}</span>
+            <span class="item">
+              {{
+                timeData.hours - 0 < 10 ? "0" + timeData.hours : timeData.hours
+              }}
+            </span>
+            :
+            <span class="item">
+              {{
+                timeData.minutes - 0 < 10
+                  ? "0" + timeData.minutes
+                  : timeData.minutes
+              }}
+            </span>
+            :
+            <span class="item">
+              {{
+                timeData.seconds - 0 < 10
+                  ? "0" + timeData.seconds
+                  : timeData.seconds
+              }}
+            </span>
             <span style="font-family:Source Han Sans CN;">后失效</span>
           </template>
         </van-count-down>
@@ -58,11 +83,24 @@
       <div class="helpPerson">
         <van-grid :column-num="4" :border="false">
           <van-grid-item
-            v-for="(p, i) in person"
+            v-for="(p, i) in detail.assistanceCount"
             :key="i"
-            :class="{ hasHeadUrl: p.headUrl }"
+            :class="{
+              hasHeadUrl:
+                detail.powerHelperDTOList[i] &&
+                detail.powerHelperDTOList[i].headImg
+            }"
           >
-            <van-image :src="p.headUrl" round width="4.5rem" height="4.5rem">
+            <van-image
+              :src="
+                (detail.powerHelperDTOList[i] &&
+                  detail.powerHelperDTOList[i].headImg) ||
+                  ''
+              "
+              round
+              width="4.5rem"
+              height="4.5rem"
+            >
               <template v-slot:error>
                 <van-icon name="plus" size="20" />
               </template>
@@ -81,40 +119,65 @@
       4.每个新注册用户尽可助力一次 <br />
       5.所有人都可以发起无数次助力
     </div>
-    <HelpStatus ref="HelpStatus" status="1" />
   </div>
 </template>
 
 <script>
 import HelpStatus from "@/components/HelpStatus";
+import { request, api } from "@/request";
+import store from "../store";
 export default {
   name: "HelpFree",
   data() {
     return {
       time: 1000 * 60 * 60 * 24,
-      person: [
-        {
-          headUrl: "https://img.yzcdn.cn/vant/apple-1.jpg"
-        },
-        {
-          headUrl: "https://img.yzcdn.cn/vant/apple-2.jpg"
-        },
-        {
-          headUrl: ""
-        },
-        {
-          headUrl: ""
-        }
-      ]
+      detail: {
+        powerHelperDTOList: []
+      }
     };
   },
   methods: {
     back() {
       this.$router.back(-1);
+    },
+    getDetail() {
+      let id = this.$route.query.goodsId;
+      let me = this;
+      request
+        .get(api.HelperGoods + id)
+        .then(res => {
+          if (res.data.code == "200") {
+            // 因为组件要他们的格式  所以转换一次
+            console.log(res);
+            me.detail = res.data.data;
+            me.time = new Date(me.detail.invalidTime) - new Date();
+            let sendData = {
+              goodsInfo: me.detail,
+              pathInfo: {
+                path: "",
+                data:
+                  "&powerSurfaceId=" +
+                  me.detail.powerSurfaceId +
+                  "&goodsId=" +
+                  me.detail.goodsId
+              }
+            };
+            store.commit("toShare", sendData);
+          } else {
+            me.$toast(res.data.message);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {});
+
+      //mall/{goods}
     }
   },
-  mounted() {
-    this.$refs.HelpStatus.showModal();
+  mounted() {},
+  activated() {
+    this.getDetail();
   },
   components: {
     HelpStatus

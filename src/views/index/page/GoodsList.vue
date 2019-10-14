@@ -37,8 +37,8 @@
             :key="n.goodsId"
             @click="goGoodsDetail(n.goodsId)"
           >
-            <van-image :src="'https://img.yzcdn.cn/vant/apple-1.jpg'" />
-            <div class="canBuyItem_title">
+            <van-image :src="n.goodsSmallUrl" />
+            <div class="canBuyItem_title goodsName">
               {{ n.goodsName }}
             </div>
             <div class="canBuyItem_subTitle">
@@ -83,7 +83,7 @@ export default {
           canSort: true
         },
         {
-          title: "我的兑换",
+          title: "我能兑换",
           type: 3,
           canSort: false
         }
@@ -244,7 +244,7 @@ export default {
     .canBuyItem_title {
       font-size: 1rem;
       color: #333;
-      padding: 0.6rem 0;
+      margin: 0.6rem 0;
       width: 100%;
     }
     .canBuyItem_subTitle {
@@ -260,6 +260,21 @@ export default {
         font-size: 0.8rem;
         color: #858585;
       }
+    }
+    .goodsName {
+      width: 100%;
+      color: #333;
+      font-size: 1.1rem;
+      font-weight: 500;
+      overflow: hidden;
+      white-space: normal;
+      text-overflow: ellipsis;
+      text-overflow: -o-ellipsis-lastline;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
   }
 }

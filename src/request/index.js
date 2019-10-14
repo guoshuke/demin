@@ -6,6 +6,7 @@ import axios from "axios";
 import router from "../views/index/router";
 import store from "../views/index/store/index";
 import Api from "./api";
+import _ from "lodash";
 import { Toast } from "vant";
 
 /**
@@ -117,5 +118,7 @@ request.interceptors.response.use(
     }
   }
 );
+
+// let formRequest = _.cloneDeep(request)
 
 export default { request };

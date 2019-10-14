@@ -3,16 +3,20 @@
     <div class="infoBox">
       <div class="info_up">
         <div class="info_up_title">当前积分</div>
-        <div class="info_up_text">97010</div>
+        <div class="info_up_text">{{ pointInfo.totalIntegral || 0 }}</div>
       </div>
       <div class="info_down">
         <div class="info_down_item">
           <div class="info_down_item_title">平台积分</div>
-          <div class="info_down_item_text">9500</div>
+          <div class="info_down_item_text">
+            {{ pointInfo.platformIntegral || 0 }}
+          </div>
         </div>
         <div class="info_down_item">
           <div class="info_down_item_title">商家积分</div>
-          <div class="info_down_item_text">2500</div>
+          <div class="info_down_item_text">
+            {{ pointInfo.mallIntegral || 0 }}
+          </div>
         </div>
       </div>
     </div>
@@ -31,7 +35,9 @@
             <div class="point_info_other">
               2019-09-17 15:00:00
               {{
-                !n.type && n.platformIntegral ? "(其中消耗平台积分1000)" : ""
+                !n.type && n.platformIntegral
+                  ? `(其中消耗平台积分${n.platformIntegral})`
+                  : ""
               }}
             </div>
           </div>
@@ -45,6 +51,7 @@
 import { request, api } from "@/request";
 export default {
   name: "PointsDetails",
+  props: ["pointInfo"],
   data() {
     return {
       showPoint: false,

@@ -65,12 +65,10 @@ export default {
       this.addressInfo = item;
       console.log(item);
       console.log(i);
-      debugger;
     },
 
     // 选中地址
     onSelect(n) {
-      debugger;
       this.showList = false;
       this.editingContact = n;
       this.editingContactId = n.id;

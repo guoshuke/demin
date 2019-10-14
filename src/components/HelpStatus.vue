@@ -10,85 +10,37 @@
     >
       <div class="helpStatus_content">
         <!--        123-&#45;&#45;&#45;&#45; {{ status }}-->
-        <div class="title">助力成功</div>
-        <div class="sub_title">恭喜您助力成功，发起助力，您也可以免费拿哦</div>
+        <div class="title">{{ popupText.title }}</div>
+        <div class="sub_title">{{ popupText.subTitle }}</div>
         <div class="content">
-          <li>
+          <li v-for="detail in details">
             <van-card
               price="0积分"
-              origin-price="100积分"
-              thumb="https://img.yzcdn.cn/vant/t-thirt.jpg"
+              :origin-price="detail.integral + '积分'"
+              :thumb="detail.goodsSmallUrl"
             >
               <div slot="title" class="goodsTitle">
-                <span class="goodsTitleText"
-                  >厨房厨具三件套 淡蓝色 不锈钢厨具锅具</span
-                >
+                <span class="goodsTitleText">{{ detail.goodsName }}</span>
               </div>
               <div slot="tags">
                 <van-tag type="danger">好友助力</van-tag>
-                <van-tag plain type="danger" class="needTag">需要4人</van-tag>
+                <van-tag plain type="danger" class="needTag"
+                  >需要{{ detail.assistanceCount || 0 }}人</van-tag
+                >
               </div>
               <div slot="price" class="price">
                 0积分
               </div>
               <div slot="origin-price" class="origin-price">
-                100积分
+                {{ detail.integral }}积分
               </div>
             </van-card>
             <div class="goFree">
-              <van-button class="goInviteButton">立即参与</van-button>
-            </div>
-          </li>
-          <li>
-            <van-card
-              price="0积分"
-              origin-price="100积分"
-              thumb="https://img.yzcdn.cn/vant/t-thirt.jpg"
-            >
-              <div slot="title" class="goodsTitle">
-                <span class="goodsTitleText"
-                  >厨房厨具三件套 淡蓝色 不锈钢厨具锅具</span
-                >
-              </div>
-              <div slot="tags">
-                <van-tag type="danger">好友助力</van-tag>
-                <van-tag plain type="danger" class="needTag">需要4人</van-tag>
-              </div>
-              <div slot="price" class="price">
-                0积分
-              </div>
-              <div slot="origin-price" class="origin-price">
-                100积分
-              </div>
-            </van-card>
-            <div class="goFree">
-              <van-button class="goInviteButton">立即参与</van-button>
-            </div>
-          </li>
-          <li>
-            <van-card
-              price="0积分"
-              origin-price="100积分"
-              thumb="https://img.yzcdn.cn/vant/t-thirt.jpg"
-            >
-              <div slot="title" class="goodsTitle">
-                <span class="goodsTitleText"
-                  >厨房厨具三件套 淡蓝色 不锈钢厨具锅具</span
-                >
-              </div>
-              <div slot="tags">
-                <van-tag type="danger">好友助力</van-tag>
-                <van-tag plain type="danger" class="needTag">需要4人</van-tag>
-              </div>
-              <div slot="price" class="price">
-                0积分
-              </div>
-              <div slot="origin-price" class="origin-price">
-                100积分
-              </div>
-            </van-card>
-            <div class="goFree">
-              <van-button class="goInviteButton">立即参与</van-button>
+              <van-button
+                class="goInviteButton"
+                @click="goHelpFree(detail.goodsId)"
+                >立即参与</van-button
+              >
             </div>
           </li>
         </div>
@@ -99,16 +51,39 @@
 
 <script>
 export default {
-  props: ["status"],
+  props: ["status", "details"],
   name: "HelpStatus",
+  computed: {
+    popupText() {
+      return this.data[this.status];
+    }
+  },
   data() {
     return {
-      show: false
+      show: false,
+      data: [
+        {
+          title: "助力成功",
+          subTitle: "恭喜您助力成功，发起助力，您也可以免费拿哦"
+        },
+        {
+          title: "助力失败",
+          subTitle: "您可以发起助力免费拿哦"
+        },
+        {
+          title: "新人大礼快来领取",
+          subTitle: "免费助力拿拿商品"
+        }
+      ]
     };
   },
   methods: {
     showModal() {
+      console.log(this.status);
       this.show = true;
+    },
+    goHelpFree(id) {
+      this.$router.push(`free?goodsId=` + id);
     }
   }
 };
@@ -117,7 +92,6 @@ export default {
 <style scoped lang="less">
 .helpStatus {
   .helpStatus_content {
-    height: 30rem;
     width: 92vw;
     background-color: #f23d3d;
     display: flex;
@@ -151,7 +125,7 @@ export default {
     border-radius: 1rem;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
-
+    padding: 1rem 0.5rem;
     li {
       display: flex;
       justify-content: center;

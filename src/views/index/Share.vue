@@ -12,50 +12,51 @@
         </van-divider>
         <div class="bar">好友首次成功兑换一个商品</div>
         <van-divider class="divider">
-          奖励200积分
+          奖励800积分
         </van-divider>
         <div class="bar">
           好友每成功兑换商品即可<br />
           获得3%的回馈积分奖励
         </div>
-        <van-button class="shareBar" @click="share">
+        <van-button class="shareBar" @click="toShare">
           <van-image src="./share/share_3.png" class="img img3"></van-image>
           立即邀请
           <van-image src="./share/share_3.png" class="img img4"></van-image>
         </van-button>
       </div>
-      <van-divider class="divider divider_bottom">
-        已邀请好友
-      </van-divider>
-      <ul class="list">
-        <li class="item">
-          <van-image src="./share/share_3.png" class="img headImg"></van-image>
-          <div class="niceName">Xuewei520</div>
-          <div class="point">已贡献500积分</div>
-        </li>
-      </ul>
+      <!--      <van-divider class="divider divider_bottom">-->
+      <!--        已邀请好友-->
+      <!--      </van-divider>-->
+      <!--      <ul class="list">-->
+      <!--        <li class="item">-->
+      <!--          <van-image src="./share/share_3.png" class="img headImg"></van-image>-->
+      <!--          <div class="niceName">Xuewei520</div>-->
+      <!--          <div class="point">已贡献500积分</div>-->
+      <!--        </li>-->
+      <!--      </ul>-->
     </div>
   </div>
 </template>
 
 <script>
-import wx from "weixin-js-sdk";
+import store from "./store";
 export default {
   name: "Share",
+  data() {
+    return {
+      data: null
+    };
+  },
   methods: {
-    share() {
-      alert(1);
-      wx.updateAppMessageShareData({
-        title: "我是标题", // 分享标题
-        desc: "我是描述", // 分享描述
-        link: "http://development.chinatxyj.com", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-        imgUrl: "http://development.chinatxyj.com/home/p5000.png", // 分享图标
-        success: function(res) {
-          // 设置成功
-          alert(res);
-        }
-      });
+    toShare() {
+      this.$toast("点击右上角分享给朋友吧");
     }
+  },
+  created() {
+    store.commit("toShare");
+  },
+  activated() {
+    store.commit("toShare");
   }
 };
 </script>

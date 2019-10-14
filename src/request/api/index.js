@@ -11,7 +11,8 @@ const target = (function() {
     goodsDetail: "goods/",
     allList: "goods/list",
     myGoods: "myGoods",
-    classifyList: "items/goods"
+    classifyList: "items/goods",
+    getSignature: "getSignature"
   };
   return _.transform(
     urls,

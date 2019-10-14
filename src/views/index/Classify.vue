@@ -26,7 +26,7 @@
                 :key="n.id"
                 @click="goGoodsList({ type: 'itemCatId', itemCatId: n.id })"
               >
-                <van-image :src="n.image" class="subMenu_img" />
+                <van-image :src="n.imageUrl" class="subMenu_img" />
                 <span class="subMenu_sub">{{ n.text }}</span>
               </van-grid-item>
             </van-grid>
@@ -86,7 +86,7 @@ export default {
                       let temp2 = {
                         text: n2.itemName,
                         id: n2.id,
-                        image: "https://img.yzcdn.cn/vant/apple-2.jpg"
+                        imageUrl: n2.imageUrl
                       };
                       r2.push(temp2);
                     },
