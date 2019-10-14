@@ -163,6 +163,10 @@ export default {
         }
         // 假设成功
         me.detail = res.data.data;
+        if (!me.detail.integral) {
+          me.activeNum = 1;
+        }
+
         store.commit("setBrowseHistory", res.data.data);
 
         let sendData = {
