@@ -13,6 +13,13 @@
       "unicode_decimal": 58911
     },
     {
+      "icon_id": "2681683",
+      "name": "地址",
+      "font_class": "dizhi",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
       "icon_id": "6907913",
       "name": "提交成功",
       "font_class": "tijiaochenggong",

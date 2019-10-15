@@ -78,7 +78,7 @@
     <van-popup v-model="showList" position="bottom">
       <CommitOrder
         :detail="detail"
-        :type="activeNum"
+        :payType="activeNum"
         :num="num"
         ref="commitOrder"
         @closePopup="closePopup"
@@ -158,8 +158,12 @@ export default {
       // this.$router.push(
       //   `order?goodsId=${goodsId}&num=${this.num}&type=${this.activeNum}`
       // );
-      this.showList = true;
-      this.$refs.commitOrder && this.$refs.commitOrder.getAddressList(); // 进去后重新获取一下地址
+        let me = this
+        store.dispatch("getPhoneNumber",function () {
+            me.showList = true;
+            me.$refs.commitOrder && me.$refs.commitOrder.getAddressList(); // 进去后重新获取一下地址
+        })
+
     }
   },
   activated() {
@@ -188,7 +192,10 @@ export default {
         store.commit("setBrowseHistory", res.data.data);
 
         let sendData = {
-          goodsInfo: me.detail,
+          goodsInfo: {
+              goodsName: me.detail.goodsName,
+              goodsSmallUrl:me.detail.goodsSmallUrl
+          },
           pathInfo: {
             path: "goodsDetail",
             data: "&goodsId=" + me.detail.goodsId
@@ -218,7 +225,8 @@ export default {
   components: {
     CommitOrder,
     Loading
-  }
+  },
+
 };
 </script>
 <style lang="less" scoped>

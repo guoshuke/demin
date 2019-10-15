@@ -25,7 +25,7 @@
               <van-grid-item
                 v-for="n in t.children"
                 :key="n.id"
-                @click="goGoodsList({ type: 'itemCatId', itemCatId: n.id })"
+                @click="goGoodsList({ type: 'itemCatId', itemCatId: n.id, className:n.text })"
               >
                 <van-image :src="n.imageUrl" class="subMenu_img" />
                 <span class="subMenu_sub">{{ n.text }}</span>
@@ -121,7 +121,9 @@ export default {
     }
   },
   created() {
-    this.getList();
+      if(this.items.length === 0){
+          this.getList();
+      }
   },
   components: {
     Loading
@@ -180,11 +182,10 @@ export default {
   }
   .items {
     background-color: #fff;
-    padding: 0 1rem;
   }
   .subMenu {
     color: #333333;
-    padding: 1rem 0 1rem 0.5rem;
+    padding: 1rem;
   }
   .subMenu_img {
     margin-bottom: 1rem;
@@ -204,7 +205,7 @@ export default {
     /deep/ .van-sidebar-item {
       background-color: #efefef;
     }
-    flex: 1.5;
+    flex: 1.2;
   }
   .divider {
     color: #858585;

@@ -7,7 +7,8 @@ export default (() => {
     orderList: "exchange/list",
     orderDetail: "order/detail/",
     cancelOrder: "update/status",
-    pay: "create"
+    pay: "create",
+    hasPhone:"have/phone"
   };
   return _.transform(
     urls,

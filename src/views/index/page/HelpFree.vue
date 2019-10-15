@@ -35,15 +35,18 @@
         <div class="calc_right"></div>
       </div>
 
-      <div class="invite">
+      <div class="invite" v-if="detail.assistanceCount !== detail.powerHelperDTOList.length">
         再邀请<span style="color: #f23d3d;"
           >{{
             detail.assistanceCount - detail.powerHelperDTOList.length
           }}位</span
         >好友助力，立即免费获得该商品
       </div>
+      <div class="invite" v-if="detail.assistanceCount == detail.powerHelperDTOList.length">
+        恭喜您助力成功
+      </div>
 
-      <div class="goInvite">
+      <div class="goInvite" >
         <van-button
           v-if="detail.assistanceCount > detail.powerHelperDTOList.length"
           class="goInviteButton"
@@ -56,9 +59,14 @@
           @click="goCommitOrder"
           >去兑换</van-button
         >
+        <van-button
+                v-if="time == 0 && detail.assistanceCount !== detail.powerHelperDTOList.length"
+                class="goInviteButton"
+        >助力失败</van-button
+        >
       </div>
 
-      <div class="countDown">
+      <div class="countDown" v-if="detail.assistanceCount !== detail.powerHelperDTOList.length">
         <van-count-down :time="time">
           <template v-slot="timeData">
             <span class="item">
@@ -109,7 +117,7 @@
               height="4.5rem"
             >
               <template v-slot:error>
-                <van-icon name="plus" size="20" />
+                <van-icon name="question-o" size="28" />
               </template>
             </van-image>
           </van-grid-item>
@@ -131,6 +139,7 @@
         :detail="detail"
         :type="0"
         :num="1"
+        :isFree="true"
         ref="commitOrder"
         @closePopup="closePopup"
       />
@@ -168,9 +177,13 @@ export default {
             // 因为组件要他们的格式  所以转换一次
             console.log(res);
             me.detail = res.data.data;
-            me.time = new Date(me.detail.invalidTime) - new Date();
+            me.time = new Date(me.detail.invalidTime.replace(/-/g,"/")) - new Date();
+            if(me.time < 0){me.time = 0}
             let sendData = {
-              goodsInfo: me.detail,
+              goodsInfo: {
+                  goodsName: me.detail.goodsName,
+                  goodsSmallUrl:me.detail.goodsSmallUrl
+              },
               pathInfo: {
                 path: "",
                 data:
@@ -204,8 +217,11 @@ export default {
       // this.$router.push(
       //   `order?goodsId=${goodsId}&num=${this.num}&type=${this.activeNum}`
       // );
-      this.showList = true;
-      this.$refs.commitOrder && this.$refs.commitOrder.getAddressList(); // 进去后重新获取一下地址
+        let me = this
+        store.dispatch("getPhoneNumber",function () {
+            me.showList = true;
+            me.$refs.commitOrder && me.$refs.commitOrder.getAddressList(); // 进去后重新获取一下地址
+        })
     }
   },
   mounted() {},

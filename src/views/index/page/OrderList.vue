@@ -65,8 +65,8 @@ export default {
       ],
       list: [],
       resData: {
-        pageSize: 10,
-        currentPage: 0,
+        pageSize: 999,
+        currentPage: 1,
         orderStatus: null
       },
       loading: false,
@@ -85,12 +85,12 @@ export default {
       console.log(i);
       this.list = [];
       let types = [null, 0, 1, 2, 3, 4];
-      this.resData.currentPage = 0;
+      this.resData.currentPage = 1;
       this.questData(types[i]);
     },
     questData(type) {
       let me = this;
-      me.resData.currentPage++;
+      // me.resData.currentPage++;
       me.resData.orderStatus = type;
       _.isNull(type) && delete me.resData.orderStatus;
       this.loading = true;
@@ -103,7 +103,7 @@ export default {
             me.finished = true;
             console.log("end");
           } else {
-            me.list = me.list.concat(res.dataList);
+            me.list = res.dataList;
           }
         })
         .catch(err => {

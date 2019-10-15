@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div class="fixed_top">
+    <div class="fixed_top" :style="{'background': `rgba(0, 0, 0, ${opacity})`}">
       <div class="location" @click="$toast('更多城市入驻中')">
         <van-icon name="aim" />
         <span>扬州市</span>
@@ -331,7 +331,8 @@ export default {
       show: false,
       resData: { currentPage: 1, pageSize: 10 },
       details: [],
-      showNew: false
+      showNew: false,
+        opacity:0.3
     };
   },
   methods: {
@@ -548,16 +549,23 @@ export default {
       this.showNew = true;
       debugger;
       this.$refs.HelpStatus.showModal();
-    }
+    },
+      setOpacity(){
+        let me = this
+        window.onscroll=function (n) {
+            me.opacity = window.scrollY/500 < 0.3 ? window.scrollY/500 : 0.3
+            // opacity
+        }
+      }
   },
   mounted() {
-    store.commit("toShare");
     this.requestHomeData();
   },
   components: {
     HelpStatus
   },
   created() {
+      this.setOpacity()
     let n = this;
     this.loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
     if (
@@ -610,7 +618,6 @@ export default {
   width: 100%;
   align-items: center;
   color: #fff;
-  background: rgba(0, 0, 0, 0.3);
   .location {
     padding-left: 12px;
     display: flex;
@@ -640,7 +647,7 @@ export default {
 
 .swipe {
   .van-image {
-    height: 66vw;
+    /*min-height: 50vw;*/
   }
   img {
     width: 100vw;

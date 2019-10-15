@@ -5,7 +5,7 @@
       :class="{ unpaid: brief.orderStatus == 0 }"
       @click="goOrderDetail(brief)"
     >
-      <van-card thumb="https://img.yzcdn.cn/vant/t-thirt.jpg" class="goodsInfo">
+      <van-card :thumb="brief.imageUrl" class="goodsInfo">
         <div slot="title" class="goodsTitle">
           <span class="goodsTitleText">{{
             brief.payType ? "现金支付" : "积分兑换"
@@ -111,6 +111,7 @@ export default {
       position: absolute;
       right: 6px;
       top: 1rem;
+      z-index: 1000;
     }
   }
   & > div {

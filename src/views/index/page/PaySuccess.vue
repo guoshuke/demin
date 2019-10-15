@@ -6,7 +6,7 @@
       <span>兑换成功</span>
     </div>
     <div class="title">
-      兑换成功 我们的工作人员将会在七个工作日内讲货物 发出 请耐心等待
+      兑换成功 我们的工作人员将会在七个工作日内将货物发出请耐心等待
     </div>
     <div class="funcBar">
       <van-button type="default" class="share">邀请好友赚积分</van-button>

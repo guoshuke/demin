@@ -1,7 +1,7 @@
 <template>
   <div class="goodsList">
     <van-nav-bar
-      title="分类名称"
+      :title="title || '分类名称'"
       left-arrow
       fixed
       @click-left="$router.back(-1)"
@@ -87,7 +87,8 @@ export default {
           type: 3,
           canSort: false
         }
-      ]
+      ],
+        title:''
     };
   },
   methods: {
@@ -170,6 +171,8 @@ export default {
     };
     try {
       let t = JSON.parse(this.$route.query.object);
+      this.title = t.className
+        delete t.className;
       console.log(t);
       if (t.type) {
         this.resData[t.type] = t[t.type];

@@ -34,30 +34,31 @@
       <!--          <div class="point">已贡献500积分</div>-->
       <!--        </li>-->
       <!--      </ul>-->
+      <shareModal v-if="showModal" @click="showModal = false"/>
     </div>
   </div>
 </template>
 
 <script>
+  import shareModal from "@/components/shareModal";
 import store from "./store";
 export default {
   name: "Share",
   data() {
     return {
-      data: null
+      data: null,
+        showModal:false
     };
   },
   methods: {
     toShare() {
-      this.$toast("点击右上角分享给朋友吧");
+        debugger
+        this.showModal = true
     }
   },
-  created() {
-    store.commit("toShare");
-  },
-  activated() {
-    store.commit("toShare");
-  }
+    components:{
+        shareModal
+    }
 };
 </script>
 
@@ -163,7 +164,7 @@ export default {
       color: #f23d3d;
       border-color: #f23d3d;
       width: 100%;
-      padding: 0 6rem;
+      padding: 0 5rem;
       box-sizing: border-box;
       font-weight: 500;
       font-size: 1.2rem;

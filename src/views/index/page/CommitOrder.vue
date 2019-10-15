@@ -43,7 +43,7 @@
     </van-popup>
 
     <van-card
-      :num="num"
+      :num="number"
       :thumb="detail.goodsSmallUrl || `https://img.yzcdn.cn/vant/t-thirt.jpg`"
       class="goodsInfo"
     >
@@ -51,7 +51,7 @@
         <span class="goodsTitleText">{{ detail.goodsName }}</span>
       </div>
       <div slot="price" class="price">
-        {{ type ? detail.price + "元" : detail.integral + "积分" }}
+        {{ type ? (detail.price*number) + "元" : (detail.integral*number) + "积分" }}
       </div>
     </van-card>
 
@@ -69,7 +69,7 @@
     <div class="myList">
       <div class="listTitle">商品金额</div>
       <div class="listTitle_sub">
-        {{ type ? detail.price + "元" : detail.integral + "积分" }}
+        {{ type ? (detail.price* number) + "元" : (detail.integral*number) + "积分" }}
       </div>
       <!--      <van-icon name="arrow" class="listTitle_sub" />-->
     </div>
@@ -90,10 +90,8 @@
         实际支付：
         {{
           type
-            ? "￥" + detail.price
-            : (detail.integral - detail.platformReductionIntegral < 0
-                ? 0
-                : detail.integral - detail.platformReductionIntegral) + "积分"
+            ? "￥" + (detail.price * number)
+            : payPoint
         }}
       </div>
       <van-button class="submitRedeem" :loading="loading" @click="submitOrder"
@@ -110,7 +108,7 @@ import _ from "lodash";
 import utils from "@/utils";
 import wx from "weixin-js-sdk";
 export default {
-  props: ["detail", "num", "type"],
+  props: ["detail", "num", "payType", "isFree"],
   name: "Order",
   data() {
     return {
@@ -123,7 +121,9 @@ export default {
       addressInfo: {},
       editingContactId: null,
       areaList,
-      list: []
+      list: [],
+        number: this.num || 1,
+        type:this.payType || 0
     };
   },
   computed: {
@@ -133,7 +133,12 @@ export default {
     currentContact() {
       const id = this.chosenContactId;
       return id !== null ? this.list.filter(item => item.id === id)[0] : {};
-    }
+    },
+      payPoint(){
+          this.isFree ? '0积分' :((detail.integral * number - detail.platformReductionIntegral < 0
+              ? 0
+              : detail.integral * number - detail.platformReductionIntegral) + "积分")
+      }
   },
 
   methods: {
@@ -207,6 +212,8 @@ export default {
     },
 
     getAddressList(info) {
+        this.number = this.num
+        this.type = this.payType
       const me = this;
       request
         .get(api.addressList)
@@ -270,6 +277,9 @@ export default {
         phone: this.editingContact.tel,
         payType: this.type - 0
       };
+        if(isFree){
+            sendData.goodsIntegral = 0
+        }
       _.each(this.list, n => {
         if (this.editingContact.id == n.id) {
           sendData.address = utils.getAddress(n.areaCode) + sendData.address;
@@ -279,6 +289,7 @@ export default {
       const me = this;
       if (!sendData.address) {
         this.$toast("请选择地址");
+          this.loading = false;
         return;
       }
       request
@@ -299,12 +310,14 @@ export default {
         })
         .catch(err => {
           console.log(err);
+            this.loading = false;
         })
         .finally(() => {
-          me.loading = false;
+
         });
     },
     pay(orderId, data) {
+        let me = this
       let sendData = {
         orderId: orderId,
         goodsName: data.goodsName,
@@ -325,18 +338,25 @@ export default {
           payConfig.paySign = payConfig.sign;
           payConfig.nonceStr = payConfig.noncestr;
           payConfig.success = function(res) {
+              me.closePopup()
             if (res.errMsg == "chooseWXPay:ok") {
               //alert("支付成功");
+                me.$notify("支付成功");
               me.$router.push("paySuccess?orderId=" + orderId);
             } else {
-              me.$toast("支付失败");
-              this.$router.push("orderDetail?orderId=" + orderId);
+              me.$notify("支付失败");
+              me.$router.push("orderDetail?orderId=" + orderId);
             }
           };
           payConfig.cancel = function(res) {
-            me.$toast("取消支付");
-            this.$router.push("orderDetail?orderId=" + orderId);
+            me.$notify("取消支付");
+              me.closePopup()
+            me.$router.push("orderDetail?orderId=" + orderId);
           };
+            // 支付失败回调函数
+            payConfig.fail=function (res) {
+                me.$notify('支付失败~')
+            }
           console.log(payConfig);
 
           wx.config({
@@ -350,10 +370,11 @@ export default {
           wx.chooseWXPay(payConfig);
         })
         .catch(err => {
+            this.loading = false;
           console.log(err);
         })
         .finally(() => {
-          this.loading = false;
+
         });
 
       // me.$router.push("paySuccess?orderId=" + res.data.data);

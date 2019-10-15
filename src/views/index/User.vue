@@ -63,10 +63,8 @@
     <!--    积分规则-->
     <van-popup
       v-model="pointRules_show"
-      round
       closeable
       position="bottom"
-      :style="{ height: '80%' }"
     >
       <van-nav-bar title="积分规则" @click-left="$router.back(-1)" />
       <div class="pointRules_pop">
@@ -74,7 +72,7 @@
         <iframe
           width="100%"
           height="100%"
-          src="http://weixin.chinatxyj.com/menu/mycenter_aboutus.html"
+          src="http://weixin.chinatxyj.com/menu/integral_rule.html"
         ></iframe>
       </div>
     </van-popup>
@@ -287,7 +285,10 @@ export default {
   }
   .pointRules_pop {
     padding: 1rem;
-    height: 100%;
+    height: calc(100vh - 74px);
+    iframe{
+      border: 0;
+    }
   }
 }
 </style>

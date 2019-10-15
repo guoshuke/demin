@@ -24,9 +24,9 @@
               </div>
               <div slot="tags">
                 <van-tag type="danger">好友助力</van-tag>
-                <van-tag plain type="danger" class="needTag"
-                  >需要{{ detail.assistanceCount || 0 }}人</van-tag
-                >
+<!--                <van-tag plain type="danger" class="needTag"-->
+<!--                  >需要{{ detail.assistanceCount || 0 }}人</van-tag-->
+<!--                >-->
               </div>
               <div slot="price" class="price">
                 0积分

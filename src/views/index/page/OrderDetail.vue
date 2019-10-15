@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="address">
-        <div class="address_icon"></div>
+        <div class="address_icon"><span class="iconfont icon-dizhi"  /></div>
         <div class="address_info">
           <div class="address_info_title">
             <span>收货人：{{ detail.userName }}</span>
@@ -67,7 +67,7 @@
         </div>
       </div>
     </div>
-    <div class="footer">
+    <div class="footer" v-if="detail.orderStatus == 0">
       <van-button class="cancel" @click="show = true">取消订单</van-button>
       <van-button class="toPay" @click="pay">立即支付</van-button>
     </div>
@@ -86,6 +86,7 @@
 
 <script>
 import { request, api } from "@/request";
+import wx from "weixin-js-sdk"
 import _ from "lodash";
 import utils from "@/utils";
 export default {
@@ -172,7 +173,7 @@ export default {
     },
     doCopy(text) {
       let me = this;
-      this.$copyText("11111111").then(
+      this.$copyText(text).then(
         function(e) {
           me.$toast("复制成功");
         },
@@ -182,6 +183,7 @@ export default {
       );
     },
     pay() {
+        let me = this;
       let data = this.detail;
       let sendData = {
         orderId: data.orderId,
@@ -204,7 +206,17 @@ export default {
           payConfig.nonceStr = payConfig.noncestr;
           payConfig.success = function(res) {
             console.log(res);
+              me.$router.push("paySuccess?orderId=" + orderId);
           };
+            payConfig.cancel = function(res) {
+                me.$notify("取消支付");
+                me.closePopup()
+                me.$router.push("orderDetail?orderId=" + orderId);
+            };
+            // 支付失败回调函数
+            payConfig.fail=function (res) {
+                me.$notify('支付失败~')
+            }
           console.log(payConfig);
 
           wx.config({
@@ -267,6 +279,10 @@ export default {
     background-color: #fff;
     .address_icon {
       width: 4rem;
+      text-align: center;
+      .iconfont{
+        font-size: 1.8rem;
+      }
     }
     .address_info {
       display: flex;

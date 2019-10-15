@@ -12,11 +12,13 @@ Vue.use(VueClipboard);
 import "vant/lib/index.css";
 import common from "@/utils/request";
 import { request, api } from "@/request";
-
+debugger
 Vue.use(VueLazyload);
 
 Vue.use(Vant);
 Vue.config.productionTip = false;
+
+store.commit('toShare')
 
 router.beforeEach((to, from, next) => {
   console.log("router", to, from, next);
