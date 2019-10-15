@@ -1,5 +1,6 @@
 <template>
   <div class="classify">
+    <Loading v-show="loading"></Loading>
     <form action="/" class="form">
       <van-search
         v-model="value"
@@ -40,14 +41,16 @@
 
 <script>
 import _ from "lodash";
-import { request, api } from "../../request";
+import { request, api } from "@/request";
+import Loading from "@/components/Loading";
 export default {
   name: "Classify",
   data() {
     return {
       activeIndex: 0,
       items: [],
-      value: ""
+      value: "",
+      loading: false
     };
   },
   methods: {
@@ -58,13 +61,15 @@ export default {
       console.log(2);
     },
     getList() {
+      let me = this;
+      me.loading = true;
       request
         .get(api.list)
         .then(res => {
           console.log(res.data);
           // todo 判断code
           // 假设成功
-          this.items = _.transform(
+          me.items = _.transform(
             res.data.data,
             (r, n, k) => {
               let temp = {
@@ -108,6 +113,7 @@ export default {
         })
         .finally(() => {
           // this.goGoodsDetail(3);
+          me.loading = false;
         });
     },
     goGoodsList(item) {
@@ -116,6 +122,9 @@ export default {
   },
   created() {
     this.getList();
+  },
+  components: {
+    Loading
   }
 };
 </script>

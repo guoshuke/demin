@@ -25,7 +25,7 @@
       <div class="funcBar_items">花积分</div>
     </div>
     <div class="listBox">
-      <ul class="list">
+      <ul class="list" v-if="dataList.length">
         <li v-for="n in dataList">
           <div class="cacl">{{ (n.type ? "" : "-") + n.mallIntegral }}</div>
           <div class="point_info">
@@ -43,12 +43,14 @@
           </div>
         </li>
       </ul>
+      <noData :text="'暂无积分记录'" v-if="!dataList.length" />
     </div>
   </div>
 </template>
 
 <script>
 import { request, api } from "@/request";
+import noData from "@/components/noData";
 export default {
   name: "PointsDetails",
   props: ["pointInfo"],
@@ -85,6 +87,9 @@ export default {
   },
   mounted() {
     this.getList();
+  },
+  components: {
+    noData
   }
 };
 </script>

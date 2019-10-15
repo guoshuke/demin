@@ -45,9 +45,16 @@
 
       <div class="goInvite">
         <van-button
+          v-if="detail.assistanceCount > detail.powerHelperDTOList.length"
           class="goInviteButton"
           @click="$toast('点击右上角分享给朋友吧')"
           >去邀请</van-button
+        >
+        <van-button
+          v-if="detail.assistanceCount === detail.powerHelperDTOList.length"
+          class="goInviteButton"
+          @click="goCommitOrder"
+          >去兑换</van-button
         >
       </div>
 
@@ -119,11 +126,21 @@
       4.每个新注册用户尽可助力一次 <br />
       5.所有人都可以发起无数次助力
     </div>
+    <van-popup v-model="showList" position="bottom">
+      <CommitOrder
+        :detail="detail"
+        :type="0"
+        :num="1"
+        ref="commitOrder"
+        @closePopup="closePopup"
+      />
+    </van-popup>
   </div>
 </template>
 
 <script>
 import HelpStatus from "@/components/HelpStatus";
+import CommitOrder from "./CommitOrder";
 import { request, api } from "@/request";
 import store from "../store";
 export default {
@@ -133,7 +150,8 @@ export default {
       time: 1000 * 60 * 60 * 24,
       detail: {
         powerHelperDTOList: []
-      }
+      },
+      showList: false
     };
   },
   methods: {
@@ -173,6 +191,21 @@ export default {
         .finally(() => {});
 
       //mall/{goods}
+    },
+    closePopup() {
+      this.showList = false;
+    },
+    goCommitOrder() {
+      // let goodsId = this.$route.query.goodsId;
+      // let temp = {
+      //   0: "integral",
+      //   1: "price"
+      // };
+      // this.$router.push(
+      //   `order?goodsId=${goodsId}&num=${this.num}&type=${this.activeNum}`
+      // );
+      this.showList = true;
+      this.$refs.commitOrder && this.$refs.commitOrder.getAddressList(); // 进去后重新获取一下地址
     }
   },
   mounted() {},
@@ -180,7 +213,8 @@ export default {
     this.getDetail();
   },
   components: {
-    HelpStatus
+    HelpStatus,
+    CommitOrder
   }
 };
 </script>

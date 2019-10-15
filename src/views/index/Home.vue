@@ -27,20 +27,8 @@
 
     <div class="home_block">
       <van-swipe :autoplay="3000" class="swipe">
-        <van-swipe-item
-          v-for="n in data.bannerList"
-          :key="n.id"
-          @click="goGoodsDetail(n.id)"
-        >
-          <van-image
-            :src="
-              n.bannerUrl ||
-                'http://139.196.151.129:8081/goodsPic/15/1/65c018d98a0e476da458bd3f26b7422e.jpg'
-            "
-            fit="cover"
-            @load="imgLoad"
-          />
-          {{ n.bannerUrl }}
+        <van-swipe-item v-for="n in data.bannerList" :key="n.id">
+          <van-image :src="n.bannerUrl" fit="cover" @load="imgLoad" />
         </van-swipe-item>
       </van-swipe>
     </div>
@@ -558,6 +546,7 @@ export default {
     showModal() {
       this.details = this.data.zeroGoodsList.slice(0, 2);
       this.showNew = true;
+      debugger;
       this.$refs.HelpStatus.showModal();
     }
   },
@@ -569,13 +558,15 @@ export default {
     HelpStatus
   },
   created() {
+    let n = this;
     this.loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
     if (
       localStorage.getItem("powerSurfaceId") &&
-      localStorage.getItem("goodsId") &&
-      this.loginInfo.flag
+      localStorage.getItem("goodsId")
     ) {
-      this.$refs.HelpStatus.showModal();
+      setTimeout(() => {
+        me.$refs.HelpStatus.showModal();
+      }, 500);
 
       const me = this;
       request

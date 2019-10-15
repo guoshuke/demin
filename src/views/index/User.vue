@@ -56,10 +56,10 @@
       <div class="listTitle">我的收货地址</div>
       <van-icon name="arrow" class="listTitle_sub" />
     </div>
-    <div class="myList">
-      <div class="listTitle">我的助力</div>
-      <van-icon name="arrow" class="listTitle_sub" />
-    </div>
+    <!--    <div class="myList">-->
+    <!--      <div class="listTitle">我的助力</div>-->
+    <!--      <van-icon name="arrow" class="listTitle_sub" />-->
+    <!--    </div>-->
     <!--    积分规则-->
     <van-popup
       v-model="pointRules_show"
@@ -69,7 +69,14 @@
       :style="{ height: '80%' }"
     >
       <van-nav-bar title="积分规则" @click-left="$router.back(-1)" />
-      <div v-html="pointRules" class="pointRules_pop"></div>
+      <div class="pointRules_pop">
+        <!--        v-html="pointRules"-->
+        <iframe
+          width="100%"
+          height="100%"
+          src="http://weixin.chinatxyj.com/menu/mycenter_aboutus.html"
+        ></iframe>
+      </div>
     </van-popup>
     <!--    积分明细-->
     <van-popup
@@ -280,6 +287,7 @@ export default {
   }
   .pointRules_pop {
     padding: 1rem;
+    height: 100%;
   }
 }
 </style>

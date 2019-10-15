@@ -1,5 +1,6 @@
 <template>
   <div class="goodsDetail">
+    <Loading v-show="loading"></Loading>
     <van-nav-bar left-arrow fiexd @click-left="onClickLeft" class="goodsTitle">
     </van-nav-bar>
     <div class="swipeBlock">
@@ -89,7 +90,9 @@
 import { request, api } from "@/request";
 import store from "../store";
 import CommitOrder from "./CommitOrder";
+import Loading from "@/components/Loading";
 import _ from "lodash";
+let back = -1;
 export default {
   name: "goodsDetail",
   data() {
@@ -99,6 +102,7 @@ export default {
         "https://img.yzcdn.cn/vant/apple-1.jpg",
         "https://img.yzcdn.cn/vant/apple-2.jpg"
       ],
+      loading: false,
       detail: {
         goodsId: 0,
         goodsName: "",
@@ -117,9 +121,20 @@ export default {
       num: 1
     };
   },
+  beforeRouteEnter(to, form, next) {
+    console.log(to, form);
+    if (form.name == "search") {
+      debugger;
+      back = -2;
+    } else {
+      back = -1;
+    }
+    next();
+  },
   methods: {
     onClickLeft() {
-      this.$router.back(-1);
+      debugger;
+      history.go(back);
     },
     closePopup() {
       this.showList = false;
@@ -148,6 +163,7 @@ export default {
     }
   },
   activated() {
+    this.loading = true;
     let goodsId = this.$route.query.goodsId;
     const me = this;
     request
@@ -165,6 +181,8 @@ export default {
         me.detail = res.data.data;
         if (!me.detail.integral) {
           me.activeNum = 1;
+        } else {
+          me.activeNum = 0;
         }
 
         store.commit("setBrowseHistory", res.data.data);
@@ -182,8 +200,12 @@ export default {
         console.log(err);
       })
       .finally(() => {
+        me.loading = false;
         // this.goGoodsDetail(3);
       });
+  },
+  deactivated() {
+    this.detail = {};
   },
   computed: {
     needPoints() {
@@ -194,7 +216,8 @@ export default {
     }
   },
   components: {
-    CommitOrder
+    CommitOrder,
+    Loading
   }
 };
 </script>
