@@ -572,10 +572,6 @@ export default {
       localStorage.getItem("powerSurfaceId") &&
       localStorage.getItem("goodsId")
     ) {
-      setTimeout(() => {
-        me.$refs.HelpStatus.showModal();
-      }, 500);
-
       const me = this;
       request
         .get(api.goodsDetail + localStorage.getItem("goodsId"))
@@ -585,6 +581,9 @@ export default {
             // todo delete
             me.$toast(res.data.message);
           } else {
+            setTimeout(() => {
+        me.$refs.HelpStatus.showModal();
+      }, 500);
             me.details = [res.data.data];
             // me.detail.powerSurfaceId = localStorage.getItem("powerSurfaceId");
           }

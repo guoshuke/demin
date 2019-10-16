@@ -74,6 +74,8 @@ export default new Vuex.Store({
         if (sendData.pathInfo.data) {
           url = url +  sendData.pathInfo.data;
         }
+        console.log("分享的链接是---------",url)
+      
         wx.onMenuShareAppMessage({
           title: sendData.goodsInfo.goodsName || "邀请好友得一千积分", // 分享标题
           desc: "这是得民官方为回馈用户提供的福利，人人都能领积分~~", // 分享描述

@@ -85,11 +85,14 @@ request.interceptors.request.use(
     // 后台根据携带的token判断用户的登录情况，并返回给我们对应的状态码
     // 而后我们可以在响应拦截器中，根据状态码进行一些统一的操作。
     let obj = JSON.parse(localStorage.getItem("loginInfo"));
-    console.log("获取到的token是", obj);
+    console.log("获取到的用户信息是", obj);
     // openid 正确地 ocz_9s85KT-EWnDBUKXBe3AisXw0
     const token = _.isObject(obj) ? obj.openId : "";
     token && (config.headers.openId = token);
-    return config;
+    // 有token  或者是请求授权的时候才能发起请求
+    if (token || api.oauth === config.url){
+      return config;
+    }
   },
   error => Promise.error(error)
 );
@@ -97,7 +100,15 @@ request.interceptors.request.use(
 // 响应拦截器
 request.interceptors.response.use(
   // 请求成功
-  res => (res.status === 200 ? Promise.resolve(res) : Promise.reject(res)),
+  res => {
+    if (res.status === 200) {
+      console.log('res =>>' ,res)
+      debugger
+      return Promise.resolve(res)
+    } else{
+      return Promise.reject(res)
+    } 
+  },
   // 请求失败
   error => {
     const { response } = error;
