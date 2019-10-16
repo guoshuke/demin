@@ -37,8 +37,10 @@ router.beforeEach((to, from, next) => {
 
   //从地址栏获取code
   const code = common.getQueryString("code");
+
   const pOpenId = common.getQueryString("openId");
   let path = localStorage.getItem("path");
+  // path 只会记录一次
   if (!path) {
     path = location.href;
     localStorage.setItem("path", path);

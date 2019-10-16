@@ -277,7 +277,7 @@ export default {
         phone: this.editingContact.tel,
         payType: this.type - 0
       };
-        if(isFree){
+        if(this.isFree){
             sendData.goodsIntegral = 0
         }
       _.each(this.list, n => {

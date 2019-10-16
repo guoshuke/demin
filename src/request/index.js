@@ -103,6 +103,10 @@ request.interceptors.response.use(
   res => {
     if (res.status === 200) {
       console.log('res =>>' ,res)
+      let errorArr = ['500',"501"]
+      if(errorArr.includes(res.data.code)){
+        tip(res.data.message)
+      }
       debugger
       return Promise.resolve(res)
     } else{

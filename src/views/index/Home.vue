@@ -582,8 +582,8 @@ export default {
             me.$toast(res.data.message);
           } else {
             setTimeout(() => {
-        me.$refs.HelpStatus.showModal();
-      }, 500);
+              me.$refs.HelpStatus.showModal();
+            }, 500);
             me.details = [res.data.data];
             // me.detail.powerSurfaceId = localStorage.getItem("powerSurfaceId");
           }

@@ -77,7 +77,7 @@ export default new Vuex.Store({
         console.log("分享的链接是---------",url)
       
         wx.onMenuShareAppMessage({
-          title: sendData.goodsInfo.goodsName || "邀请好友得一千积分", // 分享标题
+          title: sendData.goodsInfo.goodsName || "邀请好友得1000积分", // 分享标题
           desc: "这是得民官方为回馈用户提供的福利，人人都能领积分~~", // 分享描述
           link: url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: sendData.goodsInfo.goodsSmallUrl || window.location.origin + "/home/logo.jpg", // 分享图标

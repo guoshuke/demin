@@ -35,14 +35,14 @@
         <div class="calc_right"></div>
       </div>
 
-      <div class="invite" v-if="detail.assistanceCount !== detail.powerHelperDTOList.length">
+      <div class="invite" v-if="detail.assistanceCount > detail.powerHelperDTOList.length">
         再邀请<span style="color: #f23d3d;"
           >{{
             detail.assistanceCount - detail.powerHelperDTOList.length
           }}位</span
         >好友助力，立即免费获得该商品
       </div>
-      <div class="invite" v-if="detail.assistanceCount == detail.powerHelperDTOList.length">
+      <div class="invite" v-if="detail.assistanceCount <= detail.powerHelperDTOList.length">
         恭喜您助力成功
       </div>
 
@@ -54,7 +54,7 @@
           >去邀请</van-button
         >
         <van-button
-          v-if="detail.assistanceCount === detail.powerHelperDTOList.length"
+          v-if="detail.assistanceCount <= detail.powerHelperDTOList.length"
           class="goInviteButton"
           @click="goCommitOrder"
           >去兑换</van-button
