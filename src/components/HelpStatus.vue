@@ -5,6 +5,7 @@
       v-model="show"
       round
       closeable
+      @closed="closeModal"
       close-icon="add-o"
       close-icon-position="bottom-left"
     >
@@ -62,18 +63,18 @@ export default {
     return {
       show: false,
       data: [
-        {
-          title: "助力成功",
-          subTitle: "恭喜您助力成功，发起助力，您也可以免费拿哦"
-        },
-        {
-          title: "助力失败",
-          subTitle: "您可以发起助力免费拿哦"
-        },
-        {
-          title: "新人大礼快来领取",
-          subTitle: "免费助力拿拿商品"
-        }
+          {
+              title: "助力失败",
+              subTitle: "您可以发起助力免费拿哦"
+          },
+          {
+            title: "助力成功",
+            subTitle: "恭喜您助力成功，发起助力，您也可以免费拿哦"
+          },
+          {
+            title: "新人大礼快来领取",
+            subTitle: "免费助力拿拿商品"
+          }
       ]
     };
   },
@@ -82,6 +83,19 @@ export default {
       console.log(this.status);
       this.show = true;
     },
+      closeModal(){
+          let me = this
+          let loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
+          // 获取用户信息
+          loginInfo.isNew = 0;  // 变成   老人
+          localStorage.setItem("loginInfo", JSON.stringify(loginInfo))
+
+          if(this.status == 0){
+              me.$emit("closeModal")
+          }else{
+
+          }
+      },
     goHelpFree(id) {
       this.$router.push(`free?goodsId=` + id);
     }

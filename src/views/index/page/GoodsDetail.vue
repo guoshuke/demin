@@ -26,7 +26,8 @@
       </div>
       <div class="sub_title">
         <span>已兑换：{{ detail.goodsAmount - detail.goodsStock }}</span>
-        <span>剩余库存：{{ detail.goodsStock }}</span>
+        <span class="goodsStock">剩余库存：{{ detail.goodsStock }}</span>
+        <span class="share" @click="showShare = true">分享赚<van-icon name="share" /></span>
       </div>
       <div class="title payWay">支付方式</div>
       <ul class="sub_title">
@@ -54,7 +55,7 @@
       </ul>
       <div class="num">
         <div class="title">数量</div>
-        <van-stepper v-model="num" />
+        <van-stepper :min="1" v-model="num" :max="detail.goodsStock" />
       </div>
       <div class="detailContent">
         <div class="title">商品详情</div>
@@ -84,6 +85,7 @@
         @closePopup="closePopup"
       />
     </van-popup>
+    <shareModal v-if="showShare" @closeShareModal="closeShareModal"/>
   </div>
 </template>
 <script>
@@ -91,6 +93,7 @@ import { request, api } from "@/request";
 import store from "../store";
 import CommitOrder from "./CommitOrder";
 import Loading from "@/components/Loading";
+import shareModal from "@/components/shareModal";
 import _ from "lodash";
 let back = -1;
 export default {
@@ -118,7 +121,8 @@ export default {
         integralTotal: 0
       },
       activeNum: 0,
-      num: 1
+      num: 1,
+        showShare:false
     };
   },
   beforeRouteEnter(to, form, next) {
@@ -164,7 +168,10 @@ export default {
             me.$refs.commitOrder && me.$refs.commitOrder.getAddressList(); // 进去后重新获取一下地址
         })
 
-    }
+    },
+      closeShareModal(){
+        this.showShare = false
+      }
   },
   activated() {
     this.loading = true;
@@ -182,6 +189,7 @@ export default {
         }
         // 假设成功
         me.detail = res.data.data;
+        me.num = 1
         if (!me.detail.integral) {
           me.activeNum = 1;
         } else {
@@ -223,7 +231,8 @@ export default {
   },
   components: {
     CommitOrder,
-    Loading
+    Loading,
+      shareModal
   },
 
 };
@@ -271,6 +280,19 @@ export default {
         font-size: 0.9rem;
         padding-right: 1rem;
         font-weight: 400;
+      }
+      .goodsStock{
+        flex: 1;
+      }
+      .share{
+        float: right;
+        padding-right: 1rem;
+        display: flex;
+        color: #f23d3d;
+        .van-icon{
+          margin-left: 0.5rem;
+          font-size: 1.2rem;
+        }
       }
       li {
         min-width: 5rem;

@@ -9,7 +9,7 @@
       <form action="/" class="form">
         <van-search
           v-model="value"
-          placeholder="请您输入商品、品牌名称"
+          placeholder="请您输入商品名称"
           readonly
           @click="toSearch"
         />
@@ -42,7 +42,7 @@
         <van-grid-item
           v-for="n in data.itemsList"
           :key="n.id"
-          @click="goGoodsList({ type: 'parentItemId', parentItemId: n.id })"
+          @click="goGoodsList({ type: 'parentItemId', parentItemId: n.id, className:n.itemName})"
         >
           <van-image :src="n.imageUrl" />
           <span>{{ n.itemName }}</span>
@@ -87,12 +87,13 @@
             />
             <span class="goodsName">{{ n.goodsName }}</span>
             <span class="red">{{ n.integral }} 积分</span>
-            <span class="helpNum">已有100+人成功</span>
+<!--            <span class="helpNum">已有100+人成功</span>-->
             <div class="icon">
               <van-image src="./home/style.png" class="icon_img" />
               爆品 <br />
               助力
             </div>
+            <div class="go">GO</div>
           </li>
         </ul>
       </div>
@@ -243,21 +244,6 @@ import _ from "lodash";
 
 export default {
   name: "home",
-  computed: {
-    status() {
-      let t = 1;
-      if (this.loginInfo.flag === false) {
-        t = 1;
-      }
-      if (this.loginInfo.flag === true) {
-        t = 0;
-      }
-      if (this.showNew) {
-        t = 2;
-      }
-      return t;
-    }
-  },
   data() {
     return {
       swipeHeight: 0,
@@ -331,8 +317,9 @@ export default {
       show: false,
       resData: { currentPage: 1, pageSize: 10 },
       details: [],
-      showNew: false,
-        opacity:0.3
+      isNew: 0,
+        opacity:0.3,
+        status:2
     };
   },
   methods: {
@@ -503,6 +490,7 @@ export default {
             imageUrl: "./home/icon_1.png"
           });
           me.data = res.data.data;
+            me.showPopup()
         })
         .catch(err => {
           console.log(err);
@@ -545,10 +533,12 @@ export default {
         });
     },
     showModal() {
-      this.details = this.data.zeroGoodsList.slice(0, 2);
-      this.showNew = true;
-      debugger;
-      this.$refs.HelpStatus.showModal();
+        this.details = this.data.zeroGoodsList.slice(0, 2);
+        console.log('助力要展示的商品是--------',this.details);
+        let parentOpenId = localStorage.getItem("openId");
+        if( parentOpenId !== this.loginInfo.openId){
+            this.$refs.HelpStatus.showModal();
+        }
     },
       setOpacity(){
         let me = this
@@ -556,48 +546,42 @@ export default {
             me.opacity = window.scrollY/500 < 0.3 ? window.scrollY/500 : 0.3
             // opacity
         }
+      },
+      closeModal(){
+          let me = this
+          setTimeout(()=>{
+              if(me.isNew){
+                  me.showModal()
+              }
+          },300)
+      },
+      showPopup(){
+          let me = this;
+          this.loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+
+          //  是不是新人
+          if(this.loginInfo.isNew == 1){
+              // 新人
+              this.showModal()
+          }
+          // 是不是助力
+          if(localStorage.getItem("powerSurfaceId")){
+              // 是助力  flag false是失败  true 是成功
+              this.status = Number(this.loginInfo.flag)
+              localStorage.removeItem("powerSurfaceId");
+              this.showModal()
+          }else {
+              store.commit('bindFather')
+          }
       }
-  },
-  mounted() {
-    this.requestHomeData();
   },
   components: {
     HelpStatus
   },
   created() {
-      this.setOpacity()
-    let n = this;
-    this.loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-    if (
-      localStorage.getItem("powerSurfaceId") &&
-      localStorage.getItem("goodsId")
-    ) {
-      const me = this;
-      request
-        .get(api.goodsDetail + localStorage.getItem("goodsId"))
-        .then(res => {
-          console.log(res.data);
-          if (res.data.code != "200") {
-            // todo delete
-            me.$toast(res.data.message);
-          } else {
-            setTimeout(() => {
-              me.$refs.HelpStatus.showModal();
-            }, 500);
-            me.details = [res.data.data];
-            // me.detail.powerSurfaceId = localStorage.getItem("powerSurfaceId");
-          }
-          // 假设成功
-        })
-        .catch(err => {
-          console.log(err);
-        })
-        .finally(() => {
-          localStorage.removeItem("powerSurfaceId");
-          localStorage.removeItem("goodsId");
-          // this.goGoodsDetail(3);
-        });
-    }
+    this.setOpacity()
+    this.status = 2
+      this.requestHomeData();
   }
 };
 </script>
@@ -791,6 +775,21 @@ export default {
             top: 0;
             z-index: -1;
           }
+        }
+        .go{
+          position: absolute;
+          right: 1rem;
+          bottom: 0;
+          width: 2rem;
+          height: 2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 2rem;
+          background-color: #f23d3d;
+          color: #fff;
+          font-size: 1.2rem;
+          font-weight: 500;
         }
       }
     }

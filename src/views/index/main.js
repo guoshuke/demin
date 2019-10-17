@@ -23,7 +23,7 @@ store.commit('toShare')
 router.beforeEach((to, from, next) => {
   console.log("router", to, from, next);
   // 微信公众号appid-开发-基本配置中获取
-  const appId = "wx50dd97a40ea2adf9";
+  const appId = common.appId;
   // 获取code后再次跳转路径 window.location.href；例：www.baido.com/#/Home
   const toPath = common.host + "/#" + to.path;
   // 核心步骤，获取code
@@ -96,6 +96,7 @@ function getToken(data) {
   request.post(api.oauth, sendData).then(function(res) {
     if (res && res.status == 200) {
       if (res.data.data) {
+        res.data.data.openid = res.data.data.openid + "_demin"
         res.data.data.openId = res.data.data.openid;
         store.commit("setLoginInfo", res.data.data);
         window.location.replace(localStorage.getItem("path"));

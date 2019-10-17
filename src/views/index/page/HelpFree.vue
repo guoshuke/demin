@@ -30,43 +30,36 @@
           {{ detail.integral }}积分
         </div>
       </van-card>
+      <div class="failed" v-if="detail.helperStatus == 2">
+        <van-image src="./user/failed.png"/>
+      </div>
       <div class="calc">
         <div class="calc_left"></div>
         <div class="calc_right"></div>
       </div>
 
-      <div class="invite" v-if="detail.assistanceCount > detail.powerHelperDTOList.length">
-        再邀请<span style="color: #f23d3d;"
-          >{{
+      <div class="invite" v-if="detail.helperStatus == 0">
+        再邀请
+        <span style="color: #f23d3d;">{{
             detail.assistanceCount - detail.powerHelperDTOList.length
           }}位</span
         >好友助力，立即免费获得该商品
       </div>
-      <div class="invite" v-if="detail.assistanceCount <= detail.powerHelperDTOList.length">
+      <div class="invite" v-if="detail.helperStatus == 1 || detail.helperStatus == 3">
         恭喜您助力成功
+      </div>
+      <div class="invite" v-if="detail.helperStatus == 2">
+        助力已失效
       </div>
 
       <div class="goInvite" >
-        <van-button
-          v-if="detail.assistanceCount > detail.powerHelperDTOList.length"
-          class="goInviteButton"
-          @click="$toast('点击右上角分享给朋友吧')"
-          >去邀请</van-button
-        >
-        <van-button
-          v-if="detail.assistanceCount <= detail.powerHelperDTOList.length"
-          class="goInviteButton"
-          @click="goCommitOrder"
-          >去兑换</van-button
-        >
-        <van-button
-                v-if="time == 0 && detail.assistanceCount !== detail.powerHelperDTOList.length"
-                class="goInviteButton"
-        >助力失败</van-button
-        >
+        <van-button v-if="detail.helperStatus == 0" class="goInviteButton" @click="showModal = true" >去邀请</van-button>
+        <van-button v-if="detail.helperStatus == 1" class="goInviteButton" @click="goCommitOrder">去兑换</van-button>
+        <van-button v-if="detail.helperStatus == 2" class="goInviteButton" @click="reSend">再次发起</van-button>
+        <van-button v-if="detail.helperStatus == 3" class="goInviteButton" @click="reSend">已兑换</van-button>
       </div>
 
-      <div class="countDown" v-if="detail.assistanceCount !== detail.powerHelperDTOList.length">
+      <div class="countDown" v-if="detail.helperStatus == 0">
         <van-count-down :time="time">
           <template v-slot="timeData">
             <span class="item">
@@ -137,18 +130,20 @@
     <van-popup v-model="showList" position="bottom">
       <CommitOrder
         :detail="detail"
-        :type="0"
+        :payType="0"
         :num="1"
         :isFree="true"
         ref="commitOrder"
         @closePopup="closePopup"
       />
     </van-popup>
+    <shareModal v-if="showModal" @closeShareModal="closeShareModal"/>
   </div>
 </template>
 
 <script>
 import HelpStatus from "@/components/HelpStatus";
+import shareModal from "@/components/shareModal";
 import CommitOrder from "./CommitOrder";
 import { request, api } from "@/request";
 import store from "../store";
@@ -160,24 +155,32 @@ export default {
       detail: {
         powerHelperDTOList: []
       },
-      showList: false
+      showList: false,
+        showModal:false
     };
   },
   methods: {
     back() {
       this.$router.back(-1);
     },
-    getDetail() {
+      reSend(){
+        this.getDetail('/1')
+      },
+    getDetail(t) {
       let id = this.$route.query.goodsId;
       let me = this;
+      t = t || "/0"
+        // 0  老用户发起助力   可以发起
+          // 1 新用户助力  不能发起助力
       request
-        .get(api.HelperGoods + id)
+        .get(api.HelperGoods + id + t)
         .then(res => {
           if (res.data.code == "200") {
             // 因为组件要他们的格式  所以转换一次
             console.log(res);
             me.detail = res.data.data;
             me.time = new Date(me.detail.invalidTime.replace(/-/g,"/")) - new Date();
+            // me.detail.helperStatus // 0 助理中  1 助力完成   2 助力失败   3 兑换完成
             if(me.time < 0){me.time = 0}
             let sendData = {
               goodsInfo: {
@@ -222,7 +225,10 @@ export default {
             me.showList = true;
             me.$refs.commitOrder && me.$refs.commitOrder.getAddressList(); // 进去后重新获取一下地址
         })
-    }
+    },
+      closeShareModal(){
+          this.showModal = false
+      },
   },
   mounted() {},
   activated() {
@@ -230,7 +236,8 @@ export default {
   },
   components: {
     HelpStatus,
-    CommitOrder
+    CommitOrder,
+      shareModal
   }
 };
 </script>
@@ -388,6 +395,15 @@ export default {
           width: 0;
         }
       }
+    }
+
+    .failed{
+      position: absolute;
+      right: 2rem;
+      top: 9rem;
+      width: 8rem;
+      height: 9rem;
+      z-index: 10;
     }
   }
 

@@ -21,75 +21,108 @@
       </div>
     </div>
     <div class="funcBar">
-      <div class="funcBar_items">赚积分</div>
-      <div class="funcBar_items">花积分</div>
+      <div class="funcBar_items" @click="showModal = true">赚积分</div>
+      <div class="funcBar_items" @click="$router.replace('/')">花积分</div>
     </div>
     <div class="listBox">
-      <ul class="list" v-if="dataList.length">
-        <li v-for="n in dataList">
-          <div class="cacl">{{ (n.type ? "" : "-") + n.mallIntegral }}</div>
-          <div class="point_info">
-            <div class="point_info_title">
-              {{ n.remark }}
-            </div>
-            <div class="point_info_other">
-              2019-09-17 15:00:00
-              {{
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+        <van-list
+                class="list"
+                v-model="loading"
+                :finished="finished"
+                finished-text="没有更多了"
+                @load="getList"
+                v-if="dataList.length"
+        >
+          <li v-for="n in dataList">
+            <div class="cacl">{{ (n.type ? "" : "-") + n.mallIntegral }}</div>
+            <div class="point_info">
+              <div class="point_info_title ">
+                {{ n.remark }}
+              </div>
+              <div class="point_info_other">
+                2019-09-17 15:00:00
+                {{
                 !n.type && n.platformIntegral
-                  ? `(其中消耗平台积分${n.platformIntegral})`
-                  : ""
-              }}
+                ? `(其中消耗平台积分${n.platformIntegral})`
+                : ""
+                }}
+              </div>
             </div>
-          </div>
-        </li>
-      </ul>
+          </li>
+        </van-list>
+      </van-pull-refresh>
       <noData :text="'暂无积分记录'" v-if="!dataList.length" />
     </div>
+
+    <shareModal v-if="showModal" @closeShareModal="closeShareModal"/>
   </div>
 </template>
 
 <script>
 import { request, api } from "@/request";
 import noData from "@/components/noData";
+import shareModal from "@/components/shareModal";
 export default {
   name: "PointsDetails",
   props: ["pointInfo"],
   data() {
     return {
       showPoint: false,
+      showModal: false,
       dataList: [],
       resData: {
         pageSize: 10,
         currentPage: 0
-      }
+      },
+        loading:false,
+        finished:false,
+        isLoading:false,
     };
   },
   methods: {
-    openModal() {
-      this.showPoint = true;
-      this.getList();
-    },
-    getList() {
-      const self = this;
-      this.dataList = [];
-      this.resData.currentPage++;
-
-      request
-        .post(api.pointsDetails, this.resData)
-        .then(res => {
-          console.log(res.data);
-          self.dataList = res.data.dataList;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
+      openModal() {
+        this.showPoint = true;
+        this.onRefresh();
+      },
+      onRefresh(){
+          this.resData.currentPage = 0
+          this.finished = false
+          this.isLoading = false,
+          this.getList()
+      },
+      getList() {
+          this.loading = true
+        const me = this;
+        this.dataList = [];
+        this.resData.currentPage++;
+        request
+          .post(api.pointsDetails, this.resData)
+          .then(res => {
+            console.log(res.data);
+              me.dataList = res.data.dataList;
+              me.loading = false
+              me.isLoading = false
+              if(res.data.isLastPage){
+                  me.finished = true
+              }
+          })
+          .catch(err => {
+            console.log(err);
+              me.finished = true
+              me.loading = false
+          })
+      },
+      closeShareModal(){
+        this.showModal = false
+      },
   },
   mounted() {
     this.getList();
   },
   components: {
-    noData
+      noData,
+      shareModal
   }
 };
 </script>
@@ -170,14 +203,14 @@ export default {
     li {
       width: 100%;
       display: flex;
-      margin: 1.5rem 0;
+      margin: 1rem 0;
       position: relative;
       &::before {
         content: "";
         position: absolute;
         left: 2rem;
-        top: -1.8rem;
-        height: 1.8rem;
+        top: -1rem;
+        height: 1rem;
         background-color: #f23d3d;
         width: 1px;
       }
@@ -185,19 +218,17 @@ export default {
         content: "";
         position: absolute;
         left: 2rem;
-        bottom: -1.4rem;
-        height: 2rem;
+        bottom: -1rem;
+        height: 1rem;
         background-color: #f23d3d;
         width: 1px;
       }
       &:first-child {
-        margin-top: 1rem;
         &::before {
           height: 0;
         }
       }
       &:last-child {
-        margin-bottom: 1rem;
         &::after {
           height: 0;
         }
@@ -233,6 +264,21 @@ export default {
         }
       }
     }
+  }
+  .goodsName {
+    width: 100%;
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: normal;
+    text-overflow: ellipsis;
+    text-overflow: -o-ellipsis-lastline;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 }
 </style>

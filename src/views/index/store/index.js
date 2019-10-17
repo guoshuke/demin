@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import wx from "weixin-js-sdk";
 import { request, api } from "@/request";
+import common from "@/utils/request";
 
 Vue.use(Vuex);
 
@@ -70,12 +71,12 @@ export default new Vuex.Store({
         let openId =
             JSON.parse(localStorage.getItem("loginInfo")).openId || "";
 
-        let url = "http://development.chinatxyj.com/#/" + (sendData.pathInfo.path || "") + "?openId=" + openId;
+        let url = common.host + "/#/" + (sendData.pathInfo.path || "") + "?openId=" + openId;
         if (sendData.pathInfo.data) {
           url = url +  sendData.pathInfo.data;
         }
         console.log("分享的链接是---------",url)
-      
+
         wx.onMenuShareAppMessage({
           title: sendData.goodsInfo.goodsName || "邀请好友得1000积分", // 分享标题
           desc: "这是得民官方为回馈用户提供的福利，人人都能领积分~~", // 分享描述
@@ -101,7 +102,7 @@ export default new Vuex.Store({
       let f = new FormData();
       let pOpenId = localStorage.getItem("pOpenId");
       if (pOpenId) {
-        f.append("openId", window.location.href);
+        f.append("openId", pOpenId);
         localStorage.removeItem("pOpenId");
         request
           .post(api.bindFather, f)
@@ -116,19 +117,20 @@ export default new Vuex.Store({
   },
   actions: {
     getPhoneNumber(state, cb) {
-      cb && cb()
-      // request
-      //     .get(api.hasPhone)
-      //     .then(res => {
-      //       if (res.data.code != "200") {
-      //         location.href = "http://weixin.chinatxyj.com/menu/login.jsp"
-      //       }else {
-      //         cb && cb()
-      //       }
-      //     })
-      //     .catch(err => {
-      //       console.log(err);
-      //     });
+      // cb && cb()
+      request
+          .get(api.hasPhone)
+          .then(res => {
+            console.log(res);
+            if (res.data.code != "200") {
+              location.href = "http://weixin.chinatxyj.com/menu/login.jsp"
+            }else {
+              cb && cb()
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
     }
   }
 });

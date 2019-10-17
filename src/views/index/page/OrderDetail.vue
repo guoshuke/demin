@@ -1,6 +1,5 @@
 <template>
   <div class="orderDetail">
-    <van-nav-bar title="订单详情" left-arrow @click-left="$router.back(-1)" />
     <div class="content">
       <div class="payStatusBar">
         <div class="payStatus">
@@ -133,7 +132,7 @@ export default {
         return;
       }
       request
-        .post(api.cancelOrder, { orderId, orderStatus: 4 })
+        .post(api.cancelOrder, { orderId, orderStatus: 4, buyNumber: me.detail.buyNumber })
         .then(res => {
           if (res.data.code == "200") {
             // 因为组件要他们的格式  所以转换一次
@@ -221,7 +220,7 @@ export default {
 
           wx.config({
             debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-            appId: "wx50dd97a40ea2adf9", // 必填，公众号的唯一标识
+            appId: payConfig.appId, // 必填，公众号的唯一标识
             timestamp: payConfig.timestamp, // 必填，生成签名的时间戳
             nonceStr: payConfig.nonceStr, // 必填，生成签名的随机串
             signature: payConfig.signature, // 必填，签名，见附录1

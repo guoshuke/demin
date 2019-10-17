@@ -15,7 +15,7 @@ Vue.config.productionTip = false;
 
 router.beforeEach((to, from, next) => {
   // 微信公众号appid-开发-基本配置中获取
-  const appId = "wxfc44234f195910e9";
+  const appId = common.appId;
   // 获取code后再次跳转路径 window.location.href；例：www.baido.com/#/Home
   const toPath = common.host + "/#" + to.path;
   // 核心步骤，获取code

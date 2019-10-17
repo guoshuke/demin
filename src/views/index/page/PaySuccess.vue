@@ -9,7 +9,7 @@
       兑换成功 我们的工作人员将会在七个工作日内将货物发出请耐心等待
     </div>
     <div class="funcBar">
-      <van-button type="default" class="share">邀请好友赚积分</van-button>
+      <van-button type="default" class="share" to="/">邀请好友赚积分</van-button>
       <van-button type="danger" class="goOrderDetail" @click="goOrderDetail"
         >查看订单</van-button
       >
@@ -23,7 +23,7 @@ export default {
   methods: {
     goOrderDetail() {
       let orderId = this.$route.query.orderId;
-      this.$router.push("orderDetail?orderId=" + orderId);
+      this.$router.replace("orderDetail?orderId=" + orderId);
     }
   }
 };

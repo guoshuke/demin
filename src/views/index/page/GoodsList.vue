@@ -1,11 +1,5 @@
 <template>
   <div class="goodsList">
-    <van-nav-bar
-      :title="title || '分类名称'"
-      left-arrow
-      fixed
-      @click-left="$router.back(-1)"
-    />
     <div class="list_title">
       <span
         class="list_types first_type"
@@ -87,8 +81,7 @@ export default {
           type: 3,
           canSort: false
         }
-      ],
-        title:''
+      ]
     };
   },
   methods: {
@@ -165,13 +158,13 @@ export default {
     }
   },
   activated() {
-    this.resData = {
+      this.resData = {
       currentPage: 0,
       pageSize: 10
     };
     try {
       let t = JSON.parse(this.$route.query.object);
-      this.title = t.className
+        document.title = t.className || '积分商城'
         delete t.className;
       console.log(t);
       if (t.type) {
@@ -203,7 +196,7 @@ export default {
     font-weight: 400;
     position: fixed;
     width: 100%;
-    top: 46px;
+    top: 0;
     left: 0;
     background-color: #fff;
     z-index: 10;
@@ -234,13 +227,13 @@ export default {
   .list {
     padding: 0 1rem;
     /*height: 150vh;*/
-    margin-top: calc(46px + 4rem);
+    margin-top: 4rem;
     .van-image {
       height: 11rem;
     }
     .canBuyItem {
       /deep/ .van-grid-item__content {
-        height: 18rem;
+        min-height: 18rem;
         justify-content: space-evenly;
       }
     }

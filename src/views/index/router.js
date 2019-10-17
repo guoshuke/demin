@@ -12,11 +12,13 @@ export default new Router({
     {
       path: "/",
       name: "home",
+      meta: { title: "积分商城" },
       component: Home
     },
     {
       path: "/classify",
       name: "classify",
+      meta: { title: "分类列表" },
       component: Classify
     },
     {
@@ -29,26 +31,30 @@ export default new Router({
       path: "/user",
       name: "user",
       component: User,
-      meta: { requireAuth: true }
+      meta: { requireAuth: true, title: "我的" }
     },
     {
       path: "/search",
       name: "search",
+      meta: { title: "查询" },
       component: () => import("./page/Search.vue")
     },
     {
       path: "/address",
       name: "address",
+      meta: { title: "地址管理" },
       component: () => import("./page/Address.vue")
     },
     {
       path: "/editAddress",
       name: "editAddress",
+      meta: { title: "编辑地址" },
       component: () => import("./page/EditAddress.vue")
     },
     {
       path: "/free",
       name: "free",
+      meta: { title: "助力免单" },
       component: () => import("./page/HelpFree.vue")
     },
     {
@@ -59,11 +65,13 @@ export default new Router({
     {
       path: "/paySuccess",
       name: "paySuccess",
+      meta: { title: "支付成功" },
       component: () => import("./page/PaySuccess.vue")
     },
     {
       path: "/orderList",
       name: "orderList",
+      meta: { title: "订单列表" },
       component: () => import("./page/OrderList.vue")
     },
     {
@@ -74,6 +82,7 @@ export default new Router({
     {
       path: "/pointsDetail",
       name: "pointsDetail",
+      meta: { title: "订单详情" },
       component: () => import("./page/PointsDetails.vue")
     },
     {
@@ -84,7 +93,7 @@ export default new Router({
     {
       path: "/goodsDetail",
       name: "goodsDetail",
-      meta: { requireAuth: true },
+      meta: { requireAuth: true,  title: "商品详情" },
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.

@@ -4,7 +4,7 @@
     <form action="/" class="form">
       <van-search
         v-model="value"
-        placeholder="请您输入商品、品牌名称"
+        placeholder="请您输入商品名称"
         readonly
         @click="toSearch"
         @cancel="onCancel"

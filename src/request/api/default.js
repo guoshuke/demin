@@ -7,8 +7,9 @@ export default (() => {
     pointsDetails: "integralDetail/list",
     oauth: "oauth/redirect/url",
     point: "UserAccount",
-    bindFather: "/set/distribution",
-    HelperGoods: "Helper/add/"
+    bindFather: "set/distribution",
+    HelperGoods: "Helper/add/",
+    HelperList:'Helper/getHelperList',
   };
   return _.transform(
     urls,

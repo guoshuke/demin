@@ -24,38 +24,59 @@
           <van-image src="./share/share_3.png" class="img img4"></van-image>
         </van-button>
       </div>
-      <!--      <van-divider class="divider divider_bottom">-->
-      <!--        已邀请好友-->
-      <!--      </van-divider>-->
-      <!--      <ul class="list">-->
-      <!--        <li class="item">-->
-      <!--          <van-image src="./share/share_3.png" class="img headImg"></van-image>-->
-      <!--          <div class="niceName">Xuewei520</div>-->
-      <!--          <div class="point">已贡献500积分</div>-->
-      <!--        </li>-->
-      <!--      </ul>-->
-      <shareModal v-if="showModal" @click="showModal = false"/>
+            <van-divider class="divider divider_bottom">
+              已邀请好友
+            </van-divider>
+            <ul class="list">
+              <li class="item" v-for="(n, i) in list">
+                <van-image :src="n.invitationUserHead" class="img headImg"></van-image>
+                <div class="niceName">{{n.invitationUserName}}</div>
+                <div class="point">已贡献200积分</div>
+              </li>
+            </ul>
+      <shareModal v-if="showModal" @closeShareModal="closeShareModal"/>
     </div>
   </div>
 </template>
 
 <script>
   import shareModal from "@/components/shareModal";
+  import { request, api } from "@/request";
 import store from "./store";
 export default {
   name: "Share",
   data() {
     return {
       data: null,
-        showModal:false
+        showModal:false,
+        list:[]
     };
   },
   methods: {
     toShare() {
-        debugger
         this.showModal = true
-    }
+    },
+      closeShareModal(){
+          this.showModal = false
+      },
+      getShareList(){
+          let me = this;
+          request
+              .get(api.HelperList)
+              .then(res => {
+                  if(res.data.code === '200'){
+                      me.list = res.data.data;
+                      console.log(res.data);
+                  }
+              })
+              .catch(err => {
+                  console.log(err);
+              });
+      }
   },
+    activated(){
+      this.getShareList()
+    },
     components:{
         shareModal
     }
@@ -183,9 +204,12 @@ export default {
       align-items: center;
       width: 100%;
       color: #fff;
+      margin-bottom: 1rem;
       .headImg {
         height: 3.3rem;
         width: 3.3rem;
+        border-radius: 3rem;
+        overflow: hidden;
       }
       .niceName {
         flex: 1;

@@ -4,7 +4,7 @@
       <van-icon name="arrow-left" @click="onCancel" />
       <van-search
         v-model="value"
-        placeholder="请您输入商品、品牌名称"
+        placeholder="请您输入商品名称"
         show-action
         @search="toSearch"
         @cancel="onCancel"
@@ -18,7 +18,7 @@
             round
             v-for="n in searchHistory.slice(0, 10)"
             :key="n"
-            @click="goGoodsList({ selectName: n })"
+            @click="goGoodsList({ selectName: n,className:n })"
             >{{ n }}</van-tag
           >
         </div>
@@ -82,7 +82,7 @@ export default {
         console.log(searchHistory);
         localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
       }
-      this.goGoodsList({ selectName: this.value });
+      this.goGoodsList({ selectName: this.value,className: this.value });
     },
     onCancel() {
       this.$router.back(-1);

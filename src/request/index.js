@@ -7,6 +7,7 @@ import router from "../views/index/router";
 import store from "../views/index/store/index";
 import Api from "./api";
 import _ from "lodash";
+import common from "@/utils/request";
 import { Toast } from "vant";
 
 /**
@@ -27,12 +28,17 @@ export const api = Api;
  * 携带当前页面路由，以期在登录页面完成登录后返回当前页面
  */
 const toLogin = () => {
-  router.replace({
-    path: "/login",
-    query: {
-      redirect: router.currentRoute.fullPath
-    }
-  });
+  const appId = common.appId;
+  // 获取code后再次跳转路径 window.location.href；例：www.baido.com/#/Home
+  const toPath = common.host;
+  // 核心步骤，获取code
+  // let base_code = needAuth ? "snsapi_userinfo" : "snsapi_base";
+  // 多次获取code  会触发48001
+  let base_code = "snsapi_userinfo";
+  const hrefUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${encodeURIComponent(
+      toPath
+  )}&response_type=code&scope=${base_code}&state=dcabe11a-751f-490f-9dcc-606881c6fcdb#wechat_redirect`;
+  window.location.replace(hrefUrl);
 };
 
 /**
@@ -103,15 +109,19 @@ request.interceptors.response.use(
   res => {
     if (res.status === 200) {
       console.log('res =>>' ,res)
-      let errorArr = ['500',"501"]
-      if(errorArr.includes(res.data.code)){
+      let errorArr = ["600"]
+      if(res.data.code != "200"){
         tip(res.data.message)
       }
-      debugger
-      return Promise.resolve(res)
+      if(errorArr.includes(res.data.code)){
+        toLogin()
+      }else {
+        debugger
+        return Promise.resolve(res)
+      }
     } else{
       return Promise.reject(res)
-    } 
+    }
   },
   // 请求失败
   error => {

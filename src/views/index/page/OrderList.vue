@@ -75,10 +75,12 @@ export default {
   },
   activated() {
     let type = this.$route.query.type - 0;
-    if (!_.isNaN(type)) {
+      console.log(type);
+      debugger
+      if (!_.isNaN(type)) {
       this.active = type;
     }
-    this.questData(this.active || null);
+    this.toggleStatus(this.active || null);
   },
   methods: {
     toggleStatus(i) {

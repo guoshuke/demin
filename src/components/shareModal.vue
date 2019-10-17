@@ -3,7 +3,9 @@
     <div class="right">
       <van-image src="./share/shareTip.png" />
     </div>
-    <div class="center"></div>
+    <div class="center">
+      <van-image src="./share/shareCenter.png" />
+    </div>
   </div>
 </template>
 
@@ -32,6 +34,14 @@
       width: 9rem;
       right: 1rem;
       top: 1rem;
+    }
+    .center{
+      position: fixed;
+      left: 50%;
+      margin-left: -6rem;
+      margin-top: -6rem;
+      top: 50%;
+      width: 12rem;
     }
   }
 </style>
