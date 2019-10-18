@@ -101,7 +101,9 @@ export default new Vuex.Store({
     bindFather(state) {
       let f = new FormData();
       let pOpenId = localStorage.getItem("pOpenId");
-      if (pOpenId) {
+      let openId = JSON.parse(localStorage.getItem("loginInfo")).openId
+      if (pOpenId !=  openId && pOpenId) {
+        // 不是本人发起的  才能绑定父子级关系    //pOpenId 存在才可以发起
         f.append("openId", pOpenId);
         localStorage.removeItem("pOpenId");
         request

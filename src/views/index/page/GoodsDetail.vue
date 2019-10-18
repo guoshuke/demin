@@ -66,14 +66,15 @@
         type="default"
         class="footer"
         @click="goCommitOrder"
-        v-if="activeNum || needPoints <= detail.integralTotal"
+        v-if="(activeNum || needPoints <= detail.integralTotal) && detail.goodsStock>0"
         >立即兑换
       </van-button>
       <van-button
         type="default"
         class="footer poorPoints"
-        v-if="detail.integralTotal < needPoints && !activeNum"
-        >积分不足</van-button
+        v-if="detail.integralTotal < needPoints && !activeNum || detail.goodsStock <= 0">
+        {{detail.goodsStock>0?"积分不足":"库存不足"}}
+      </van-button
       >
     </div>
     <van-popup v-model="showList" position="bottom">

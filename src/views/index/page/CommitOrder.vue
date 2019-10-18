@@ -290,6 +290,11 @@ export default {
           this.loading = false;
         return;
       }
+        if(this.detail.goodsStock <= 0){
+            this.$toast("库存不足");
+            this.loading = false;
+            return;
+        }
       request
         .post(api.submitOrder, sendData)
         .then(res => {

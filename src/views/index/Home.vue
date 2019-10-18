@@ -532,6 +532,10 @@ export default {
           me.loading = false;
         });
     },
+      showNew(){
+        this.status = 2
+          this.showModal()
+      },
     showModal() {
         this.details = this.data.zeroGoodsList.slice(0, 2);
         console.log('助力要展示的商品是--------',this.details);
@@ -542,7 +546,7 @@ export default {
     },
       setOpacity(){
         let me = this
-        window.onscroll=function (n) {
+        window.onscroll = function (n) {
             me.opacity = window.scrollY/500 < 0.3 ? window.scrollY/500 : 0.3
             // opacity
         }
