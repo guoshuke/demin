@@ -56,7 +56,7 @@
         <van-button v-if="detail.helperStatus == 0" class="goInviteButton" @click="showModal = true" >去邀请</van-button>
         <van-button v-if="detail.helperStatus == 1" class="goInviteButton" @click="goCommitOrder">去兑换</van-button>
         <van-button v-if="detail.helperStatus == 2" class="goInviteButton" @click="reSend">再次发起</van-button>
-        <van-button v-if="detail.helperStatus == 3" class="goInviteButton" @click="reSend">已兑换</van-button>
+        <van-button v-if="detail.helperStatus == 3" class="goInviteButton">已兑换</van-button>
       </div>
 
       <div class="countDown" v-if="detail.helperStatus == 0">
