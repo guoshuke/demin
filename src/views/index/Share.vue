@@ -31,7 +31,7 @@
               <li class="item" v-for="(n, i) in list">
                 <van-image :src="n.invitationUserHead" class="img headImg"></van-image>
                 <div class="niceName">{{n.invitationUserName}}</div>
-                <div class="point">已贡献200积分</div>
+<!--                <div class="point">已贡献200积分</div>-->
               </li>
             </ul>
       <shareModal v-if="showModal" @closeShareModal="closeShareModal"/>

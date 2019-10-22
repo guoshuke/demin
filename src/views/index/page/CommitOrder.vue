@@ -87,8 +87,8 @@
 
     <div class="myList submitOrder">
       <div class="listTitle">
-        实际支付：
-        {{ payType ? "￥" + (detail.price * num) : payPoint }}
+        实际支付：￥
+        {{ payType ?  (detail.price * num) : 0 }}
       </div>
       <van-button class="submitRedeem" :loading="loading" @click="submitOrder"
         >立即兑换</van-button

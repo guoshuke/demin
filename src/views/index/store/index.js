@@ -42,6 +42,8 @@ export default new Vuex.Store({
       // 接收对象
       let f = new FormData();
       f.append("url", window.location.href);
+      // debugger
+      // f.append("url", 'http://development.chinatxyj.com/#/');
       if (!state.signature) {
         request
           .post(api.getSignature, f)

@@ -93,6 +93,9 @@ function getToken(data) {
   if (pOpenId) {
     sendData.openId = pOpenId;
   }
+  // 先清除 openId
+  localStorage.removeItem('loginInfo')
+  // 获取openId
   request.post(api.oauth, sendData).then(function(res) {
     if (res && res.status == 200) {
       if (res.data.data) {

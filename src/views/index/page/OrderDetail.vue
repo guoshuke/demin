@@ -116,7 +116,7 @@ export default {
       loading: false,
       status: {
         0: "待付款",
-        1: "发货中",
+        1: "待发货",
         2: "已发货",
         3: "已成功",
         4: "已取消"

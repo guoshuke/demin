@@ -12,7 +12,7 @@ export default new Router({
     {
       path: "/",
       name: "home",
-      meta: { title: "积分商城" },
+      meta: { title: "积分惠民商城" },
       component: Home
     },
     {

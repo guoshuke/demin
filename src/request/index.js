@@ -114,6 +114,7 @@ request.interceptors.response.use(
         tip(res.data.message)
       }
       if(errorArr.includes(res.data.code)){
+        debugger
         toLogin()
       }else {
         debugger

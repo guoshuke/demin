@@ -160,23 +160,24 @@ export default {
     };
   },
   methods: {
-    back() {
-      this.$router.back(-1);
-    },
-      reSend(){
-        this.getDetail('/1')
+      back() {
+        this.$router.back(-1);
       },
-    getDetail(t) {
+      reSend(){
+        this.getDetail('/0')
+      },
+      getDetail(t) {
       let id = this.$route.query.goodsId;
       let me = this;
-      t = t || "/0"
+      t = t || "/1"
         // 0  老用户发起助力   可以发起
           // 1 新用户助力  不能发起助力
+
       request
         .get(api.HelperGoods + id + t)
         .then(res => {
           if (res.data.code == "200") {
-            // 因为组件要他们的格式  所以转换一次
+            //
             console.log(res);
             me.detail = res.data.data;
             me.time = new Date(me.detail.invalidTime.replace(/-/g,"/")) - new Date();
@@ -208,10 +209,10 @@ export default {
 
       //mall/{goods}
     },
-    closePopup() {
-      this.showList = false;
-    },
-    goCommitOrder() {
+      closePopup() {
+        this.showList = false;
+      },
+      goCommitOrder() {
       // let goodsId = this.$route.query.goodsId;
       // let temp = {
       //   0: "integral",
@@ -232,7 +233,17 @@ export default {
   },
   mounted() {},
   activated() {
-    this.getDetail();
+      let id = this.$route.query.goodsId;
+      let t = '/0';
+      let helpArray = JSON.parse(localStorage.getItem('helpArray') || '[]');
+      console.log(helpArray);
+      if(helpArray.includes(id)){
+          t = '/1'
+      }else {
+          helpArray.push(id)
+          localStorage.setItem('helpArray', JSON.stringify(helpArray))
+      }
+    this.getDetail(t);
   },
   components: {
     HelpStatus,
