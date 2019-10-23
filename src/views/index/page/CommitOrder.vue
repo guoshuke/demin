@@ -42,16 +42,14 @@
       />
     </van-popup>
 
-    <van-card
-      :num="num"
-      :thumb="detail.goodsSmallUrl"
-      class="goodsInfo"
-    >
+    <van-card :num="num" :thumb="detail.goodsSmallUrl" class="goodsInfo">
       <div slot="title" class="goodsTitle">
         <span class="goodsTitleText">{{ detail.goodsName }}</span>
       </div>
       <div slot="price" class="price">
-        {{ payType ? (detail.price * num) + "元" : (detail.integral * num) + "积分" }}
+        {{
+          payType ? detail.price * num + "元" : detail.integral * num + "积分"
+        }}
       </div>
     </van-card>
 
@@ -69,26 +67,28 @@
     <div class="myList">
       <div class="listTitle">商品金额</div>
       <div class="listTitle_sub">
-        {{ payType ? (detail.price* num) + "元" : (detail.integral * num) + "积分" }}
+        {{
+          payType ? detail.price * num + "元" : detail.integral * num + "积分"
+        }}
       </div>
       <!--      <van-icon name="arrow" class="listTitle_sub" />-->
     </div>
-<!--    <div class="myList" v-if="payType == 0">-->
-<!--      <div class="listTitle">平台积分立减</div>-->
-<!--      <div class="listTitle_sub">{{ detail.platformIntegral }}积分</div>-->
-<!--      &lt;!&ndash;      <van-icon name="arrow" class="listTitle_sub" />&ndash;&gt;-->
-<!--    </div>-->
+    <!--    <div class="myList" v-if="payType == 0">-->
+    <!--      <div class="listTitle">平台积分立减</div>-->
+    <!--      <div class="listTitle_sub">{{ detail.platformIntegral }}积分</div>-->
+    <!--      &lt;!&ndash;      <van-icon name="arrow" class="listTitle_sub" />&ndash;&gt;-->
+    <!--    </div>-->
     <div class="myList" v-if="payType == 0">
       <div class="listTitle">商家积分立减</div>
       <div class="listTitle_sub">
-        {{ isFree? 0 : '-' + detail.platformReductionIntegral }}积分
+        {{ isFree ? 0 : "-" + detail.platformReductionIntegral }}积分
       </div>
     </div>
 
     <div class="myList submitOrder">
       <div class="listTitle">
         实际支付：￥
-        {{ payType ?  (detail.price * num) : 0 }}
+        {{ payType ? detail.price * num : 0 }}
       </div>
       <van-button class="submitRedeem" :loading="loading" @click="submitOrder"
         >立即兑换</van-button
@@ -128,10 +128,16 @@ export default {
       const id = this.chosenContactId;
       return id !== null ? this.list.filter(item => item.id === id)[0] : {};
     },
-      payPoint(){
-          return  this.isFree ? '0积分' :(((this.detail.integral || 0) * this.num - (this.detail.platformReductionIntegral || 0) < 0
-          ? 0 : (this.detail.integral || 0) * this.num - (this.detail.platformReductionIntegral || 0)) + "积分")
-      }
+    payPoint() {
+      return this.isFree
+        ? "0积分"
+        : ((this.detail.integral || 0) * this.num -
+            (this.detail.platformReductionIntegral || 0) <
+          0
+            ? 0
+            : (this.detail.integral || 0) * this.num -
+              (this.detail.platformReductionIntegral || 0)) + "积分";
+    }
   },
 
   methods: {
@@ -205,7 +211,7 @@ export default {
     },
 
     getAddressList(info) {
-        console.log('支付方式--------------',this.payType)
+      console.log("支付方式--------------", this.payType);
       const me = this;
       request
         .get(api.addressList)
@@ -249,9 +255,9 @@ export default {
               info.id = me.editingContactId;
             }
           }
-            if(!me.editingContact.id && me.list.length != 0){
-                me.editingContact= me.list[0]
-            }
+          if (!me.editingContact.id && me.list.length != 0) {
+            me.editingContact = me.list[0];
+          }
         });
     },
     submitOrder() {
@@ -264,20 +270,21 @@ export default {
         goodsName: this.detail.goodsName,
         imageUrl: this.detail.goodsUrl,
         platformIntegral: this.detail.platformIntegral || 0,
-        mallIntegral: (this.detail.integral - this.detail.platformReductionIntegral) || 0,
+        mallIntegral:
+          this.detail.integral - this.detail.platformReductionIntegral || 0,
         price: this.detail.price || 0,
         goodsIntegral: this.detail.integral || 0,
         address: this.editingContact.address,
         userName: this.editingContact.name,
         phone: this.editingContact.tel || 0,
         payType: this.payType || 0,
-        buyNumber:this.num
+        buyNumber: this.num
       };
-        if(this.isFree){
-            sendData.payType = 0
-            sendData.goodsIntegral = 0
-            sendData.mallIntegral = 0
-        }
+      if (this.isFree) {
+        sendData.payType = 0;
+        sendData.goodsIntegral = 0;
+        sendData.mallIntegral = 0;
+      }
       // _.each(this.list, n => {
       //   if (this.editingContact.id == n.id) {
       //     sendData.address = utils.getAddress(n.areaCode) + sendData.address;
@@ -287,23 +294,27 @@ export default {
       const me = this;
       if (!sendData.address) {
         this.$toast("请选择地址");
-          this.loading = false;
+        this.loading = false;
         return;
       }
-        if(this.detail.goodsStock <= 0){
-            this.$toast("库存不足");
-            this.loading = false;
-            return;
-        }
+      if (this.detail.goodsStock <= 0) {
+        this.$toast("库存不足");
+        this.loading = false;
+        return;
+      }
       request
         .post(api.submitOrder, sendData)
         .then(res => {
           if (res.data.code == "200") {
             // 因为组件要他们的格式  所以转换一次
             console.log(res);
-              me.pay(res.data.data, sendData);
+            // 如果有助力单 是助力进来的   要更新一下助力的状态
+            if (me.detail.powerSurfaceId) {
+              me.updateStatus(me.detail.powerSurfaceId);
+            }
+            me.pay(res.data.data, sendData);
 
-              // 积分也走支付
+            // 积分也走支付
             // if (sendData.payType) {
             //   //todo  如果选择金钱支付则发起支付
             //
@@ -316,14 +327,12 @@ export default {
         })
         .catch(err => {
           console.log(err);
-            this.loading = false;
+          this.loading = false;
         })
-        .finally(() => {
-
-        });
+        .finally(() => {});
     },
     pay(orderId, data) {
-        let me = this
+      let me = this;
       let sendData = {
         orderId: orderId,
         goodsName: data.goodsName,
@@ -344,10 +353,10 @@ export default {
           payConfig.paySign = payConfig.sign;
           payConfig.nonceStr = payConfig.noncestr;
           payConfig.success = function(res) {
-              me.closePopup()
+            me.closePopup();
             if (res.errMsg == "chooseWXPay:ok") {
               //alert("支付成功");
-                me.$notify("支付成功");
+              me.$notify("支付成功");
               me.$router.push("paySuccess?orderId=" + orderId);
             } else {
               me.$notify("支付失败");
@@ -356,41 +365,45 @@ export default {
           };
           payConfig.cancel = function(res) {
             me.$notify("取消支付");
-              me.loading = false;
-              me.closePopup()
+            me.loading = false;
+            me.closePopup();
             me.$router.push("orderDetail?orderId=" + orderId);
           };
-            // 支付失败回调函数
-            payConfig.fail=function (res) {
-                me.$notify('支付失败~')
-                me.loading = false;
-                me.closePopup()
-                me.$router.push("orderDetail?orderId=" + orderId);
-            }
+          // 支付失败回调函数
+          payConfig.fail = function(res) {
+            me.$notify("支付失败~");
+            me.loading = false;
+            me.closePopup();
+            me.$router.push("orderDetail?orderId=" + orderId);
+          };
           console.log(payConfig);
-            if(sendData.payType){
-                wx.config({
-                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                    appId: payConfig.appId, // 必填，公众号的唯一标识
-                    timestamp: payConfig.timestamp, // 必填，生成签名的时间戳
-                    nonceStr: payConfig.nonceStr, // 必填，生成签名的随机串
-                    signature: payConfig.signature, // 必填，签名，见附录1
-                    jsApiList: ["chooseWXPay"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
-                });
-                wx.chooseWXPay(payConfig);
-            }else {
-                me.$router.push("paySuccess?orderId=" + orderId);
-            }
+          if (sendData.payType) {
+            wx.config({
+              debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+              appId: payConfig.appId, // 必填，公众号的唯一标识
+              timestamp: payConfig.timestamp, // 必填，生成签名的时间戳
+              nonceStr: payConfig.nonceStr, // 必填，生成签名的随机串
+              signature: payConfig.signature, // 必填，签名，见附录1
+              jsApiList: ["chooseWXPay"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+            });
+            wx.chooseWXPay(payConfig);
+          } else {
+            me.$router.push("paySuccess?orderId=" + orderId);
+          }
         })
         .catch(err => {
-            me.loading = false;
+          me.loading = false;
           console.log(err);
         })
-        .finally(() => {
-
-        });
+        .finally(() => {});
 
       // me.$router.push("paySuccess?orderId=" + res.data.data);
+    },
+    updateStatus(powerSurfaceId) {
+      request
+        .get(api.updateHelperStatus + powerSurfaceId)
+        .then(res => {})
+        .catch(err => {});
     }
   },
   mounted() {

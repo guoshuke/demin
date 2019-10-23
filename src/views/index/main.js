@@ -12,13 +12,13 @@ Vue.use(VueClipboard);
 import "vant/lib/index.css";
 import common from "@/utils/request";
 import { request, api } from "@/request";
-debugger
+debugger;
 Vue.use(VueLazyload);
 
 Vue.use(Vant);
 Vue.config.productionTip = false;
 
-store.commit('toShare')
+store.commit("toShare");
 
 router.beforeEach((to, from, next) => {
   console.log("router", to, from, next);
@@ -94,12 +94,12 @@ function getToken(data) {
     sendData.openId = pOpenId;
   }
   // 先清除 openId
-  localStorage.removeItem('loginInfo')
+  localStorage.removeItem("loginInfo");
   // 获取openId
   request.post(api.oauth, sendData).then(function(res) {
     if (res && res.status == 200) {
       if (res.data.data) {
-        res.data.data.openid = res.data.data.openid + "_demin"
+        res.data.data.openid = res.data.data.openid + "_demin";
         res.data.data.openId = res.data.data.openid;
         store.commit("setLoginInfo", res.data.data);
         window.location.replace(localStorage.getItem("path"));

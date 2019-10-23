@@ -25,9 +25,9 @@
               </div>
               <div slot="tags">
                 <van-tag type="danger">好友助力</van-tag>
-<!--                <van-tag plain type="danger" class="needTag"-->
-<!--                  >需要{{ detail.assistanceCount || 0 }}人</van-tag-->
-<!--                >-->
+                <!--                <van-tag plain type="danger" class="needTag"-->
+                <!--                  >需要{{ detail.assistanceCount || 0 }}人</van-tag-->
+                <!--                >-->
               </div>
               <div slot="price" class="price">
                 0积分
@@ -63,18 +63,18 @@ export default {
     return {
       show: false,
       data: [
-          {
-              title: "助力失败",
-              subTitle: "您可以发起助力免费拿哦"
-          },
-          {
-            title: "助力成功",
-            subTitle: "恭喜您助力成功，发起助力，您也可以免费拿哦"
-          },
-          {
-            title: "新人大礼快来领取",
-            subTitle: "免费助力拿拿商品"
-          }
+        {
+          title: "助力失败",
+          subTitle: "您可以发起助力免费拿哦"
+        },
+        {
+          title: "助力成功",
+          subTitle: "恭喜您助力成功，发起助力，您也可以免费拿哦"
+        },
+        {
+          title: "新人大礼快来领取",
+          subTitle: "免费助力拿拿商品"
+        }
       ]
     };
   },
@@ -83,19 +83,20 @@ export default {
       console.log(this.status);
       this.show = true;
     },
-      closeModal(){
-          let me = this
-          let loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
-          // 获取用户信息
-          loginInfo.isNew = 0;  // 变成   老人
-          localStorage.setItem("loginInfo", JSON.stringify(loginInfo))
-
-          if(this.status == 0){
-              me.$emit("closeModal")
-          }else{
-
-          }
-      },
+    closeModal() {
+      let me = this;
+      let loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+      // 获取用户信息
+      debugger;
+      if (this.status == 1) {
+        loginInfo.flag = false;
+        localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
+        me.$parent.closeModal();
+      } else if (this.status == 2) {
+        loginInfo.isNew = 0; // 变成   老人
+        localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
+      }
+    },
     goHelpFree(id) {
       this.$router.push(`free?goodsId=` + id);
     }

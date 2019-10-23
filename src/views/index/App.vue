@@ -56,7 +56,7 @@ export default {
       active: 0,
       homePages: ["home", "classify", "share", "user"],
       showTabBar: false,
-        cachedViews:[""]
+      cachedViews: [""]
     };
   },
   watch: {
@@ -72,7 +72,6 @@ export default {
     }
     let loading = document.getElementById("loadingGif");
     loading && document.body.removeChild(loading);
-
   }
 };
 </script>

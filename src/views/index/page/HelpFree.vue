@@ -31,7 +31,7 @@
         </div>
       </van-card>
       <div class="failed" v-if="detail.helperStatus == 2">
-        <van-image src="./user/failed.png"/>
+        <van-image src="./user/failed.png" />
       </div>
       <div class="calc">
         <div class="calc_left"></div>
@@ -40,23 +40,44 @@
 
       <div class="invite" v-if="detail.helperStatus == 0">
         再邀请
-        <span style="color: #f23d3d;">{{
+        <span style="color: #f23d3d;"
+          >{{
             detail.assistanceCount - detail.powerHelperDTOList.length
           }}位</span
         >好友助力，立即免费获得该商品
       </div>
-      <div class="invite" v-if="detail.helperStatus == 1 || detail.helperStatus == 3">
-        恭喜您助力成功
+      <div
+        class="invite"
+        v-if="detail.helperStatus == 1 || detail.helperStatus == 3"
+      >
+        助力成功，点击去兑换即可领取0元奖品
       </div>
       <div class="invite" v-if="detail.helperStatus == 2">
-        助力已失效
+        点击再次发起可以重新获得0积分兑换机会
       </div>
 
-      <div class="goInvite" >
-        <van-button v-if="detail.helperStatus == 0" class="goInviteButton" @click="showModal = true" >去邀请</van-button>
-        <van-button v-if="detail.helperStatus == 1" class="goInviteButton" @click="goCommitOrder">去兑换</van-button>
-        <van-button v-if="detail.helperStatus == 2" class="goInviteButton" @click="reSend">再次发起</van-button>
-        <van-button v-if="detail.helperStatus == 3" class="goInviteButton">已兑换</van-button>
+      <div class="goInvite">
+        <van-button
+          v-if="detail.helperStatus == 0"
+          class="goInviteButton"
+          @click="showModal = true"
+          >去邀请</van-button
+        >
+        <van-button
+          v-if="detail.helperStatus == 1"
+          class="goInviteButton"
+          @click="goCommitOrder"
+          >去兑换</van-button
+        >
+        <van-button
+          v-if="detail.helperStatus == 2"
+          class="goInviteButton"
+          @click="reSend"
+          >再次发起</van-button
+        >
+        <van-button v-if="detail.helperStatus == 3" class="goInviteButton gray"
+          >已兑换</van-button
+        >
       </div>
 
       <div class="countDown" v-if="detail.helperStatus == 0">
@@ -86,6 +107,10 @@
             <span style="font-family:Source Han Sans CN;">后失效</span>
           </template>
         </van-count-down>
+      </div>
+
+      <div class="countDown" v-if="detail.helperStatus == 3">
+        <span class="item helpOver">当前助力已结束</span>
       </div>
 
       <div class="helpPerson">
@@ -137,7 +162,7 @@
         @closePopup="closePopup"
       />
     </van-popup>
-    <shareModal v-if="showModal" @closeShareModal="closeShareModal"/>
+    <shareModal v-if="showModal" @closeShareModal="closeShareModal" />
   </div>
 </template>
 
@@ -156,22 +181,22 @@ export default {
         powerHelperDTOList: []
       },
       showList: false,
-        showModal:false
+      showModal: false
     };
   },
   methods: {
-      back() {
-        this.$router.back(-1);
-      },
-      reSend(){
-        this.getDetail('/0')
-      },
-      getDetail(t) {
+    back() {
+      this.$router.back(-1);
+    },
+    reSend() {
+      this.getDetail("/1");
+    },
+    getDetail(t) {
       let id = this.$route.query.goodsId;
       let me = this;
-      t = t || "/1"
-        // 0  老用户发起助力   可以发起
-          // 1 新用户助力  不能发起助力
+      t = t || "/1";
+      // 0  已发起过助力助力  不能发起助力
+      // 1  没有发起过助力   可以发起助力
 
       request
         .get(api.HelperGoods + id + t)
@@ -179,14 +204,21 @@ export default {
           if (res.data.code == "200") {
             //
             console.log(res);
+            // 解决删除数据库时   重新获取
+            if (!res.data.data.powerSurfaceId) {
+              me.reSend();
+            }
             me.detail = res.data.data;
-            me.time = new Date(me.detail.invalidTime.replace(/-/g,"/")) - new Date();
+            me.time =
+              new Date(me.detail.invalidTime.replace(/-/g, "/")) - new Date();
             // me.detail.helperStatus // 0 助理中  1 助力完成   2 助力失败   3 兑换完成
-            if(me.time < 0){me.time = 0}
+            if (me.time < 0) {
+              me.time = 0;
+            }
             let sendData = {
               goodsInfo: {
-                  goodsName: me.detail.goodsName,
-                  goodsSmallUrl:me.detail.goodsSmallUrl
+                goodsName: me.detail.goodsName,
+                goodsSmallUrl: me.detail.goodsSmallUrl
               },
               pathInfo: {
                 path: "",
@@ -199,6 +231,8 @@ export default {
             };
             store.commit("toShare", sendData);
           } else {
+            // 订单可能不存在  所以重新发起
+            me.reSend();
             me.$toast(res.data.message);
           }
         })
@@ -209,10 +243,10 @@ export default {
 
       //mall/{goods}
     },
-      closePopup() {
-        this.showList = false;
-      },
-      goCommitOrder() {
+    closePopup() {
+      this.showList = false;
+    },
+    goCommitOrder() {
       // let goodsId = this.$route.query.goodsId;
       // let temp = {
       //   0: "integral",
@@ -221,34 +255,34 @@ export default {
       // this.$router.push(
       //   `order?goodsId=${goodsId}&num=${this.num}&type=${this.activeNum}`
       // );
-        let me = this
-        store.dispatch("getPhoneNumber",function () {
-            me.showList = true;
-            me.$refs.commitOrder && me.$refs.commitOrder.getAddressList(); // 进去后重新获取一下地址
-        })
+      let me = this;
+      store.dispatch("getPhoneNumber", function() {
+        me.showList = true;
+        me.$refs.commitOrder && me.$refs.commitOrder.getAddressList(); // 进去后重新获取一下地址
+      });
     },
-      closeShareModal(){
-          this.showModal = false
-      },
+    closeShareModal() {
+      this.showModal = false;
+    }
   },
   mounted() {},
   activated() {
-      let id = this.$route.query.goodsId;
-      let t = '/0';
-      let helpArray = JSON.parse(localStorage.getItem('helpArray') || '[]');
-      console.log(helpArray);
-      if(helpArray.includes(id)){
-          t = '/1'
-      }else {
-          helpArray.push(id)
-          localStorage.setItem('helpArray', JSON.stringify(helpArray))
-      }
+    let id = this.$route.query.goodsId;
+    let t = "/1";
+    let helpArray = JSON.parse(localStorage.getItem("helpArray") || "[]");
+    console.log(helpArray);
+    if (helpArray.includes(id)) {
+      t = "/0";
+    } else {
+      helpArray.push(id);
+      localStorage.setItem("helpArray", JSON.stringify(helpArray));
+    }
     this.getDetail(t);
   },
   components: {
     HelpStatus,
     CommitOrder,
-      shareModal
+    shareModal
   }
 };
 </script>
@@ -341,6 +375,9 @@ export default {
         font-weight: bold;
         font-size: 1.1rem;
       }
+      .gray {
+        background: #858585;
+      }
     }
 
     .countDown {
@@ -356,6 +393,10 @@ export default {
         font-size: 12px;
         text-align: center;
         background-color: #e4e4ee;
+      }
+      .helpOver {
+        background-color: #fff;
+        width: auto;
       }
     }
 
@@ -408,7 +449,7 @@ export default {
       }
     }
 
-    .failed{
+    .failed {
       position: absolute;
       right: 2rem;
       top: 9rem;

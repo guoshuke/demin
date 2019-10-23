@@ -36,7 +36,7 @@ const toLogin = () => {
   // 多次获取code  会触发48001
   let base_code = "snsapi_userinfo";
   const hrefUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${encodeURIComponent(
-      toPath
+    toPath
   )}&response_type=code&scope=${base_code}&state=dcabe11a-751f-490f-9dcc-606881c6fcdb#wechat_redirect`;
   window.location.replace(hrefUrl);
 };
@@ -72,7 +72,7 @@ const errorHandle = (status, other) => {
 };
 
 // 创建axios实例
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true; // 代理 cookie不能直接代理  需要这个定义
 export let request = axios.create({
   timeout: 1000 * 12,
   withCredentials: true
@@ -96,7 +96,7 @@ request.interceptors.request.use(
     const token = _.isObject(obj) ? obj.openId : "";
     token && (config.headers.openId = token);
     // 有token  或者是请求授权的时候才能发起请求
-    if (token || api.oauth === config.url){
+    if (token || api.oauth === config.url) {
       return config;
     }
   },
@@ -108,20 +108,21 @@ request.interceptors.response.use(
   // 请求成功
   res => {
     if (res.status === 200) {
-      console.log('res =>>' ,res)
-      let errorArr = ["600"]
-      if(res.data.code != "200"){
-        tip(res.data.message)
+      console.log("res =>>", res);
+      let errorArr = ["600"];
+      // 绑定父级  不需要提示
+      if (res.data.code != "200" && res.config.url != "mall/set/distribution") {
+        tip(res.data.message);
       }
-      if(errorArr.includes(res.data.code)){
-        debugger
-        toLogin()
-      }else {
-        debugger
-        return Promise.resolve(res)
+      if (errorArr.includes(res.data.code)) {
+        debugger;
+        toLogin();
+      } else {
+        debugger;
+        return Promise.resolve(res);
       }
-    } else{
-      return Promise.reject(res)
+    } else {
+      return Promise.reject(res);
     }
   },
   // 请求失败
@@ -145,6 +146,10 @@ request.interceptors.response.use(
   }
 );
 
-// let formRequest = _.cloneDeep(request)
+// let JsonRequest = _.cloneDeep(request);
+//
+// // 设置post请求头
+// JsonRequest.defaults.headers.post["Content-Type"] =
+//   "application/x-www-form-urlencoded";
 
 export default { request };

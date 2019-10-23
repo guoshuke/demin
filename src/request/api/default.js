@@ -9,7 +9,8 @@ export default (() => {
     point: "UserAccount",
     bindFather: "set/distribution",
     HelperGoods: "Helper/add/",
-    HelperList:'Helper/getHelperList',
+    HelperList: "Helper/getHelperList",
+    updateHelperStatus: "Helper/updateStatu/"
   };
   return _.transform(
     urls,

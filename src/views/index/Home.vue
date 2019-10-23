@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div class="fixed_top" :style="{'background': `rgba(0, 0, 0, ${opacity})`}">
+    <div class="fixed_top" :style="{ background: `rgba(0, 0, 0, ${opacity})` }">
       <div class="location" @click="$toast('更多城市入驻中')">
         <van-icon name="aim" />
         <span>扬州市</span>
@@ -42,7 +42,13 @@
         <van-grid-item
           v-for="n in data.itemsList"
           :key="n.id"
-          @click="goGoodsList({ type: 'parentItemId', parentItemId: n.id, className:n.itemName})"
+          @click="
+            goGoodsList({
+              type: 'parentItemId',
+              parentItemId: n.id,
+              className: n.itemName
+            })
+          "
         >
           <van-image :src="n.imageUrl" />
           <span>{{ n.itemName }}</span>
@@ -86,8 +92,8 @@
               :src="n.goodsSmallUrl || 'https://img.yzcdn.cn/vant/apple-1.jpg'"
             />
             <span class="goodsName">{{ n.goodsName }}</span>
-            <span class="red">{{ n.integral }} 积分</span>
-<!--            <span class="helpNum">已有100+人成功</span>-->
+            <span class="red">{{ 0 }} 积分</span>
+            <!--            <span class="helpNum">已有100+人成功</span>-->
             <div class="icon">
               <van-image src="./home/style.png" class="icon_img" />
               爆品 <br />
@@ -318,8 +324,8 @@ export default {
       resData: { currentPage: 1, pageSize: 10 },
       details: [],
       isNew: 0,
-        opacity:0.3,
-        status:2
+      opacity: 0.3,
+      status: 2
     };
   },
   methods: {
@@ -490,7 +496,7 @@ export default {
             imageUrl: "./home/icon_1.png"
           });
           me.data = res.data.data;
-            me.showPopup()
+          me.showPopup();
         })
         .catch(err => {
           console.log(err);
@@ -532,60 +538,70 @@ export default {
           me.loading = false;
         });
     },
-      showNew(){
-        this.status = 2
-          this.showModal()
-      },
-    showModal() {
-        this.details = this.data.zeroGoodsList.slice(0, 2);
-        console.log('助力要展示的商品是--------',this.details);
-        let parentOpenId = localStorage.getItem("openId");
-        if( parentOpenId !== this.loginInfo.openId){
-            this.$refs.HelpStatus.showModal();
-        }
+    showNew() {
+      this.status = 2;
+      this.showModal();
     },
-      setOpacity(){
-        let me = this
-        window.onscroll = function (n) {
-            me.opacity = window.scrollY/500 < 0.3 ? window.scrollY/500 : 0.3
-            // opacity
-        }
-      },
-      closeModal(){
-          let me = this
-          setTimeout(()=>{
-              if(me.isNew){
-                  me.showModal()
-              }
-          },300)
-      },
-      showPopup(){
-          let me = this;
-          this.loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-
-          //  是不是新人
-          if(this.loginInfo.isNew == 1){
-              // 新人
-              this.showModal()
-          }
-          // 是不是助力
-          if(localStorage.getItem("powerSurfaceId")){
-              // 是助力  flag false是失败  true 是成功
-              this.status = Number(this.loginInfo.flag)
-              localStorage.removeItem("powerSurfaceId");
-              this.showModal()
-          }else {
-              store.commit('bindFather')
-          }
+    showModal() {
+      this.details = this.data.zeroGoodsList.slice(0, 2);
+      console.log("助力要展示的商品是--------", this.details);
+      let parentOpenId = localStorage.getItem("openId");
+      if (parentOpenId !== this.loginInfo.openId) {
+        this.$refs.HelpStatus.showModal();
       }
+    },
+    setOpacity() {
+      let me = this;
+      window.onscroll = function(n) {
+        me.opacity = window.scrollY / 500 < 0.3 ? window.scrollY / 500 : 0.3;
+        // opacity
+      };
+    },
+    closeModal() {
+      console.log("closeModal");
+      let me = this;
+      setTimeout(() => {
+        if (me.loginInfo.isNew) {
+          me.status = 2;
+          me.showModal();
+        }
+      }, 300);
+    },
+    showPopup() {
+      // 0 助力失败  1  助力成功   2 新人
+      this.loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+      // 是不是助力
+      if (localStorage.getItem("powerSurfaceId")) {
+        localStorage.removeItem("powerSurfaceId");
+        let pOpenId = localStorage.getItem("pOpenId");
+        let goodsId = localStorage.getItem("goodsId");
+        if (pOpenId == this.loginInfo.openId && goodsId) {
+          this.goHelpFree(goodsId);
+        } else if (this.loginInfo.flag) {
+          this.status = 1;
+          this.showModal();
+        } else {
+          this.status = 0;
+          this.showModal();
+        }
+      } else if (this.loginInfo.isNew == 1) {
+        this.status = 2;
+        this.showModal();
+        store.commit("bindFather");
+        // 新人绑定
+      } else {
+        // 老人也尝试执行绑定
+        store.commit("bindFather");
+      }
+    }
   },
   components: {
     HelpStatus
   },
   created() {
-    this.setOpacity()
-    this.status = 2
-      this.requestHomeData();
+    this.setOpacity();
+    this.status = 2;
+    this.requestHomeData();
   }
 };
 </script>
@@ -780,7 +796,7 @@ export default {
             z-index: -1;
           }
         }
-        .go{
+        .go {
           position: absolute;
           right: 1rem;
           bottom: 0;
