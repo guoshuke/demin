@@ -50,6 +50,7 @@
 </template>
 <script>
 import { mapState } from "vuex";
+import store from "../store";
 export default {
   name: "Search",
   data() {
@@ -97,11 +98,12 @@ export default {
       this.$router.push(`goodsList?object=${JSON.stringify(obj)}`);
     }
   },
-  activated() {
+  mounted() {
     this.browseHistory =
       JSON.parse(localStorage.getItem("browseHistory")) || [];
     this.searchHistory =
       JSON.parse(localStorage.getItem("searchHistory")) || [];
+      store.commit("toShare");
   }
 };
 </script>

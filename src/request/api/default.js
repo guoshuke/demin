@@ -10,7 +10,8 @@ export default (() => {
     bindFather: "set/distribution",
     HelperGoods: "Helper/add/",
     HelperList: "Helper/getHelperList",
-    updateHelperStatus: "Helper/updateStatu/"
+    updateHelperStatus: "Helper/updateStatu/",
+    reHelper:'Helper/newAdd/'
   };
   return _.transform(
     urls,

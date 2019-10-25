@@ -40,10 +40,15 @@ export default new Vuex.Store({
     },
     toShare(state, data) {
       // 接收对象
+      let me = this
       let f = new FormData();
       f.append("url", window.location.href);
       // debugger
       // f.append("url", 'http://development.chinatxyj.com/#/');
+      let openId = JSON.parse(localStorage.getItem("loginInfo")).openId || "";
+      if(!openId) {
+        return
+      }
       if (!state.signature) {
         request
           .post(api.getSignature, f)
@@ -58,7 +63,7 @@ export default new Vuex.Store({
               signature: res.sign, // 必填，签名
               jsApiList: ["onMenuShareAppMessage", "onMenuShareTimeline"] // 必填，需要使用的JS接口列表
             });
-            this.commit("share", data);
+            me.commit("share", data);
           })
           .catch(err => {
             console.log(err);
@@ -70,14 +75,11 @@ export default new Vuex.Store({
     share(state, sendData) {
       wx.ready(function() {
         sendData = sendData || { goodsInfo: {}, pathInfo: {} };
+
         let openId = JSON.parse(localStorage.getItem("loginInfo")).openId || "";
 
-        let url =
-          common.host +
-          "/#/" +
-          (sendData.pathInfo.path || "") +
-          "?openId=" +
-          openId;
+        let url = common.host + "/#/" + (sendData.pathInfo.path || "") + "?openId=" + openId;
+
         if (sendData.pathInfo.data) {
           url = url + sendData.pathInfo.data;
         }
@@ -86,18 +88,20 @@ export default new Vuex.Store({
         let shareData = {
           link: url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           success: function(res) {
-            alert("分享成功");
+            alert("分享成功 分享的链接是---------"+ url);
+
             // 设置成功
             // alert(res);
           },
           cancel(err) {
-            alert("分享取消");
+            alert("分享取消 分享的链接是---------"+ url)
           },
           fail(fail) {
-            alert(JSON.stringify(fail));
-            alert("分享失败");
+            alert("分享失败 分享的链接是---------"+ url)
           },
-          complete(data) {}
+          complete(data) {
+            alert("分享的链接是---------"+ url)
+          }
         };
 
         // 商城首页
@@ -123,6 +127,7 @@ export default new Vuex.Store({
         // 邀请页的分享
         let sharePageData = {
           title: "我在积分惠民商城领到1000积分啦",
+          desc: " ",
           imgUrl: window.location.origin + "/share/share.png" // 邀请页的图片
         };
 

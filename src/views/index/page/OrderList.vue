@@ -73,7 +73,7 @@ export default {
       finished: false
     };
   },
-  activated() {
+  mounted() {
     let type = this.$route.query.type - 0;
       console.log(type);
       debugger

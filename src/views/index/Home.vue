@@ -247,6 +247,7 @@ import { request, api } from "@/request";
 import HelpStatus from "@/components/HelpStatus";
 import store from "./store";
 import _ from "lodash";
+import common from "@/utils/request";
 
 export default {
   name: "home",
@@ -321,7 +322,7 @@ export default {
       list: [],
       value: "",
       show: false,
-      resData: { currentPage: 1, pageSize: 10 },
+      resData: { currentPage: 0, pageSize: 10 },
       details: [],
       isNew: 0,
       opacity: 0.3,
@@ -351,6 +352,7 @@ export default {
     onLoad() {
       const self = this;
       console.log("onLoad");
+      this.resData.currentPage ++;
       this.loading = true;
       this.requestList();
     },
@@ -571,7 +573,8 @@ export default {
       // 0 助力失败  1  助力成功   2 新人
       this.loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
       // 是不是助力
-      if (localStorage.getItem("powerSurfaceId")) {
+      if (localStorage.getItem("powerSurfaceId") && !localStorage.getItem("helpList")) {
+          localStorage.setItem("helpList", localStorage.getItem("powerSurfaceId"))
         localStorage.removeItem("powerSurfaceId");
         let pOpenId = localStorage.getItem("pOpenId");
         let goodsId = localStorage.getItem("goodsId");
@@ -585,12 +588,14 @@ export default {
           this.showModal();
         }
       } else if (this.loginInfo.isNew == 1) {
+        // 新用户进来之后 就不能助力了
         this.status = 2;
         this.showModal();
         store.commit("bindFather");
         // 新人绑定
       } else {
         // 老人也尝试执行绑定
+        // 老用户进来之后 也不能助力了
         store.commit("bindFather");
       }
     }
@@ -602,7 +607,27 @@ export default {
     this.setOpacity();
     this.status = 2;
     this.requestHomeData();
-  }
+      const pOpenId = common.getQueryString("openId");
+
+
+      const powerSurfaceId = common.getQueryString("powerSurfaceId");
+      const goodsId = common.getQueryString("goodsId");
+
+      console.log("pOpenId" + pOpenId);
+      if (powerSurfaceId) {
+          localStorage.setItem("powerSurfaceId", powerSurfaceId);
+      }
+      if (goodsId) {
+          localStorage.setItem("goodsId", goodsId);
+      }
+      if (pOpenId) {
+          localStorage.setItem("pOpenId", pOpenId);
+      }
+  },
+    mounted() {
+      this.resData.currentPage = 0
+        store.commit("toShare");
+    }
 };
 </script>
 <style lang="less" scoped>

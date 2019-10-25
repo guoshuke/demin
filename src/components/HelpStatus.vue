@@ -88,7 +88,7 @@ export default {
       let loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
       // 获取用户信息
       debugger;
-      if (this.status == 1) {
+      if (this.status == 0 || this.status == 1) {
         loginInfo.flag = false;
         localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
         me.$parent.closeModal();

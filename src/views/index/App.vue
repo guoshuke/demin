@@ -1,8 +1,13 @@
 <template>
   <div id="app">
+<!--    <keep-alive include="user">-->
+<!--     -->
+<!--    </keep-alive>-->
     <keep-alive>
-      <router-view class="box" />
+      <router-view class="box" v-if="$route.meta.keepAlive"></router-view>
+      <!--这里是会被缓存的组件-->
     </keep-alive>
+    <router-view class="box" v-if="!$route.meta.keepAlive"></router-view>
     <van-tabbar
       v-model="active"
       active-color="#F23D3D"
@@ -11,7 +16,7 @@
       class="tabBar"
       route
     >
-      <van-tabbar-item replace to="/" icon="home-o"
+      <van-tabbar-item to="/" icon="home-o"
         >首页
         <img
           slot="icon"
@@ -19,7 +24,7 @@
           :src="props.active ? './home/home.png' : './home/home_normal.png'"
         />
       </van-tabbar-item>
-      <van-tabbar-item replace to="/classify" icon="search">
+      <van-tabbar-item to="/classify" icon="search">
         分类
         <img
           slot="icon"
@@ -29,7 +34,7 @@
           "
         />
       </van-tabbar-item>
-      <van-tabbar-item replace to="/share" icon="friends-o">
+      <van-tabbar-item to="/share" icon="friends-o">
         邀请
         <img
           slot="icon"
@@ -37,7 +42,7 @@
           :src="props.active ? './home/share.png' : './home/share_normal.png'"
         />
       </van-tabbar-item>
-      <van-tabbar-item replace to="/user" icon="setting-o">
+      <van-tabbar-item to="/user" icon="setting-o">
         我的
         <img
           slot="icon"
@@ -49,6 +54,8 @@
   </div>
 </template>
 <script>
+    import common from "@/utils/request";
+    import wx from "weixin-js-sdk"
 export default {
   name: "App",
   data() {
@@ -61,17 +68,15 @@ export default {
   },
   watch: {
     "$route.name": function(newVal) {
-      this.showTabBar = this.homePages.includes(newVal);
-    }
+          this.showTabBar = this.homePages.includes(newVal);
+      }
   },
   mounted() {
     this.showTabBar = this.homePages.includes(this.$route.name);
   },
   created() {
-    if (!localStorage.getItem("LocationCity")) {
-    }
-    let loading = document.getElementById("loadingGif");
-    loading && document.body.removeChild(loading);
+      let loading = document.getElementById("loadingGif");
+      loading && document.body.removeChild(loading);
   }
 };
 </script>

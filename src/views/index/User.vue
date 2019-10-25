@@ -10,7 +10,7 @@
           height="6rem"
           :src="loginInfo.headImg"
         />
-        <span class="nick_name">{{ loginInfo.nickname }}</span>
+        <span class="nick_name">{{ loginInfo.nickname + (pointInfo.userId ? "_" + pointInfo.userId : "") }}</span>
       </div>
       <div class="point">
         <div class="point_title">当前积分</div>
@@ -21,7 +21,7 @@
             积分明细
           </van-button>
           <van-button
-            type="danger"
+            type="default"
             size="small"
             @click="pointRules_show = true"
           >
@@ -56,6 +56,10 @@
       <div class="listTitle">我的收货地址</div>
       <van-icon name="arrow" class="listTitle_sub" />
     </div>
+    <div class="myList">
+      <div class="listTitle">版本号</div>
+      <div class="listTitle_sub">v2.0.0</div>
+    </div>
     <!--    <div class="myList">-->
     <!--      <div class="listTitle">我的助力</div>-->
     <!--      <van-icon name="arrow" class="listTitle_sub" />-->
@@ -80,6 +84,7 @@
     <van-popup
       v-model="showPointList"
       position="bottom"
+      class="PointListPopup"
       :style="{ height: '100vh' }"
     >
       <van-nav-bar
@@ -99,7 +104,7 @@
 <script>
 import { request, api } from "@/request";
 import PointList from "./page/PointsDetails";
-
+import store from "./store"
 export default {
   name: "User",
   data() {
@@ -169,9 +174,10 @@ export default {
       .catch(err => {
         console.log(err);
       });
+      this.getPoint();
+      store.commit("toShare")
   },
   activated() {
-    this.getPoint();
   },
   components: {
     PointList
@@ -197,7 +203,7 @@ export default {
       display: flex;
       align-items: center;
       .nick_name {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         color: #fff;
         font-weight: 500;
         margin-left: 1rem;
@@ -240,9 +246,9 @@ export default {
         width: 7rem;
         height: 2.6rem;
         font-size: 1.1rem;
-        &:last-child {
-          background-color: #f23d3d;
-        }
+        /*&:last-child {*/
+        /*  background-color: #f23d3d;*/
+        /*}*/
       }
     }
   }
@@ -289,6 +295,10 @@ export default {
     iframe{
       border: 0;
     }
+  }
+  .PointListPopup{
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>

@@ -174,7 +174,7 @@ export default {
         this.showShare = false
       }
   },
-  activated() {
+  mounted() {
     this.loading = true;
     let goodsId = this.$route.query.goodsId;
     const me = this;

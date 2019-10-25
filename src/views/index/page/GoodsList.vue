@@ -50,6 +50,8 @@
 
 <script>
 import { request, api } from "@/request";
+let p = ""
+import store from "../store"
 import _ from "lodash";
 export default {
   name: "GoodsList",
@@ -147,6 +149,7 @@ export default {
     onLoad() {
       // 异步更新数据
       this.loadMore = true;
+      this.finished = false;
       this.resData.currentPage++;
       this.questData();
     },
@@ -157,7 +160,20 @@ export default {
         : this.$toast("商品id未找到");
     }
   },
-  activated() {
+    beforeRouteEnter(to,form,next){
+        console.log(to, form, next);
+        p = form.name
+        debugger
+      next()
+    },
+    activated(){
+      debugger
+        if(p != "goodsDetail"){
+            console.log("this-----",this, p);
+            this.onRefresh()
+        }
+    },
+  mounted() {
       this.resData = {
       currentPage: 0,
       pageSize: 10

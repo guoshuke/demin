@@ -21,7 +21,7 @@
           </div>
         </div>
       </div>
-      <van-card num="1" :thumb="detail.imageUrl" class="goodsInfo">
+      <van-card :num="detail.buyNumber" :thumb="detail.imageUrl" class="goodsInfo">
         <div slot="title" class="goodsTitle">
           <span class="goodsTitleText">{{ detail.goodsName }}</span>
         </div>
@@ -239,7 +239,7 @@ export default {
     }
   },
 
-  activated() {
+  mounted() {
     this.getOrderDetail();
   }
 };

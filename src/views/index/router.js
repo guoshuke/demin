@@ -12,7 +12,7 @@ export default new Router({
     {
       path: "/",
       name: "home",
-      meta: { title: "积分惠民商城" },
+      meta: { title: "积分惠民商城"},
       component: Home
     },
     {
@@ -71,7 +71,7 @@ export default new Router({
     {
       path: "/orderList",
       name: "orderList",
-      meta: { title: "订单列表" },
+      meta: { title: "订单列表", keepAlive:true },
       component: () => import("./page/OrderList.vue")
     },
     {
@@ -88,6 +88,7 @@ export default new Router({
     {
       path: "/goodsList",
       name: "goodsList",
+      meta: { keepAlive:true },
       component: () => import("./page/GoodsList.vue")
     },
     {

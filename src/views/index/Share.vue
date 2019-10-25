@@ -77,7 +77,7 @@ export default {
         });
     }
   },
-  activated() {
+  mounted() {
     this.getShareList();
     let sendData = {
       isShare: true,

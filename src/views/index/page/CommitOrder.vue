@@ -322,12 +322,13 @@ export default {
             //   me.$router.push("paySuccess?orderId=" + res.data.data);
             // }
           } else {
-            this.$toast(res.data.message);
+              me.loading = false;
+            me.$toast(res.data.message);
           }
         })
         .catch(err => {
           console.log(err);
-          this.loading = false;
+          me.loading = false;
         })
         .finally(() => {});
     },
@@ -340,7 +341,8 @@ export default {
         payType: data.payType,
         platformIntegral: data.platformIntegral || 0,
         mallIntegral: data.mallIntegral || 0,
-        price: data.price || 0
+        price: data.price || 0,
+        buyNumber: this.num
       };
       this.loading = true;
       request
@@ -395,7 +397,9 @@ export default {
           me.loading = false;
           console.log(err);
         })
-        .finally(() => {});
+        .finally(() => {
+            me.loading = false;
+        });
 
       // me.$router.push("paySuccess?orderId=" + res.data.data);
     },

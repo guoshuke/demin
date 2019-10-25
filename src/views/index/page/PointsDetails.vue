@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="funcBar">
-      <div class="funcBar_items" @click="showModal = true">赚积分</div>
+      <div class="funcBar_items" @click="$router.replace('/share')">赚积分</div>
       <div class="funcBar_items" @click="$router.replace('/')">花积分</div>
     </div>
     <div class="listBox">
@@ -34,14 +34,14 @@
                 @load="getList"
                 v-if="dataList.length"
         >
-          <li v-for="n in dataList">
+          <li v-for="(n, i) in dataList" :class="{lastLi:i === dataList.length - 1}">
             <div class="cacl">{{ (n.type ? "" : "-") + n.mallIntegral }}</div>
             <div class="point_info">
               <div class="point_info_title ">
                 {{ n.remark }}
               </div>
               <div class="point_info_other">
-                2019-09-17 15:00:00
+                {{n.createTime}}
                 {{
                 !n.type && n.platformIntegral
                 ? `(其中消耗平台积分${n.platformIntegral})`
@@ -72,7 +72,7 @@ export default {
       showModal: false,
       dataList: [],
       resData: {
-        pageSize: 10,
+        pageSize: 9999,
         currentPage: 0
       },
         loading:false,
@@ -130,7 +130,9 @@ export default {
 <style scoped lang="less">
 .pointsDetails {
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   .infoBox {
     background: url("../../../../public/user/point_bg.png") center center
       no-repeat;
@@ -172,6 +174,7 @@ export default {
   .funcBar {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
     height: 3rem;
     padding: 0.5rem 1rem;
     margin-top: -2rem;
@@ -192,13 +195,18 @@ export default {
   }
   .listBox {
     padding: 1rem;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     .list {
       width: 100%;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      height: 100vh;
       display: flex;
       flex-direction: column;
+    }
+    .lastLi{
+      &::after {
+        height: 0;
+      }
     }
     li {
       width: 100%;
@@ -208,7 +216,7 @@ export default {
       &::before {
         content: "";
         position: absolute;
-        left: 2rem;
+        left: 2.5rem;
         top: -1rem;
         height: 1rem;
         background-color: #f23d3d;
@@ -217,7 +225,7 @@ export default {
       &:after {
         content: "";
         position: absolute;
-        left: 2rem;
+        left: 2.5rem;
         bottom: -1rem;
         height: 1rem;
         background-color: #f23d3d;
@@ -228,16 +236,12 @@ export default {
           height: 0;
         }
       }
-      &:last-child {
-        &::after {
-          height: 0;
-        }
-      }
 
       .cacl {
-        width: 4rem;
-        height: 4rem;
-        border-radius: 2rem;
+        flex-shrink: 0;
+        width: 5rem;
+        height: 5rem;
+        border-radius: 2.5rem;
         border: 1px solid #f23d3d;
         display: flex;
         align-items: center;
@@ -247,10 +251,10 @@ export default {
         font-weight: 400;
       }
       .point_info {
-        margin-left: 2rem;
+        margin-left: 1rem;
         display: flex;
         flex-direction: column;
-        width: calc(100vw - 8rem);
+        justify-content: space-evenly;
         .point_info_title {
           color: #333;
           font-weight: 400;

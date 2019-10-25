@@ -9,7 +9,9 @@
       兑换成功 我们的工作人员将会在七个工作日内将货物发出请耐心等待
     </div>
     <div class="funcBar">
-      <van-button type="default" class="share" to="/">邀请好友赚积分</van-button>
+      <van-button type="default" class="share" to="/share"
+        >邀请好友赚积分</van-button
+      >
       <van-button type="danger" class="goOrderDetail" @click="goOrderDetail"
         >查看订单</van-button
       >
@@ -18,6 +20,7 @@
 </template>
 
 <script>
+    import store from "../store";
 export default {
   name: "PaySuccess",
   methods: {
@@ -25,7 +28,10 @@ export default {
       let orderId = this.$route.query.orderId;
       this.$router.replace("orderDetail?orderId=" + orderId);
     }
-  }
+  },
+    mounted() {
+        store.commit("toShare");
+    }
 };
 </script>
 

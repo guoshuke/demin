@@ -149,7 +149,7 @@
       1.邀请好友助力即可获得奖励 <br />
       2.仅限新注册用户帮忙助力 <br />
       3.在规定的时间内完成活动，奖励即刻到账 <br />
-      4.每个新注册用户尽可助力一次 <br />
+      4.每个新注册用户仅可助力一次 <br />
       5.所有人都可以发起无数次助力
     </div>
     <van-popup v-model="showList" position="bottom">
@@ -189,7 +189,35 @@ export default {
       this.$router.back(-1);
     },
     reSend() {
-      this.getDetail("/1");
+        let me = this
+        let id = this.$route.query.goodsId;
+        request
+            .get(api.reHelper + id + "/1").then(res => {
+            console.log(res);
+            if (res.data.code == "200") {
+                me.detail = res.data.data;
+                me.time =
+                    new Date(me.detail.invalidTime.replace(/-/g, "/")) - new Date();
+                // me.detail.helperStatus // 0 助理中  1 助力完成   2 助力失败   3 兑换完成
+                if (me.time < 0) {
+                    me.time = 0;
+                }
+
+                let sendData = {
+                    goodsInfo: {
+                        goodsName: me.detail.goodsName,
+                        goodsSmallUrl: me.detail.goodsSmallUrl
+                    },
+                    pathInfo: {
+                        path: "",
+                        data: "&powerSurfaceId=" + me.detail.powerSurfaceId + "&goodsId=" + me.detail.goodsId
+                    }
+                };
+                store.commit("toShare", sendData);
+            }
+        }).catch(err => {
+
+        })
     },
     getDetail(t) {
       let id = this.$route.query.goodsId;
@@ -215,6 +243,7 @@ export default {
             if (me.time < 0) {
               me.time = 0;
             }
+
             let sendData = {
               goodsInfo: {
                 goodsName: me.detail.goodsName,
@@ -222,11 +251,7 @@ export default {
               },
               pathInfo: {
                 path: "",
-                data:
-                  "&powerSurfaceId=" +
-                  me.detail.powerSurfaceId +
-                  "&goodsId=" +
-                  me.detail.goodsId
+                data: "&powerSurfaceId=" + me.detail.powerSurfaceId + "&goodsId=" + me.detail.goodsId
               }
             };
             store.commit("toShare", sendData);
@@ -265,19 +290,21 @@ export default {
       this.showModal = false;
     }
   },
-  mounted() {},
+  mounted() {
+      let id = this.$route.query.goodsId;
+      let t = "/1";
+      let helpArray = JSON.parse(localStorage.getItem("helpArray") || "[]");
+      console.log(helpArray);
+      if (helpArray.includes(id)) {
+          t = "/0";
+      } else {
+          helpArray.push(id);
+          localStorage.setItem("helpArray", JSON.stringify(helpArray));
+      }
+      this.getDetail(t);
+  },
   activated() {
-    let id = this.$route.query.goodsId;
-    let t = "/1";
-    let helpArray = JSON.parse(localStorage.getItem("helpArray") || "[]");
-    console.log(helpArray);
-    if (helpArray.includes(id)) {
-      t = "/0";
-    } else {
-      helpArray.push(id);
-      localStorage.setItem("helpArray", JSON.stringify(helpArray));
-    }
-    this.getDetail(t);
+
   },
   components: {
     HelpStatus,
