@@ -143,8 +143,9 @@ export default {
         .finally(() => {});
     }
   },
-  activated() {
+  mounted() {
     this.getAddressList();
+
   }
 };
 </script>

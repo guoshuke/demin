@@ -32,6 +32,7 @@
 <script>
 import OrderStatus from "@/components/OrderStatus";
 import { request, api } from "@/request";
+let params = ""
 export default {
   name: "OrderList",
   data() {
@@ -73,14 +74,22 @@ export default {
       finished: false
     };
   },
-  mounted() {
-    let type = this.$route.query.type - 0;
-      console.log(type);
-      debugger
-      if (!_.isNaN(type)) {
-      this.active = type;
-    }
-    this.toggleStatus(this.active || null);
+    beforeRouteEnter(to,form,next){
+        console.log(to, form, next);
+        params = form.name
+        debugger
+        next()
+    },
+  activated() {
+      if(params != "orderDetail"){
+          let type = this.$route.query.type - 0;
+          console.log(type);
+          debugger
+          if (!_.isNaN(type)) {
+              this.active = type;
+          }
+          this.toggleStatus(this.active || null);
+      }
   },
   methods: {
     toggleStatus(i) {

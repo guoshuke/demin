@@ -52,9 +52,9 @@
           <div class="logistics_order_number">
             快递单号：{{ brief.expressNumber }}
           </div>
-          <button @click="doCopy(brief.expressNumber)" class="copy">
+          <span @click.stop="doCopy(brief.expressNumber)" class="copy">
             复制
-          </button>
+          </span>
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@ export default {
         0: "未付款",
         1: "未发货",
         2: "已发货",
-        3: "已成功",
+        3: "已完成",
         4: "已取消"
       }
     };
@@ -96,7 +96,11 @@ export default {
           me.$toast("复制失败");
         }
       );
-    }
+    },
+      stopBubble(e){
+        e.cancelBubble = true;
+        e.preventDefault && e.preventDefault();
+      }
   }
 };
 </script>

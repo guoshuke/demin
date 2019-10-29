@@ -572,31 +572,40 @@ export default {
     showPopup() {
       // 0 助力失败  1  助力成功   2 新人
       this.loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-      // 是不是助力
-      if (localStorage.getItem("powerSurfaceId") && !localStorage.getItem("helpList")) {
-          localStorage.setItem("helpList", localStorage.getItem("powerSurfaceId"))
-        localStorage.removeItem("powerSurfaceId");
         let pOpenId = localStorage.getItem("pOpenId");
         let goodsId = localStorage.getItem("goodsId");
-        if (pOpenId == this.loginInfo.openId && goodsId) {
-          this.goHelpFree(goodsId);
-        } else if (this.loginInfo.flag) {
-          this.status = 1;
-          this.showModal();
-        } else {
-          this.status = 0;
-          this.showModal();
-        }
-      } else if (this.loginInfo.isNew == 1) {
-        // 新用户进来之后 就不能助力了
-        this.status = 2;
-        this.showModal();
-        store.commit("bindFather");
-        // 新人绑定
-      } else {
-        // 老人也尝试执行绑定
-        // 老用户进来之后 也不能助力了
-        store.commit("bindFather");
+        // 是不是助力
+        // 有助力单算是助力   如果是本人就跳到助力单详情页 否则就弹框提示助力成功或者失败  只能提示一次
+        // 无助力单算是新人或者老人进行绑定   有
+      if(localStorage.getItem("powerSurfaceId")){
+          if (pOpenId == this.loginInfo.openId && goodsId) {
+              localStorage.removeItem("powerSurfaceId");
+              this.goHelpFree(goodsId);
+          } else {
+              if(localStorage.getItem("helpList")){
+                  return;
+              }
+              localStorage.setItem("helpList", localStorage.getItem("powerSurfaceId"))
+              localStorage.removeItem("powerSurfaceId");
+              if(this.loginInfo.flag){
+                  this.status = 1;
+              } else {
+                  this.status = 0;
+              }
+              this.showModal();
+          }
+      }else {
+          if (this.loginInfo.isNew == 1) {
+              // 新用户进来之后 就不能助力了
+              this.status = 2;
+              this.showModal();
+              store.commit("bindFather");
+              // 新人绑定
+          } else {
+              // 老人也尝试执行绑定
+              // 老用户进来之后 也不能助力了
+              store.commit("bindFather");
+          }
       }
     }
   },
@@ -607,22 +616,6 @@ export default {
     this.setOpacity();
     this.status = 2;
     this.requestHomeData();
-      const pOpenId = common.getQueryString("openId");
-
-
-      const powerSurfaceId = common.getQueryString("powerSurfaceId");
-      const goodsId = common.getQueryString("goodsId");
-
-      console.log("pOpenId" + pOpenId);
-      if (powerSurfaceId) {
-          localStorage.setItem("powerSurfaceId", powerSurfaceId);
-      }
-      if (goodsId) {
-          localStorage.setItem("goodsId", goodsId);
-      }
-      if (pOpenId) {
-          localStorage.setItem("pOpenId", pOpenId);
-      }
   },
     mounted() {
       this.resData.currentPage = 0

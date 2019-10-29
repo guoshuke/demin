@@ -88,19 +88,18 @@ export default new Vuex.Store({
         let shareData = {
           link: url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           success: function(res) {
-            alert("分享成功 分享的链接是---------"+ url);
+            alert("分享成功");
 
             // 设置成功
             // alert(res);
           },
           cancel(err) {
-            alert("分享取消 分享的链接是---------"+ url)
+            alert("分享取消")
           },
           fail(fail) {
-            alert("分享失败 分享的链接是---------"+ url)
+            alert("分享失败")
           },
           complete(data) {
-            alert("分享的链接是---------"+ url)
           }
         };
 

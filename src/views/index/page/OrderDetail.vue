@@ -6,7 +6,7 @@
           {{ status[detail.orderStatus] }}
         </div>
         <div class="payMoney">
-          实际支付：<span>￥{{ detail.price }}</span>
+          实际支付：<span>{{detail.payType == 0 ? (detail.mallIntegral * detail.buyNumber - detail.platformIntegral / 10) + "积分" : "￥ " + (detail.price * detail.buyNumber) }}</span>
         </div>
       </div>
       <div class="address">
@@ -25,7 +25,7 @@
         <div slot="title" class="goodsTitle">
           <span class="goodsTitleText">{{ detail.goodsName }}</span>
         </div>
-        <div slot="price" class="price">￥ {{ detail.price }}</div>
+        <div slot="price" class="price">{{detail.payType == 0 ? detail.mallIntegral + "积分" : "￥ " + detail.price }}</div>
       </van-card>
       <div class="myList payWay">
         <div class="listTitle">配送方式</div>
@@ -34,26 +34,26 @@
       <div class="myList">
         <div class="listTitle">支付方式</div>
         <div class="listTitle_sub wePay">
-          <van-image src="./user/wepay.png" alt="" />微信支付
+          <van-image src="./user/wepay.png" alt="" /> {{detail.payType == 0 ? "积分支付" : "微信支付"}}
         </div>
         <!--      <van-icon name="arrow" class="listTitle_sub" />-->
       </div>
       <div class="myList">
         <div class="listTitle">商品金额</div>
-        <div class="listTitle_sub">￥{{ detail.price }}</div>
+        <div class="listTitle_sub">{{detail.payType == 0 ? (detail.mallIntegral * detail.buyNumber) + "积分" : "￥ " + (detail.price * detail.buyNumber) }}</div>
         <!--      <van-icon name="arrow" class="listTitle_sub" />-->
       </div>
-      <!--      <div class="myList">-->
-      <!--        <div class="listTitle">平台积分立减</div>-->
-      <!--        <div class="listTitle_sub red">150积分</div>-->
-      <!--      </div>-->
-      <!--      <div class="myList">-->
-      <!--        <div class="listTitle">商家积分立减</div>-->
-      <!--        <div class="listTitle_sub red">-50积分</div>-->
-      <!--      </div>-->
+            <div class="myList">
+              <div class="listTitle">平台积分立减</div>
+              <div class="listTitle_sub red">{{detail.payType == 0 ? detail.platformIntegral ? (detail.platformIntegral + "积分抵扣" + (detail.platformIntegral / 10) + "商家积分") : "无抵扣" : "0积分"}}</div>
+            </div>
+            <div class="myList">
+              <div class="listTitle">商家积分立减</div>
+              <div class="listTitle_sub red">{{detail.payType == 0 ? detail.mallIntegral * detail.buyNumber : "0"}}积分</div>
+            </div>
       <div class="myList hasLine">
         <div class="listTitle">实际支付</div>
-        <div class="listTitle_sub">￥{{ detail.price }}</div>
+        <div class="listTitle_sub">{{ detail.payType == 0 ? (detail.mallIntegral * detail.buyNumber) + "积分" : "￥ " + (detail.price * detail.buyNumber) }}</div>
       </div>
       <div class="orderInfo">
         <div class="myList">
@@ -118,7 +118,7 @@ export default {
         0: "待付款",
         1: "待发货",
         2: "已发货",
-        3: "已成功",
+        3: "已完成",
         4: "已取消"
       }
     };

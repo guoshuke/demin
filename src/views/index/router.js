@@ -18,7 +18,7 @@ export default new Router({
     {
       path: "/classify",
       name: "classify",
-      meta: { title: "分类列表" },
+      meta: { title: "分类列表", keepAlive:true },
       component: Classify
     },
     {

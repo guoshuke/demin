@@ -158,7 +158,29 @@ export default {
       _.isNumber(id)
         ? this.$router.push(`goodsDetail?goodsId=${id}`)
         : this.$toast("商品id未找到");
-    }
+    },
+      init(){
+          this.resData = {
+              currentPage: 0,
+              pageSize: 10
+          };
+          try {
+              let t = JSON.parse(this.$route.query.object);
+              document.title = t.className || '积分商城'
+              delete t.className;
+              console.log(t);
+              if (t.type) {
+                  this.resData[t.type] = t[t.type];
+              } else {
+                  Object.assign(this.resData, t);
+              }
+              this.resData.type = 1;
+              this.list = [];
+              this.onLoad();
+          } catch (e) {
+              this.$toast("链接不合法");
+          }
+      }
   },
     beforeRouteEnter(to,form,next){
         console.log(to, form, next);
@@ -167,33 +189,13 @@ export default {
       next()
     },
     activated(){
-      debugger
         if(p != "goodsDetail"){
             console.log("this-----",this, p);
-            this.onRefresh()
+           this.init()
         }
     },
   mounted() {
-      this.resData = {
-      currentPage: 0,
-      pageSize: 10
-    };
-    try {
-      let t = JSON.parse(this.$route.query.object);
-        document.title = t.className || '积分商城'
-        delete t.className;
-      console.log(t);
-      if (t.type) {
-        this.resData[t.type] = t[t.type];
-      } else {
-        Object.assign(this.resData, t);
-      }
-      this.resData.type = 1;
-      this.list = [];
-      this.onLoad();
-    } catch (e) {
-      this.$toast("链接不合法");
-    }
+    // this.init()
   }
 };
 </script>

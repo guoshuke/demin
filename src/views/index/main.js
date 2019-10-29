@@ -18,6 +18,22 @@ Vue.use(VueLazyload);
 Vue.use(Vant);
 Vue.config.productionTip = false;
 
+const pOpenId = common.getQueryString("openId");
+const powerSurfaceId = common.getQueryString("powerSurfaceId");
+const goodsId = common.getQueryString("goodsId");
+
+debugger
+console.log("pOpenId" + pOpenId);
+if (powerSurfaceId) {
+  localStorage.setItem("powerSurfaceId", powerSurfaceId);
+}
+if (goodsId) {
+  localStorage.setItem("goodsId", goodsId);
+}
+if (pOpenId) {
+  localStorage.setItem("pOpenId", pOpenId);
+}
+
 
 router.beforeEach((to, from, next) => {
   console.log("router", to, from, next);
@@ -77,6 +93,7 @@ function getToken(data) {
   if (pOpenId) {
     sendData.openId = pOpenId;
   }
+
   // 先清除 openId
   localStorage.removeItem("loginInfo");
   // 获取openId

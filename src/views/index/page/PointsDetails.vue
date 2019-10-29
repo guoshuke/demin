@@ -35,7 +35,7 @@
                 v-if="dataList.length"
         >
           <li v-for="(n, i) in dataList" :class="{lastLi:i === dataList.length - 1}">
-            <div class="cacl">{{ (n.type ? "" : "-") + n.mallIntegral }}</div>
+            <div class="cacl">{{ (n.mallIntegral == 0  ? "" : n.type == 2 ? "+" : "-") + n.mallIntegral }}</div>
             <div class="point_info">
               <div class="point_info_title ">
                 {{ n.remark }}
