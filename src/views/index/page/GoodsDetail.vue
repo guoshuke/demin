@@ -66,13 +66,13 @@
         type="default"
         class="footer"
         @click="goCommitOrder"
-        v-if="(activeNum || needPoints <= detail.integralTotal) && detail.goodsStock>0"
+        v-if="(activeNum || needPoints <= 0) && detail.goodsStock>0"
         >立即兑换
       </van-button>
       <van-button
         type="default"
         class="footer poorPoints"
-        v-if="detail.integralTotal < needPoints && !activeNum || detail.goodsStock <= 0">
+        v-if="0 < needPoints && !activeNum || detail.goodsStock <= 0">
         {{detail.goodsStock>0?"积分不足":"库存不足"}}
       </van-button
       >
@@ -155,6 +155,7 @@ export default {
       this.num = 1;
     },
     goCommitOrder() {
+        debugger
       // let goodsId = this.$route.query.goodsId;
       // let temp = {
       //   0: "integral",
@@ -224,10 +225,9 @@ export default {
   },
   computed: {
     needPoints() {
-      return (
-        (this.detail.integral || 0) * this.num -
-        (this.detail.platformReductionIntegral || 0)
-      );
+        let t = (this.detail.integral || 0) * this.num - this.detail.integralTotal
+        debugger
+      return t
     }
   },
   components: {

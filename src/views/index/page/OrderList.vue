@@ -17,7 +17,7 @@
         v-for="(n, i) in statusList"
         :key="i"
         :title="n.title"
-        style="height: 100vh"
+        class="vanTab"
       >
         <ul class="list">
           <li v-for="(m, l) in list" :key="l">
@@ -135,10 +135,16 @@ export default {
 <style scoped lang="less">
 .orderList {
   background-color: #efefef;
+  padding-bottom: 0;
+  height: 100vh;
+  .vanTab{
+    /*height: calc(100vh - 47px);*/
+    /*overflow-y: auto;*/
+    /*-webkit-overflow-scrolling: touch;*/
+  }
   .list {
-    height: calc(100vh - 46px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    /*height: calc(100vh - 46px);*/
+
   }
 }
 </style>

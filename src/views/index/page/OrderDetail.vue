@@ -6,7 +6,7 @@
           {{ status[detail.orderStatus] }}
         </div>
         <div class="payMoney">
-          实际支付：<span>{{detail.payType == 0 ? (detail.mallIntegral * detail.buyNumber - detail.platformIntegral / 10) + "积分" : "￥ " + (detail.price * detail.buyNumber) }}</span>
+          实际支付：<span>{{detail.payType == 0 ? (detail.goodsIntegral * detail.buyNumber - detail.platformIntegral / 10) + "积分" : "￥ " + (detail.price * detail.buyNumber) }}</span>
         </div>
       </div>
       <div class="address">
@@ -49,11 +49,11 @@
             </div>
             <div class="myList">
               <div class="listTitle">商家积分立减</div>
-              <div class="listTitle_sub red">{{detail.payType == 0 ? detail.mallIntegral * detail.buyNumber : "0"}}积分</div>
+              <div class="listTitle_sub red">{{detail.payType == 0 ? detail.mallIntegral * detail.buyNumber - (detail.platformIntegral / 10): "0"}}积分</div>
             </div>
       <div class="myList hasLine">
         <div class="listTitle">实际支付</div>
-        <div class="listTitle_sub">{{ detail.payType == 0 ? (detail.mallIntegral * detail.buyNumber) + "积分" : "￥ " + (detail.price * detail.buyNumber) }}</div>
+        <div class="listTitle_sub">{{ detail.payType == 0 ? (detail.mallIntegral * detail.buyNumber - (detail.platformIntegral / 10)) + "积分" : "￥ " + (detail.price * detail.buyNumber) }}</div>
       </div>
       <div class="orderInfo">
         <div class="myList">
@@ -205,12 +205,11 @@ export default {
           payConfig.nonceStr = payConfig.noncestr;
           payConfig.success = function(res) {
             console.log(res);
-              me.$router.push("paySuccess?orderId=" + orderId);
+              me.$notify("支付成功");
+              me.$router.push("paySuccess?orderId=" + me.detail.orderId);
           };
             payConfig.cancel = function(res) {
                 me.$notify("取消支付");
-                me.closePopup()
-                me.$router.push("orderDetail?orderId=" + orderId);
             };
             // 支付失败回调函数
             payConfig.fail=function (res) {
@@ -219,7 +218,7 @@ export default {
           console.log(payConfig);
 
           wx.config({
-            debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
             appId: payConfig.appId, // 必填，公众号的唯一标识
             timestamp: payConfig.timestamp, // 必填，生成签名的时间戳
             nonceStr: payConfig.nonceStr, // 必填，生成签名的随机串

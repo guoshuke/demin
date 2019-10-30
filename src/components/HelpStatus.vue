@@ -114,9 +114,9 @@ export default {
   }
   /deep/ .van-popup__close-icon {
     top: initial;
-    bottom: 12px;
-    right: 50%;
-    margin-right: -24px;
+    bottom: 0.9rem;
+    left: 50%;
+    margin-left: -24px;
     font-size: 2.4rem;
     transform: rotate(45deg);
     color: #fde4c5;

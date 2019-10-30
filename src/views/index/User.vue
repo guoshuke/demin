@@ -6,8 +6,8 @@
         <van-image
           round
           fit="cover"
-          width="6rem"
-          height="6rem"
+          width="4.5rem"
+          height="4.5rem"
           :src="loginInfo.headImg"
         />
         <span class="nick_name">{{ loginInfo.nickname + (pointInfo.userId ? "_" + pointInfo.userId : "") }}</span>

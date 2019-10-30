@@ -74,7 +74,7 @@ const errorHandle = (status, other) => {
 // 创建axios实例
 axios.defaults.withCredentials = true; // 代理 cookie不能直接代理  需要这个定义
 export let request = axios.create({
-  timeout: 1000 * 12,
+  // timeout: 1000 * 12,
   withCredentials: true
 });
 // 设置post请求头
