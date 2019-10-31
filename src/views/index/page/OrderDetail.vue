@@ -6,7 +6,7 @@
           {{ status[detail.orderStatus] }}
         </div>
         <div class="payMoney">
-          实际支付：<span>{{detail.payType == 0 ? (detail.goodsIntegral * detail.buyNumber - detail.platformIntegral / 10) + "积分" : "￥ " + (detail.price * detail.buyNumber) }}</span>
+          实际支付：<span>{{detail.payType == 0 ? (detail.goodsIntegral - detail.platformIntegral / 10) + "积分" : "￥ " + (detail.price) }}</span>
         </div>
       </div>
       <div class="address">
@@ -25,7 +25,7 @@
         <div slot="title" class="goodsTitle">
           <span class="goodsTitleText">{{ detail.goodsName }}</span>
         </div>
-        <div slot="price" class="price">{{detail.payType == 0 ? detail.mallIntegral + "积分" : "￥ " + detail.price }}</div>
+        <div slot="price" class="price">{{detail.payType == 0 ? (detail.goodsIntegral / detail.buyNumber) + "积分" : "￥ " + (detail.price  / detail.buyNumber)}}</div>
       </van-card>
       <div class="myList payWay">
         <div class="listTitle">配送方式</div>
@@ -40,7 +40,7 @@
       </div>
       <div class="myList">
         <div class="listTitle">商品金额</div>
-        <div class="listTitle_sub">{{detail.payType == 0 ? (detail.mallIntegral * detail.buyNumber) + "积分" : "￥ " + (detail.price * detail.buyNumber) }}</div>
+        <div class="listTitle_sub">{{detail.payType == 0 ? (detail.goodsIntegral) + "积分" : "￥ " + (detail.price || 0)}}</div>
         <!--      <van-icon name="arrow" class="listTitle_sub" />-->
       </div>
             <div class="myList">
@@ -49,11 +49,11 @@
             </div>
             <div class="myList">
               <div class="listTitle">商家积分立减</div>
-              <div class="listTitle_sub red">{{detail.payType == 0 ? detail.mallIntegral * detail.buyNumber - (detail.platformIntegral / 10): "0"}}积分</div>
+              <div class="listTitle_sub red">{{detail.payType == 0 ? detail.mallIntegral: "0"}}积分</div>
             </div>
       <div class="myList hasLine">
         <div class="listTitle">实际支付</div>
-        <div class="listTitle_sub">{{ detail.payType == 0 ? (detail.mallIntegral * detail.buyNumber - (detail.platformIntegral / 10)) + "积分" : "￥ " + (detail.price * detail.buyNumber) }}</div>
+        <div class="listTitle_sub">{{ detail.payType == 0 ? detail.mallIntegral + "积分" : "￥ " + (detail.price || 0)}}</div>
       </div>
       <div class="orderInfo">
         <div class="myList">

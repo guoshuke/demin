@@ -189,8 +189,11 @@ export default {
             localStorage.removeItem("loginInfo");
           }
         }
+        // 平台积分不为10的倍数 则抹0
+          debugger
         // 假设成功
         me.detail = res.data.data;
+        me.detail.platformIntegral = Math.floor(res.data.data.platformIntegral / 10) * 10
         me.num = 1
         if (!me.detail.integral) {
           me.activeNum = 1;

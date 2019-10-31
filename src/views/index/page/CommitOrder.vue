@@ -345,40 +345,14 @@
                     imageUrl: this.detail.goodsUrl,
                     platformIntegral: this.detail.platformIntegral || 0,
                     mallIntegral: this.detail.integral,
-                    price: this.detail.price || 0,
-                    goodsIntegral: this.detail.integral || 0,
+                    price: (this.detail.price || 0) * this.num,
+                    goodsIntegral: this.detail.integral * this.num  || 0,
                     address: this.editingContact.address,
                     userName: this.editingContact.name,
                     phone: this.editingContact.tel || 0,
                     payType: this.payType || 0,
                     buyNumber: this.num
                 };
-                if (this.isFree) {
-                    sendData.payType = 0;
-                    sendData.goodsIntegral = 0;
-                    sendData.mallIntegral = 0;
-                }
-                if(sendData.payType == 0){
-                    sendData.price = 0
-                }else {
-                    sendData.mallIntegral = 0
-                }
-                if(this.sheetType == 0 || sendData.payType){
-                    sendData.platformIntegral = 0
-                    // sendData.mallIntegral = this.detail.integral * sendData.buyNumber
-                }else {
-                    if(sendData.platformIntegral / 10 > this.detail.integral * this.num ){
-                        sendData.mallIntegral = 0;
-                        sendData.platformIntegral = (this.detail.integral * this.num) * 10;
-                    }
-                }
-                // _.each(this.list, n => {
-                //   if (this.editingContact.id == n.id) {
-                //     sendData.address = utils.getAddress(n.areaCode) + sendData.address;
-                //   }
-                // });
-                console.log(sendData);
-                debugger
                 const me = this;
                 if (!sendData.address) {
                     this.$toast("请选择地址");
@@ -390,6 +364,35 @@
                     this.loading = false;
                     return;
                 }
+                // 助力商品
+                if (this.isFree) {
+                    sendData.payType = 0;
+                    sendData.goodsIntegral = 0;
+                    sendData.mallIntegral = 0;
+                } else {
+                    // 不是助力商品 支付方式为积分
+                    if(sendData.payType == 0){
+                        sendData.price = 0
+                        // 不使用平台积分
+                        if(this.sheetType == 0){
+                            sendData.platformIntegral = 0
+                        }
+                        // 平台积分兑换后大于要支付的积分
+                        if(sendData.platformIntegral / 10 > this.detail.integral * this.num ){
+                            sendData.mallIntegral = 0;
+                            sendData.platformIntegral = (this.detail.integral * this.num) * 10;
+                        }else {
+                            // 平台积分兑换后小于要支付的积分
+                            sendData.mallIntegral = this.detail.integral * this.num - sendData.platformIntegral / 10;
+                        }
+                    }else {
+                        // 支付方式为金额
+                        sendData.mallIntegral = 0
+                    }
+                }
+
+                console.log(sendData);
+                debugger
                 request
                     .post(api.submitOrder, sendData)
                     .then(res => {
@@ -433,6 +436,7 @@
                     price: data.price || 0,
                     buyNumber: this.num
                 };
+
                 this.loading = true;
                 request
                     .post(api.pay, sendData)

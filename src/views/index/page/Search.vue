@@ -121,6 +121,7 @@ export default {
     background-color: #fff;
     border-bottom: 1px solid #f9f9f9;
     margin-bottom: 0.5rem;
+    z-index: 100;
     .van-search {
       width: 100%;
     }
@@ -131,7 +132,6 @@ export default {
     }
   }
   .content {
-    padding-top: 55px;
     padding: 55px 1rem 0 1rem;
     .historyTitle {
       color: #333;

@@ -35,7 +35,8 @@
                 v-if="dataList.length"
         >
           <li v-for="(n, i) in dataList" :class="{lastLi:i === dataList.length - 1}">
-            <div class="cacl">{{ (n.mallIntegral == 0  ? "" : n.type == 2 ? "+" : "-") + n.mallIntegral }}</div>
+          <!-- 1 出账   2 买单买酒送商家积分  3 活动奖励平台积分-->
+            <div class="cacl">{{ (n.mallIntegral == 0  ? "0" : n.type == 1 ?  "-"  + n.mallIntegral :  n.type == 2 ? "+" + n.mallIntegral: "+" + n.platformIntegral) }}</div>
             <div class="point_info">
               <div class="point_info_title ">
                 {{ n.remark }}
@@ -43,7 +44,7 @@
               <div class="point_info_other">
                 {{n.createTime}}
                 {{
-                !n.type && n.platformIntegral
+                n.type ==1 && n.platformIntegral
                 ? `(其中消耗平台积分${n.platformIntegral})`
                 : ""
                 }}

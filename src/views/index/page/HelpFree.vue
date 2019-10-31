@@ -196,6 +196,7 @@ export default {
             console.log(res);
             if (res.data.code == "200") {
                 me.detail = res.data.data;
+                me.detail.platformIntegral = Math.floor(res.data.data.platformIntegral / 10) * 10
                 me.time =
                     new Date(me.detail.invalidTime.replace(/-/g, "/")) - new Date();
                 // me.detail.helperStatus // 0 助理中  1 助力完成   2 助力失败   3 兑换完成
@@ -237,6 +238,7 @@ export default {
               me.reSend();
             }
             me.detail = res.data.data;
+              me.detail.platformIntegral = Math.floor(res.data.data.platformIntegral / 10) * 10
             me.time =
               new Date(me.detail.invalidTime.replace(/-/g, "/")) - new Date();
             // me.detail.helperStatus // 0 助理中  1 助力完成   2 助力失败   3 兑换完成
