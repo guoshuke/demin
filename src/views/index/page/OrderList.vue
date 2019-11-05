@@ -77,14 +77,12 @@ export default {
     beforeRouteEnter(to,form,next){
         console.log(to, form, next);
         params = form.name
-        debugger
         next()
     },
   activated() {
       if(params != "orderDetail"){
           let type = this.$route.query.type - 0;
           console.log(type);
-          debugger
           if (!_.isNaN(type)) {
               this.active = type;
           }

@@ -129,7 +129,6 @@ export default {
   beforeRouteEnter(to, form, next) {
     console.log(to, form);
     if (form.name == "search") {
-      debugger;
       back = -2;
     } else {
       back = -1;
@@ -138,7 +137,6 @@ export default {
   },
   methods: {
     onClickLeft() {
-      debugger;
       history.go(back);
     },
     closePopup() {
@@ -155,7 +153,6 @@ export default {
       this.num = 1;
     },
     goCommitOrder() {
-        debugger
       // let goodsId = this.$route.query.goodsId;
       // let temp = {
       //   0: "integral",
@@ -189,10 +186,9 @@ export default {
             localStorage.removeItem("loginInfo");
           }
         }
-        // 平台积分不为10的倍数 则抹0
-          debugger
         // 假设成功
         me.detail = res.data.data;
+          // 平台积分不为10的倍数 则抹0
         me.detail.platformIntegral = Math.floor(res.data.data.platformIntegral / 10) * 10
         me.num = 1
         if (!me.detail.integral) {
@@ -229,7 +225,6 @@ export default {
   computed: {
     needPoints() {
         let t = (this.detail.integral || 0) * this.num - this.detail.integralTotal
-        debugger
       return t
     }
   },

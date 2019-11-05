@@ -189,7 +189,6 @@
                 // this.detail.platformReductionIntegral // 平台积分 抵扣 商家积分
                 let t = this.sheetType ?  this.detail.integralTotal : this.detail.integralTotal - this.detail.platformReductionIntegral
                 console.log(t);
-                debugger
                 if(this.isFree || this.payType || t  >= this.detail.integral * this.num) {
                     return true;
                 }else {
@@ -392,7 +391,6 @@
                 }
 
                 console.log(sendData);
-                debugger
                 request
                     .post(api.submitOrder, sendData)
                     .then(res => {

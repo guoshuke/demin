@@ -185,7 +185,6 @@ export default {
     beforeRouteEnter(to,form,next){
         console.log(to, form, next);
         p = form.name
-        debugger
       next()
     },
     activated(){

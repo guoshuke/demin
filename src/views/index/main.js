@@ -12,7 +12,6 @@ Vue.use(VueClipboard);
 import "vant/lib/index.css";
 import common from "@/utils/request";
 import { request, api } from "@/request";
-debugger;
 Vue.use(VueLazyload);
 
 Vue.use(Vant);
@@ -22,7 +21,6 @@ const pOpenId = common.getQueryString("openId");
 const powerSurfaceId = common.getQueryString("powerSurfaceId");
 const goodsId = common.getQueryString("goodsId");
 
-debugger
 // 本地测试 todo 删除
 // let obj = {"openid":"ocz_9s85KT-EWnDBUKXBe3AisXw0_demin","nickname":"sunny","sex":"1","province":"江苏","city":"苏州","country":"中国","headImg":"http://thirdwx.qlogo.cn/mmopen/vi_32/RjiaOaB3fZC9DiasPqD27fr5L8t9stdmia2s3o9zqmYyhbJg9ZbGL2iaTNVOWZ8Kz0CGteEC5a3PaxKybC4k2njaag/132","flag":1,"isNew":1,"openId":"ocz_9s85KT-EWnDBUKXBe3AisXw0_demin"}
 // localStorage.setItem("loginInfo", JSON.stringify(obj))

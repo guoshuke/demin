@@ -125,7 +125,6 @@
                 let me = this;
                 let loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
                 // 获取用户信息
-                debugger;
                 if (this.status != 7) {
                     me.$parent.closeModal();
                 } else if (this.status == 7) {
