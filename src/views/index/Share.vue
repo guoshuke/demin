@@ -10,7 +10,10 @@
         <van-divider class="divider">
           奖励200积分
         </van-divider>
-        <div class="bar">好友首次成功兑换一个商品</div>
+        <div class="bar">
+          <div>好友首次成功兑换一个商品</div>
+          <div>（仅限新用户）</div>
+        </div>
         <van-divider class="divider">
           奖励800积分
         </van-divider>
@@ -147,10 +150,15 @@ export default {
         width: 18rem;
         height: 4.5rem;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: space-evenly;
         color: #fff;
         font-size: 1.2rem;
+        div:last-child{
+          font-size: 0.9rem;
+          color: #ccc;
+        }
         &:first-child {
           font-size: 1.4rem;
         }

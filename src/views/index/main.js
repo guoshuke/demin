@@ -23,7 +23,12 @@ const powerSurfaceId = common.getQueryString("powerSurfaceId");
 const goodsId = common.getQueryString("goodsId");
 
 debugger
+// 本地测试 todo 删除
+// let obj = {"openid":"ocz_9s85KT-EWnDBUKXBe3AisXw0_demin","nickname":"sunny","sex":"1","province":"江苏","city":"苏州","country":"中国","headImg":"http://thirdwx.qlogo.cn/mmopen/vi_32/RjiaOaB3fZC9DiasPqD27fr5L8t9stdmia2s3o9zqmYyhbJg9ZbGL2iaTNVOWZ8Kz0CGteEC5a3PaxKybC4k2njaag/132","flag":1,"isNew":1,"openId":"ocz_9s85KT-EWnDBUKXBe3AisXw0_demin"}
+// localStorage.setItem("loginInfo", JSON.stringify(obj))
 console.log("pOpenId" + pOpenId);
+
+
 if (powerSurfaceId) {
   localStorage.setItem("powerSurfaceId", powerSurfaceId);
 }
@@ -39,7 +44,7 @@ router.beforeEach((to, from, next) => {
   console.log("router", to, from, next);
   // 微信公众号appid-开发-基本配置中获取
   const appId = common.appId;
-  // 获取code后再次跳转路径 window.location.href；例：www.baido.com/#/Home
+  // 获取code后再次跳转路径 window.location.href；例：www.baidu.com/#/Home
   const toPath = common.host + "/#" + to.path;
   // 核心步骤，获取code
   let needAuth = to.matched.some(record => record.meta.requireAuth);
@@ -48,7 +53,7 @@ router.beforeEach((to, from, next) => {
   let base_code = "snsapi_userinfo";
   const hrefUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${encodeURIComponent(
     toPath
-  )}&response_type=code&scope=${base_code}&state=dcabe11a-751f-490f-9dcc-606881c6fcdb#wechat_redirect`;
+  )}&response_type=code&scope=${base_code}&state=0#wechat_redirect`;
 
   //从地址栏获取code
   const code = common.getQueryString("code");
@@ -102,8 +107,15 @@ function getToken(data) {
       if (res.data.data) {
         res.data.data.openid = res.data.data.openid + "_demin";
         res.data.data.openId = res.data.data.openid;
+        // 如果没有助力单  则让助力状态置换为不是新用户
+        if(!powerSurfaceId){
+          res.data.data.flag = 1
+        }
+        // alert("powerSurfaceId是" + powerSurfaceId);
         store.commit("setLoginInfo", res.data.data);
-        window.location.replace(localStorage.getItem("path"));
+        let comePath = localStorage.getItem("path")
+        // alert("要跳转的路由是" + comePath);
+        window.location.replace(comePath);
       } else {
         alert(res.data.message);
       }

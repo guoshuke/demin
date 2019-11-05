@@ -67,7 +67,7 @@
         class="footer"
         @click="goCommitOrder"
         v-if="(activeNum || needPoints <= 0) && detail.goodsStock>0"
-        >立即兑换
+        >{{activeNum ? "立即支付" : "立即兑换"}}
       </van-button>
       <van-button
         type="default"

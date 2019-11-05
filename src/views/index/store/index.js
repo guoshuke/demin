@@ -142,6 +142,7 @@ export default new Vuex.Store({
           Object.assign(shareData, goodsShareData);
         } else if (sendData.isShare) {
           // 判断是邀请页分享
+          shareData.link = shareData.link + "&isShare=1"
           Object.assign(shareData, sharePageData);
         } else {
           // 判断是邀请页分享

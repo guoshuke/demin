@@ -92,7 +92,7 @@
         实际支付：￥
         {{ payType ? detail.price * num : 0 }}
       </div>
-      <van-button class="submitRedeem" :loading="loading" @click="submitOrder" v-if="canBuy">立即兑换</van-button>
+      <van-button class="submitRedeem" :loading="loading" @click="submitOrder" v-if="canBuy">{{payType == 1 ? "立即支付" : "立即兑换"}}</van-button>
       <van-button class="submitRedeem gray" v-if="!canBuy">积分不足</van-button>
     </div>
     <van-action-sheet v-model="showSheet"

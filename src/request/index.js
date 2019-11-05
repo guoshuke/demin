@@ -37,7 +37,29 @@ const toLogin = () => {
   let base_code = "snsapi_userinfo";
   const hrefUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${encodeURIComponent(
     toPath
-  )}&response_type=code&scope=${base_code}&state=dcabe11a-751f-490f-9dcc-606881c6fcdb#wechat_redirect`;
+  )}&response_type=code&scope=${base_code}&state=0#wechat_redirect`;
+  localStorage.removeItem("helpList")
+  let path = location.href;
+  localStorage.setItem("path", path);
+  const pOpenId = common.getQueryString("openId");
+  const powerSurfaceId = common.getQueryString("powerSurfaceId");
+  const goodsId = common.getQueryString("goodsId");
+  if (powerSurfaceId) {
+    localStorage.setItem("powerSurfaceId", powerSurfaceId);
+  }else {
+    localStorage.removeItem("powerSurfaceId")
+  }
+  if (goodsId) {
+    localStorage.setItem("goodsId", goodsId);
+  }else {
+    localStorage.removeItem("goodsId")
+  }
+  if (pOpenId) {
+    localStorage.setItem("pOpenId", pOpenId);
+  }else {
+    localStorage.removeItem("pOpenId")
+  }
+
   window.location.replace(hrefUrl);
 };
 
@@ -109,7 +131,8 @@ request.interceptors.response.use(
       console.log("res =>>", res);
       let errorArr = ["600"];
       // 绑定父级  不需要提示
-      if (res.data.code != "200" && res.config.url != "mall/set/distribution") {
+      let noTipArr = ["mall/set/distribution",]
+      if (res.data.code != "200" && !noTipArr.includes(res.config.url) && res.config.url.indexOf("mall/Helper") < 0 ) {
         tip(res.data.message);
       }
       if (errorArr.includes(res.data.code)) {

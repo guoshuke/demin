@@ -260,7 +260,7 @@ export default {
           } else {
             // 订单可能不存在  所以重新发起
             me.reSend();
-            me.$toast(res.data.message);
+            // me.$toast(res.data.message);
           }
         })
         .catch(err => {
