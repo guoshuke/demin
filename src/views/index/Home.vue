@@ -384,7 +384,7 @@
                                 ],
                                 itemsList: [
                                     {
-                                        id: 0,
+                                        id: 255,
                                         itemName: "本地生活",
                                         imageUrl: "./home/icon_1.png"
                                     }
@@ -493,10 +493,11 @@
                         });
                         console.log(data.data.itemsList);
                         res.data.data.itemsList.unshift({
-                            id: 0,
+                            id: 255,
                             itemName: "本地生活",
                             imageUrl: "./home/icon_1.png"
                         });
+                        res.data.data.itemsList.length = 10;
                         me.data = res.data.data;
                         me.showPopup();
                     })

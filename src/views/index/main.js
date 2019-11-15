@@ -36,6 +36,7 @@ if (goodsId) {
 if (pOpenId) {
   localStorage.setItem("pOpenId", pOpenId);
 }
+debugger
 
 
 router.beforeEach((to, from, next) => {

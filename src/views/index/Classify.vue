@@ -68,6 +68,7 @@ export default {
         .then(res => {
           console.log(res.data);
           // todo 判断code
+            res.data.data.length = 9
           // 假设成功
           me.items = _.transform(
             res.data.data,

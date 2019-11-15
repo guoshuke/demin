@@ -1,12 +1,12 @@
 const Timestamp = new Date().getTime();
 
 module.exports = {
-  configureWebpack: { // webpack 配置
-    output: { // 输出重构  打包编译后的 文件名称  【模块名称.时间戳】 版本号 ${process.env.VUE_APP_Version}.
-      filename: `[name].${Timestamp}.js`,
-      chunkFilename: `[name].${Timestamp}.js`
-    },
-  },
+  // configureWebpack: { // webpack 配置
+  //   output: { // 输出重构  打包编译后的 文件名称  【模块名称.时间戳】 版本号 ${process.env.VUE_APP_Version}.
+  //     filename: `[name].${Timestamp}.js`,
+  //     chunkFilename: `[name].${Timestamp}.js`
+  //   },
+  // },
   pages: {
     index: {
       // page 的入口
