@@ -384,7 +384,7 @@
                                 ],
                                 itemsList: [
                                     {
-                                        id: 255,
+                                        id: 246,
                                         itemName: "本地生活",
                                         imageUrl: "./home/icon_1.png"
                                     }
@@ -493,7 +493,7 @@
                         });
                         console.log(data.data.itemsList);
                         res.data.data.itemsList.unshift({
-                            id: 255,
+                            id: 246,
                             itemName: "本地生活",
                             imageUrl: "./home/icon_1.png"
                         });
