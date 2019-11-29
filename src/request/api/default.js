@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 export default (() => {
-  const base = "mall/";
+  const base = "http://share.chinatxyj.com/mall/";
   const urls = {
     pointRules: "integralDescription/list",
     pointsDetails: "integralDetail/list",

@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 export default (() => {
-  const base = "mall/pay/";
+  const base = "http://share.chinatxyj.com/mall/pay/";
   const urls = {
     submitOrder: "order/insert",
     orderList: "exchange/list",

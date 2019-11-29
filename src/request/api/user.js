@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 export default (() => {
-  const base = "mall/user/";
+  const base = "http://share.chinatxyj.com/mall/user/";
   const urls = {
     userInfo: "info"
   };

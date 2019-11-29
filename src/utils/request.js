@@ -7,8 +7,11 @@ class Setting extends Url {
     // this.host = "http://development.chinatxyj.com"; // 测试环境
     // this.appId = "wx50dd97a40ea2adf9"; // 测试环境
 
-    this.host = "http://jf.chinatxyj.com"; // 线上环境  //授权所需域名
-    this.appId = "wxfc44234f195910e9"; // 线上环境  //授权所需域名
+    // this.host = "http://jf.chinatxyj.com"; // 线上环境  //授权所需域名  old
+    // this.appId = "wxfc44234f195910e9"; // 线上环境  //授权所需域名   old
+
+      this.host = "http://share.chinatxyj.com"; // 线上环境  //授权所需域名
+      this.appId = "wxfc44234f195910e9"; // 线上环境  //授权所需域名
 
     // host: '127.1.1.1:8080',   // 本地环境
   }

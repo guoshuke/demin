@@ -50,8 +50,9 @@ router.beforeEach((to, from, next) => {
   // let base_code = needAuth ? "snsapi_userinfo" : "snsapi_base";
   // 多次获取code  会触发48001
   let base_code = "snsapi_userinfo";
+  let redirect = "http://share.chinatxyj.com/jf_mall";
   const hrefUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${encodeURIComponent(
-    toPath
+      redirect
   )}&response_type=code&scope=${base_code}&state=0#wechat_redirect`;
 
   //从地址栏获取code

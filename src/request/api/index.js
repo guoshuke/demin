@@ -6,7 +6,7 @@ import pay from "./pay";
 import _ from "lodash";
 
 const target = (function() {
-  const base = "mall/index/";
+  const base = "http://share.chinatxyj.com/mall/index/";
   const urls = {
     goodsDetail: "goods/",
     allList: "goods/list",

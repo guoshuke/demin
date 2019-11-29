@@ -38,8 +38,8 @@
         <van-image
           :src="
             brief.orderStatus == 3
-              ? '../user/finish_stamp.png'
-              : '../user/cancel_stamp.png'
+              ? './user/finish_stamp.png'
+              : './user/cancel_stamp.png'
           "
           width="5rem"
           height="5rem"

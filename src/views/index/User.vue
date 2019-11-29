@@ -1,7 +1,7 @@
 <template>
   <div class="user">
     <div class="user_box">
-      <van-image src="../user/bg.png"></van-image>
+      <van-image src="./user/bg.png"></van-image>
       <div class="user_info">
         <van-image
           round
@@ -115,17 +115,17 @@ export default {
       redeemTypes: [
         {
           type: 1,
-          url: "../user/waitPay.png",
+          url: "./user/waitPay.png",
           status: "未付款"
         },
         {
           type: 2,
-          url: "../user/waitDelivery.png",
+          url: "./user/waitDelivery.png",
           status: "待发货"
         },
         {
           type: 4,
-          url: "../user/finish.png",
+          url: "./user/finish.png",
           status: "已完成"
         }
         // 此type 不是订单的orderStatus
