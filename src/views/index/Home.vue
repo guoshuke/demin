@@ -509,6 +509,22 @@
                         // this.goGoodsDetail(3);
                     });
             },
+            getSyncIntegral(){
+                const me = this;
+                debugger
+                request
+                    .post(api.SyncIntegral)
+                    .then(res => {
+                        console.log(res);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+                    .finally(() => {
+                        // console.log("end");
+                        // this.goGoodsDetail(3);
+                    });
+            },
             requestList() {
                 const me = this;
                 request
@@ -625,6 +641,7 @@
             this.setOpacity();
             this.status = 2;
             this.requestHomeData();
+            this.getSyncIntegral();
         },
         mounted() {
             this.resData.currentPage = 0

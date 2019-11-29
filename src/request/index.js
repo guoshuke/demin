@@ -135,6 +135,11 @@ request.interceptors.response.use(
       if (res.data.code != "200" && !noTipArr.includes(res.config.url) && res.config.url.indexOf("mall/Helper") < 0 ) {
         tip(res.data.message);
       }
+      // 判断是不是code 已使用过
+      if(res.data.code === "18001"){
+        localStorage.setItem("path",common.host);
+        location.href = common.host;
+      }
       if (errorArr.includes(res.data.code)) {
         toLogin();
       } else {

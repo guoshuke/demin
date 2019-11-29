@@ -369,6 +369,9 @@
                     sendData.goodsIntegral = 0;
                     sendData.mallIntegral = 0;
                 } else {
+                    if(!sendData.price){
+                        sendData.payType = 0;
+                    }
                     // 不是助力商品 支付方式为积分
                     if(sendData.payType == 0){
                         sendData.price = 0
@@ -470,7 +473,7 @@
                             me.$router.push("orderDetail?orderId=" + orderId);
                         };
                         console.log(payConfig);
-                        if (sendData.payType) {
+                        if (sendData.payType && sendData.price) {
                             wx.config({
                                 debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                                 appId: payConfig.appId, // 必填，公众号的唯一标识
