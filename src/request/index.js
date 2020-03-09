@@ -130,9 +130,14 @@ request.interceptors.response.use(
     if (res.status === 200) {
       console.log("res =>>", res);
       let errorArr = ["600"];
-      // 绑定父级  不需要提示
-      let noTipArr = ["mall/set/distribution",]
-      if (res.data.code != "200" && !noTipArr.includes(res.config.url) && res.config.url.indexOf("mall/Helper") < 0 ) {
+      // 不需要提示
+      let noTipArr = [
+          "mall/set/distribution",  //绑定父级
+          "mall/Helper",            //助力失效
+          "mall/index/SyncIntegral", //删库时   数据同步错误
+      ]
+      let obj =  _.find(noTipArr, function(o) { return res.config.url.includes(o); });
+      if (res.data.code != "200" && !obj) {
         tip(res.data.message);
       }
       // 判断是不是code 已使用过

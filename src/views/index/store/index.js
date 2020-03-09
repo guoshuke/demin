@@ -78,7 +78,7 @@ export default new Vuex.Store({
 
         let openId = JSON.parse(localStorage.getItem("loginInfo")).openId || "";
 
-        let url = common.host + "/#/" + (sendData.pathInfo.path || "") + "?openId=" + openId;
+        let url = common.host + "#/" + (sendData.pathInfo.path || "") + "?openId=" + openId;
 
         if (sendData.pathInfo.data) {
           url = url + sendData.pathInfo.data;
@@ -107,7 +107,7 @@ export default new Vuex.Store({
         let defaultShareData = {
           title: "积分惠民商城，积分兑换商品太合算了，你也快来试试！",
           desc: "门店买单买酒赠送等比积分，用积分换取相应的商品",
-          imgUrl: window.location.origin + "/home/logo.jpg" // 商城首页的图片
+          imgUrl: common.host + "/home/logo.jpg" // 商城首页的图片
         };
 
         // 商品分享
@@ -127,7 +127,7 @@ export default new Vuex.Store({
         let sharePageData = {
           title: "我在积分惠民商城领到1000积分啦",
           desc: " ",
-          imgUrl: window.location.origin + "/share/share.png" // 邀请页的图片
+          imgUrl: common.host + "/share/share.png" // 邀请页的图片
         };
 
         if (

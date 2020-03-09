@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 export default (() => {
-  const base = "http://share.chinatxyj.com/mall/items/";
+  const base = location.origin + "/mall/items/";
   const urls = {
     list: "list"
   };
