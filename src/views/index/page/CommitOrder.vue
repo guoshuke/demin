@@ -55,7 +55,7 @@
 
     <div class="myList payWay">
       <div class="listTitle">配送方式</div>
-      <div class="listTitle_sub">快递费货到付款</div>
+      <div class="listTitle_sub">{{logisticsInfo.pinkageCity}} <span class="logisticsInfo" v-show="logisticsInfo.postage">{{logisticsInfo.postage + "元"}}</span></div>
     </div>
     <div class="myList" v-if="payType == 1">
       <div class="listTitle">支付方式</div>
@@ -90,7 +90,7 @@
     <div class="myList submitOrder">
       <div class="listTitle">
         实际支付：￥
-        {{ payType ? detail.price * num : 0 }}
+        {{ payType ? detail.price * num + (logisticsInfo.postage || 0) : 0 }}
       </div>
       <van-button class="submitRedeem" :loading="loading" @click="submitOrder" v-if="canBuy">{{payType == 1 ? "立即支付" : "立即兑换"}}</van-button>
       <van-button class="submitRedeem gray" v-if="!canBuy">积分不足</van-button>
@@ -117,22 +117,23 @@
         name: "Order",
         data() {
             return {
-                loading: false,
-                showList: false,
-                showEdit: false,
-                showSheet: false,
-                chosenContactId: null,
-                isEdit: false,
-                editingContact: {},
-                addressInfo: {},
-                editingContactId: null,
-                areaList,
-                list: [],
+                loading: false,   //是否在加载中
+                showList: false,  //是否展示地址列表
+                showEdit: false,  //是否展示编辑或新增地址页面
+                showSheet: false, //是否使用平台积分
+                isEdit: false,  // 编辑地址还是新增地址
+                editingContact: {},  //选中的地址的详细信息
+                addressInfo: {},  //要提交的地址的信息
+                editingContactId: null, //选中的地址的Id
+                areaList, //全部的地址
+                list: [], // 全部的地址列表
                 actions: [
                     {name: "使用平台积分抵扣", type:1},
                     {name: '不使用', type:0},
                 ],
-                sheetType:1
+                sheetType:1, // 选中的使用积分类型
+                logisticsInfo:{}
+
             };
         },
         computed: {
@@ -195,10 +196,6 @@
                     return  false;
                 }
             },
-            currentContact() {
-                const id = this.chosenContactId;
-                return id !== null ? this.list.filter(item => item.id === id)[0] : {};
-            },
             payPoint() {
                 return this.isFree
                     ? "0积分"
@@ -235,6 +232,7 @@
                 this.showList = false;
                 this.editingContact = n;
                 this.editingContactId = n.id;
+                this.getlogisticsInfo()
             },
 
             // 保存地址
@@ -251,7 +249,6 @@
                 } else {
                     this.list.push(info);
                 }
-                this.chosenContactId = info.id;
                 let sendData = {
                     address: info.addressDetail,
                     userName: info.name,
@@ -330,8 +327,18 @@
                         if (!me.editingContact.id && me.list.length != 0) {
                             me.editingContact = me.list[0];
                         }
-                        // 刚进入的时候会执行
+                        me.getlogisticsInfo()
                     });
+            },
+            getlogisticsInfo(){
+                // 获取模板信息
+                let me = this
+                request.post(api.getlogistics + String(this.editingContact.areaCode).slice(0,2)+'0000' +'/'+this.detail.goodsId).then(r => {
+                    me.logisticsInfo = r.data.data
+                    console.log(me.logisticsInfo);
+                }).catch(err => {
+                   this.$toast('获取订单物流失败')
+                })
             },
             submitOrder() {
                 if (this.loading) {
@@ -392,6 +399,8 @@
                         sendData.mallIntegral = 0
                     }
                 }
+                // 如果需要另外加运费 则加上
+                sendData.price = sendData.price + (logisticsInfo.postage || 0)
 
                 console.log(sendData);
                 request
@@ -723,6 +732,9 @@
       .listTitle_sub {
         color: #858585;
         font-size: 1.1rem;
+      }
+      .logisticsInfo{
+        color: #f23d3d;
       }
     }
 

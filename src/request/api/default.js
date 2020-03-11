@@ -11,8 +11,9 @@ export default (() => {
     HelperGoods: "Helper/add/",
     HelperList: "Helper/getHelperList",
     updateHelperStatus: "Helper/updateStatu/",
-    reHelper:'Helper/newAdd/'
-  };
+    reHelper:'Helper/newAdd/',
+    getlogistics:'logistics/getlogistics/' //后面接 选择的区域code 和商品的id
+};
   return _.transform(
     urls,
     (r, v, k) => {
