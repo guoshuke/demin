@@ -400,7 +400,7 @@
                     }
                 }
                 // 如果需要另外加运费 则加上
-                sendData.price = sendData.price + (logisticsInfo.postage || 0)
+                sendData.price = sendData.price + (this.logisticsInfo.postage || 0)
 
                 console.log(sendData);
                 request

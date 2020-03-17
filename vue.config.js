@@ -7,7 +7,7 @@ module.exports = {
     //     chunkFilename: `[name].${Timestamp}.js`
     //   },
     // },
-    publicPath: process.env.NODE_ENV === 'production' ? '/jf_mall/' : '/',
+    publicPath:  '/jf_mall/',
     pages: {
         index: {
             // page 的入口

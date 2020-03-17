@@ -1,4 +1,5 @@
 import areaList from "./areaList";
+import wx from 'weixin-js-sdk'
 
 export default {
     getAddress(areaCode) {

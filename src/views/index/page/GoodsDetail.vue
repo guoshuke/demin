@@ -61,8 +61,8 @@
         <div class="title">商品详情</div>
         <div class="content" v-html="detail.remark"></div>
       </div>
-      <a v-show="isWeChatApplet" class="openWx" data-miniprogram-appid="wxe22ef1ba024c02e4" data-miniprogram-path="/pages/index/index" href=""
-         @click="goNative">点击文字跳转小程序 <i class="iconfont icon-icon-test"></i></a>
+      <button v-show="isWeChatApplet" class="openWx"
+         @click="goNative">点击文字跳转小程序 <i class="iconfont icon-icon-test"></i></button>
 
       <van-button
               type="default"
@@ -177,7 +177,7 @@
                 this.showShare = false
             },
             goNative() {
-                wx.miniProgram.navigateTo({url: '/pages/index/index'})
+                wx.miniProgram.navigateTo({url: '/pages/logs/logs'})
             }
         },
         mounted() {
