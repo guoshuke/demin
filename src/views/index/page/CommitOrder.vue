@@ -74,13 +74,13 @@
       </div>
 <!--      <van-icon name="arrow" class="listTitle_sub"/>-->
     </div>
-    <div class="myList" @click="showSelectSheet">
-      <div class="listTitle">平台积分立减</div>
-      <div class="listTitle_sub">{{platformIntegral}}
-      </div>
-      <van-icon name="arrow" class="listTitle_sub" v-if="detail.platformIntegral && payType == 0"/>
-    </div>
-    <div class="myList">
+<!--    <div class="myList" @click="showSelectSheet">-->
+<!--      <div class="listTitle">平台积分立减</div>-->
+<!--      <div class="listTitle_sub">{{platformIntegral}}-->
+<!--      </div>-->
+<!--      <van-icon name="arrow" class="listTitle_sub" v-if="detail.platformIntegral && payType == 0"/>-->
+<!--    </div>-->
+    <div class="myList" v-if="!payType">
       <div class="listTitle">商家积分立减</div>
       <div class="listTitle_sub">
        {{mallIntegral}}
@@ -327,7 +327,8 @@
                         if (!me.editingContact.id && me.list.length != 0) {
                             me.editingContact = me.list[0];
                         }
-                        me.getlogisticsInfo()
+                        // 模板信息还没好
+                        // me.getlogisticsInfo()
                     });
             },
             getlogisticsInfo(){
@@ -337,7 +338,7 @@
                     me.logisticsInfo = r.data.data
                     console.log(me.logisticsInfo);
                 }).catch(err => {
-                   this.$toast('获取订单物流失败')
+                   // this.$toast('获取订单物流失败')
                 })
             },
             submitOrder() {

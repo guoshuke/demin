@@ -16,10 +16,16 @@ export default new Vuex.Store({
     browseHistory: [],
     searchHistory: [],
     signature: null,
-    hasPhone: false
+    hasPhone: false,
+    isMini:false
   },
   getters: {},
   mutations: {
+    updateIsMini(state){
+      //3.通过判断navigator.userAgent中包含miniProgram字样
+      let userAgent = navigator.userAgent;
+      state.isMini = /miniProgram/i.test(userAgent)
+    },
     setLoginInfo(state, playload) {
       console.log(playload);
       state.loginInfo = playload;

@@ -12,7 +12,7 @@
       v-model="active"
       active-color="#F23D3D"
       inactive-color="#000"
-      v-show="showTabBar"
+      v-show="showTabBar && !isMini"
       class="tabBar"
       route
     >
@@ -56,6 +56,7 @@
 <script>
     import common from "@/utils/request";
     import wx from "weixin-js-sdk"
+    import {mapState} from 'vuex'
 export default {
   name: "App",
   data() {
@@ -71,6 +72,9 @@ export default {
           this.showTabBar = this.homePages.includes(newVal);
       }
   },
+    computed:{
+      ...mapState(['isMini'])
+    },
   mounted() {
     this.showTabBar = this.homePages.includes(this.$route.name);
   },

@@ -45,9 +45,9 @@ module.exports = {
     },
     devServer: {
         // proxy: "http://192.168.1.249:3000/mock/20/mall" // 局域网测试
-        // proxy: "http://development.chinatxyj.com/" // 测试
+        proxy: "http://development.chinatxyj.com/" // 测试
         // proxy: "http://jf.chinatxyj.com/"    // 线上
         // proxy: "http://192.168.1.31:8080/"        // 本地/
-        proxy: "http://192.168.1.50:8080"
+        // proxy: "http://192.168.1.50:8080"
     }
 };

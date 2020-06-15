@@ -20,9 +20,12 @@ Vue.config.productionTip = false;
 const pOpenId = common.getQueryString("openId");
 const powerSurfaceId = common.getQueryString("powerSurfaceId");
 const goodsId = common.getQueryString("goodsId");
+const isAuth = common.getQueryString("isAuth");
 
 // 本地测试 todo 删除
 // let obj = {"openid":"ocz_9s85KT-EWnDBUKXBe3AisXw0_demin","nickname":"sunny","sex":"1","province":"江苏","city":"苏州","country":"中国","headImg":"http://thirdwx.qlogo.cn/mmopen/vi_32/RjiaOaB3fZC9DiasPqD27fr5L8t9stdmia2s3o9zqmYyhbJg9ZbGL2iaTNVOWZ8Kz0CGteEC5a3PaxKybC4k2njaag/132","flag":1,"isNew":1,"openId":"ocz_9s85KT-EWnDBUKXBe3AisXw0_demin"}
+// localStorage.setItem("loginInfo", JSON.stringify(obj))
+// let obj = {"openid":"ocz_9s85KT-EWnDBUKXBe3AisXw0_demin","nickname":"sunny","sex":"1","province":"江苏","city":"苏州","country":"中国","headImg":"http://thirdwx.qlogo.cn/mmopen/vi_32/RjiaOaB3fZC9DiasPqD27fr5L8t9stdmia2s3o9zqmYyhbJg9ZbGL2iaTNVOWZ8Kz0CGteEC5a3PaxKybC4k2njaag/132","flag":1,"isNew":0,"openId":"ocz_9s85KT-EWnDBUKXBe3AisXw0_demin"}
 // localStorage.setItem("loginInfo", JSON.stringify(obj))
 console.log("pOpenId" + pOpenId);
 
@@ -36,7 +39,10 @@ if (goodsId) {
 if (pOpenId) {
   localStorage.setItem("pOpenId", pOpenId);
 }
-debugger
+if (isAuth){
+  localStorage.setItem("isAuth", isAuth);
+}
+// debugger
 
 
 router.beforeEach((to, from, next) => {
@@ -67,6 +73,7 @@ router.beforeEach((to, from, next) => {
   /* 路由发生变化修改页面title */
   if (to.meta.title) {
     document.title = to.meta.title;
+    store.commit('updateIsMini')
   }
   // 如果链接里有code  那就是获取授权进来的  重定向
   if (code) {
@@ -102,6 +109,19 @@ function getToken(data) {
   localStorage.removeItem("loginInfo");
   // 获取openId
   request.post(api.oauth, sendData).then(function(res) {
+    //3.通过判断navigator.userAgent中包含miniProgram字样
+    let userAgent = navigator.userAgent;
+    let isMini = /miniProgram/i.test(userAgent)
+    let isAuth = localStorage.getItem("isAuth") || false;
+    if(isMini && isAuth){
+      localStorage.removeItem("isAuth");
+      isAuth = false
+      const url = `/pages/auth/auth/auth?openid=${res.data.data.openid}`;
+      wx.miniProgram.reLaunch({
+        url: url
+      });
+      return
+    }
     if (res && res.status == 200) {
       if (res.data.data) {
         res.data.data.openid = res.data.data.openid + "_demin";
@@ -125,6 +145,7 @@ function getToken(data) {
       alert("网络链接有误");
       // Vue.$toast(res.data ? res.data.message : "请求失败！");
     }
+
   });
 }
 

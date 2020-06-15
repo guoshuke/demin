@@ -12,7 +12,7 @@ class Setting extends Url {
 
     console.log(process.env.NODE_ENV);
     this.host = process.env.NODE_ENV === 'production' ? "http://share.chinatxyj.com/jf_mall" : "http://development.chinatxyj.com/jf_mall/"
-    debugger
+    // debugger
     this.appId = process.env.NODE_ENV === 'production'? "wxfc44234f195910e9" : "wx50dd97a40ea2adf9"
 
     // this.host = "http://development.chinatxyj.com/jf_mall/"; // 测试环境

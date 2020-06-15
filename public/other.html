@@ -1,44 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta
-      name="viewport"
-      content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"
+            name="viewport"
+            content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"
     />
     <meta
-      http-equiv="Cache-Control"
-      content="no-cache, no-store, must-revalidate"
+            http-equiv="Cache-Control"
+            content="no-cache, no-store, must-revalidate"
     />
-    <link rel="stylesheet" href="./iconfont/iconfont.css" />
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
     <style>
-      #loadingGif {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-      }
+        #loadingGif {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+        }
     </style>
-    <title><%= htmlWebpackPlugin.options.title %></title>
-  </head>
-  <body>
-    <noscript>
-      <strong
-        >We're sorry but demo-mobile doesn't work properly without JavaScript
-        enabled. Please enable it to continue.</strong
-      >
-    </noscript>
-    <div id="loadingGif">
-      <img src="http://weixin.chinatxyj.com/menu/images/loading.gif" alt="" />
-    </div>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+    <title>天下有酒</title>
+</head>
+<body>
+<div id="loadingGif">
+    <img src="http://weixin.chinatxyj.com/menu/images/loading.gif" alt=""/>
+</div>
+<script src="./jq.js"></script>
+<script src="./wx.js"></script>
+<script>
+    const code = this.getUrlParam('code')  // 截取路径中的code
+    if (code == null || code === '') {
+        const local = window.location.href
+        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx50dd97a40ea2adf9&redirect_uri=' + encodeURIComponent(local) + '&response_type=code&scope=snsapi_base&state=1#wechat_redirect';
+    } else {
+        getOpenId(code) //把code传给后台获取用户信息
+    }
+
+    function getUrlParam(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
+        let url = window.location.href.split('#')[0]
+        let search = url.split('?')[1]
+        if (search) {
+            var r = search.substr(0).match(reg)
+            if (r !== null)
+                return unescape(r[2])
+            return null
+        } else
+            return null
+    }
+
+    function getOpenId(code) {
+        $.ajax({
+            method: 'get',
+            url: "/mall/oauth/getOpenId/" + code,
+            success: (data, status) => {
+                console.log(data, status);
+                wx.miniProgram.reLaunch({url:'/pages/index/index?openId='+data.data.openId})
+            }
+        });
+    }
+</script>
+</body>
 </html>

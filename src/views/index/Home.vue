@@ -33,7 +33,7 @@
       </van-swipe>
     </div>
 
-    <div class="newUser home_block" @click="showNew">
+    <div class="newUser home_block" @click="showNew" v-if="!isMini">
       <van-image src="./home/newP.png"/>
     </div>
 
@@ -56,7 +56,7 @@
       </van-grid>
     </div>
 
-    <div class="superScrabble home_block mb15">
+    <div class="superScrabble home_block mb15" v-if="!isMini">
       <van-cell class="custom">
         <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
@@ -248,6 +248,7 @@
     import store from "./store";
     import _ from "lodash";
     import common from "@/utils/request";
+    import {mapState} from "vuex";
 
     export default {
         name: "home",
@@ -264,7 +265,7 @@
                 funcList: [
                     {
                         id: 1,
-                        itemName: "本地生活",
+                        itemName: "热门推荐",
                         imageUrl: "./home/icon_1.png"
                     },
                     {
@@ -329,6 +330,9 @@
                 status: 2
             };
         },
+      computed:{
+        ...mapState(['isMini'])
+      },
         methods: {
             goGoodsDetail(id) {
                 // id 商品的id
@@ -383,11 +387,11 @@
                                     }
                                 ],
                                 itemsList: [
-                                    {
-                                        id: 246,
-                                        itemName: "本地生活",
-                                        imageUrl: "./home/icon_1.png"
-                                    }
+                                    // {
+                                    //     id: 246,
+                                    //     itemName: "热门推荐",
+                                    //     imageUrl: "./home/icon_1.png"
+                                    // }
                                 ],
                                 zeroGoodsList: [
                                     {
@@ -492,12 +496,12 @@
                             });
                         });
                         console.log(data.data.itemsList);
-                        res.data.data.itemsList.unshift({
-                            id: 246,
-                            itemName: "本地生活",
-                            imageUrl: "./home/icon_1.png"
-                        });
-                        res.data.data.itemsList.length = 10;
+                        // res.data.data.itemsList.unshift({
+                        //     id: 246,
+                        //     itemName: "热门推荐",
+                        //     imageUrl: "./home/icon_1.png"
+                        // });
+                        // res.data.data.itemsList.length = 10;
                         me.data = res.data.data;
                         me.showPopup();
                     })
@@ -511,7 +515,7 @@
             },
             getSyncIntegral(){
                 const me = this;
-                debugger
+
                 request
                     .post(api.SyncIntegral)
                     .then(res => {
@@ -562,7 +566,9 @@
                 console.log("助力要展示的商品是--------", this.details);
                 let parentOpenId = localStorage.getItem("openId");
                 if (parentOpenId !== this.loginInfo.openId) {
-                    this.$refs.HelpStatus.showModal();
+                    if(!this.isMini){
+                      this.$refs.HelpStatus.showModal();
+                    }
                 }
             },
             showNew(){
@@ -646,6 +652,7 @@
         mounted() {
             this.resData.currentPage = 0
             store.commit("toShare");
+          // alert(this.isMini)
         }
     };
 </script>
