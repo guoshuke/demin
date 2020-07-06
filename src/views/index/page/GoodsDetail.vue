@@ -74,7 +74,7 @@
       <van-button
               type="default"
               class="footer poorPoints"
-              v-if="0 < needPoints && !activeNum || detail.goodsStock <= 0">
+              v-else>
         {{detail.goodsStock>0?"积分不足":"库存不足"}}
       </van-button
       >

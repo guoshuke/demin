@@ -25,6 +25,7 @@ export default new Vuex.Store({
       //3.通过判断navigator.userAgent中包含miniProgram字样
       let userAgent = navigator.userAgent;
       state.isMini = /miniProgram/i.test(userAgent)
+      // state.isMini = true
     },
     setLoginInfo(state, playload) {
       console.log(playload);

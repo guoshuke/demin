@@ -56,7 +56,7 @@
       </van-grid>
     </div>
 
-    <div class="superScrabble home_block mb15" v-if="!isMini">
+    <div class="superScrabble home_block mb15" v-if="!true">
       <van-cell class="custom">
         <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
@@ -566,7 +566,7 @@
                 console.log("助力要展示的商品是--------", this.details);
                 let parentOpenId = localStorage.getItem("openId");
                 if (parentOpenId !== this.loginInfo.openId) {
-                    if(!this.isMini){
+                    if(!true){
                       this.$refs.HelpStatus.showModal();
                     }
                 }

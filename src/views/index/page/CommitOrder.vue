@@ -54,8 +54,8 @@
     </van-card>
 
     <div class="myList payWay">
-      <div class="listTitle">配送方式</div>
-      <div class="listTitle_sub">{{logisticsInfo.pinkageCity}} <span class="logisticsInfo" v-show="logisticsInfo.postage">{{logisticsInfo.postage + "元"}}</span></div>
+      <div class="listTitle">配送金额</div>
+      <div class="listTitle_sub"><span class="logisticsInfo" >{{freightPrice + "元"}}</span></div>
     </div>
     <div class="myList" v-if="payType == 1">
       <div class="listTitle">支付方式</div>
@@ -90,7 +90,7 @@
     <div class="myList submitOrder">
       <div class="listTitle">
         实际支付：￥
-        {{ payType ? detail.price * num + (logisticsInfo.postage || 0) : 0 }}
+        {{ payType ? detail.price * num + freightPrice : freightPrice }}
       </div>
       <van-button class="submitRedeem" :loading="loading" @click="submitOrder" v-if="canBuy">{{payType == 1 ? "立即支付" : "立即兑换"}}</van-button>
       <van-button class="submitRedeem gray" v-if="!canBuy">积分不足</van-button>
@@ -132,7 +132,7 @@
                     {name: '不使用', type:0},
                 ],
                 sheetType:1, // 选中的使用积分类型
-                logisticsInfo:{}
+              freightPrice:0 //所需运费金额
 
             };
         },
@@ -328,15 +328,15 @@
                             me.editingContact = me.list[0];
                         }
                         // 模板信息还没好
-                        // me.getlogisticsInfo()
+                        me.getlogisticsInfo()
                     });
             },
             getlogisticsInfo(){
                 // 获取模板信息
                 let me = this
-                request.post(api.getlogistics + String(this.editingContact.areaCode).slice(0,2)+'0000' +'/'+this.detail.goodsId).then(r => {
-                    me.logisticsInfo = r.data.data
-                    console.log(me.logisticsInfo);
+                request.get(api.getlogistics +this.detail.goodsId + '/' + String(this.editingContact.areaCode).slice(0,2)+'0000').then(r => {
+                    me.freightPrice = r.data.data || 0
+                    console.log(me.freightPrice);
                 }).catch(err => {
                    // this.$toast('获取订单物流失败')
                 })
@@ -358,7 +358,8 @@
                     userName: this.editingContact.name,
                     phone: this.editingContact.tel || 0,
                     payType: this.payType || 0,
-                    buyNumber: this.num
+                    buyNumber: this.num,
+                    freightPrice:this.freightPrice
                 };
                 const me = this;
                 if (!sendData.address) {
@@ -401,7 +402,7 @@
                     }
                 }
                 // 如果需要另外加运费 则加上
-                sendData.price = sendData.price + (this.logisticsInfo.postage || 0)
+                sendData.price = sendData.price + this.freightPrice
 
                 console.log(sendData);
                 request
@@ -414,6 +415,7 @@
                             if (me.detail.powerSurfaceId) {
                                 me.updateStatus(me.detail.powerSurfaceId);
                             }
+                            me.closePopup();
                             me.pay(res.data.data, sendData);
 
                             // 积分也走支付
@@ -472,18 +474,16 @@
                         payConfig.cancel = function (res) {
                             me.$notify("取消支付");
                             me.loading = false;
-                            me.closePopup();
                             me.$router.push("orderDetail?orderId=" + orderId);
                         };
                         // 支付失败回调函数
                         payConfig.fail = function (res) {
                             me.$notify("支付失败~");
                             me.loading = false;
-                            me.closePopup();
                             me.$router.push("orderDetail?orderId=" + orderId);
                         };
                         console.log(payConfig);
-                        if (sendData.payType && sendData.price) {
+                        if (sendData.price) {
                             wx.config({
                                 debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                                 appId: payConfig.appId, // 必填，公众号的唯一标识
