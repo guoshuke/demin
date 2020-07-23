@@ -54,7 +54,7 @@
     </van-card>
 
     <div class="myList payWay">
-      <div class="listTitle">配送金额</div>
+      <div class="listTitle">配送费</div>
       <div class="listTitle_sub"><span class="logisticsInfo" >{{freightPrice + "元"}}</span></div>
     </div>
     <div class="myList" v-if="payType == 1">

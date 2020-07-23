@@ -28,8 +28,8 @@
         <div slot="price" class="price">{{detail.payType == 0 ? (detail.goodsIntegral / detail.buyNumber) + "积分" : "￥ " + (detail.price  / detail.buyNumber)}}</div>
       </van-card>
       <div class="myList payWay">
-        <div class="listTitle">配送方式</div>
-        <div class="listTitle_sub">快递费货到付款</div>
+        <div class="listTitle">配送费</div>
+        <div class="listTitle_sub">{{(freightPrice || 0) + "元"}}</div>
       </div>
       <div class="myList">
         <div class="listTitle">支付方式</div>
@@ -43,17 +43,17 @@
         <div class="listTitle_sub">{{detail.payType == 0 ? (detail.goodsIntegral) + "积分" : "￥ " + (detail.price || 0)}}</div>
         <!--      <van-icon name="arrow" class="listTitle_sub" />-->
       </div>
-            <div class="myList">
-              <div class="listTitle">平台积分立减</div>
-              <div class="listTitle_sub red">{{detail.payType == 0 ? detail.platformIntegral ? (detail.platformIntegral + "积分抵扣" + (detail.platformIntegral / 10) + "商家积分") : "无抵扣" : "0积分"}}</div>
-            </div>
+<!--            <div class="myList">-->
+<!--              <div class="listTitle">平台积分立减</div>-->
+<!--              <div class="listTitle_sub red">{{detail.payType == 0 ? detail.platformIntegral ? (detail.platformIntegral + "积分抵扣" + (detail.platformIntegral / 10) + "商家积分") : "无抵扣" : "0积分"}}</div>-->
+<!--            </div>-->
             <div class="myList">
               <div class="listTitle">商家积分立减</div>
               <div class="listTitle_sub red">{{detail.payType == 0 ? detail.mallIntegral: "0"}}积分</div>
             </div>
       <div class="myList hasLine">
         <div class="listTitle">实际支付</div>
-        <div class="listTitle_sub">{{ detail.payType == 0 ? detail.mallIntegral + "积分" : "￥ " + (detail.price || 0)}}</div>
+        <div class="listTitle_sub">{{ detail.payType == 0 ? detail.mallIntegral + "积分" + (detail.freightPrice ? '+运费'+ detail.freightPrice + '元' :'') : "￥ " + (detail.price ? detail.price + (detail.freightPrice || 0):  0) }}</div>
       </div>
       <div class="orderInfo">
         <div class="myList">

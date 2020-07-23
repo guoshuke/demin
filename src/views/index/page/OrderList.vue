@@ -49,7 +49,7 @@ export default {
         },
         {
           title: "待发货",
-          type: 1
+          type: 5
         },
         {
           title: "已发货",
@@ -93,7 +93,7 @@ export default {
     toggleStatus(i) {
       console.log(i);
       this.list = [];
-      let types = [null, 0, 1, 2, 3, 4];
+      let types = [null, 0, 5, 2, 3, 4];
       this.resData.currentPage = 1;
       this.questData(types[i]);
     },
